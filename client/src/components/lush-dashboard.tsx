@@ -85,14 +85,18 @@ const LushDashboard = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [cameraEnabled, setCameraEnabled] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [showNav, setShowNav] = useState(true);
+  const [syncStatus, setSyncStatus] = useState<'online' | 'offline' | 'syncing'>('online');
+  const [offlineQueue, setOfflineQueue] = useState<any[]>([]);
   
   // Mock user context - in real app this would come from auth context
   const userRole = "admin"; // Could be "admin", "broker", "solicitor", "builder", "accountant", "client", "investor"
   const userEmail = "admin@lushproperties.com"; // Mock user email
   const firstName = "Alex"; // Mock user first name
 
-  // Push notifications setup
+  // Enhanced setup with offline detection and mobile navigation
   React.useEffect(() => {
+    // Push notifications setup
     if ("Notification" in window && Notification.permission !== "granted") {
       Notification.requestPermission().then(permission => {
         if (permission === "granted") {
@@ -100,7 +104,69 @@ const LushDashboard = () => {
         }
       });
     }
+
+    // Mobile navigation auto-hide
+    if (window.innerWidth < 640) {
+      setShowNav(false);
+    }
+
+    // Online/offline detection
+    const handleOnline = () => {
+      setSyncStatus('online');
+      notifyUser("🌐 Back Online", "Data sync resumed");
+      processOfflineQueue();
+    };
+    
+    const handleOffline = () => {
+      setSyncStatus('offline');
+      notifyUser("📱 Offline Mode", "Changes will sync when connection returns");
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
   }, []);
+
+  // Process offline queue when back online
+  const processOfflineQueue = async () => {
+    if (offlineQueue.length === 0) return;
+    
+    setSyncStatus('syncing');
+    notifyUser("🔄 Syncing Data", `Processing ${offlineQueue.length} offline changes`);
+    
+    try {
+      for (const item of offlineQueue) {
+        await fetch(item.endpoint, {
+          method: item.method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(item.data)
+        });
+      }
+      setOfflineQueue([]);
+      setSyncStatus('online');
+      notifyUser("✅ Sync Complete", "All offline changes synchronized");
+    } catch (error) {
+      console.error('Sync failed:', error);
+      notifyUser("❌ Sync Failed", "Some changes couldn't be synchronized");
+    }
+  };
+
+  // Add to offline queue when no connection
+  const queueOfflineAction = (endpoint: string, method: string, data: any) => {
+    const queueItem = {
+      id: Date.now(),
+      endpoint,
+      method,
+      data,
+      timestamp: new Date().toISOString()
+    };
+    setOfflineQueue(prev => [...prev, queueItem]);
+    notifyUser("💾 Saved Offline", "Changes queued for sync when online");
+  };
 
   // Utility functions for maps and notifications
   const notifyUser = (title: string, message: string) => {
