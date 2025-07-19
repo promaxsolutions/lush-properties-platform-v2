@@ -7,11 +7,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Dashboard from "./components/lush-dashboard";
-import Layout from "./components/Layout";
+import SidebarLayout from "./components/SidebarLayout";
 import { AuthProvider, useAuth } from "./components/AuthContext";
 import Upload from "./components/Upload";
 import Claims from "./components/Claims";
 import Xero from "./components/Xero";
+import Settings from "./components/Settings";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -39,15 +40,16 @@ function App() {
                 path="/*"
                 element={
                   <ProtectedRoute>
-                    <Layout>
+                    <SidebarLayout>
                       <Routes>
                         <Route path="dashboard" element={<Dashboard />} />
                         <Route path="uploads" element={<Upload />} />
                         <Route path="claims" element={<Claims />} />
                         <Route path="xero" element={<Xero />} />
+                        <Route path="settings" element={<Settings />} />
                         <Route path="*" element={<Navigate to="/dashboard" />} />
                       </Routes>
-                    </Layout>
+                    </SidebarLayout>
                   </ProtectedRoute>
                 }
               />
