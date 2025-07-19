@@ -1,0 +1,162 @@
+// App.jsx (with Roles, Uploads, Claims, Xero Integration Scaffold)
+
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import Dashboard from "./components/LushDashboard";
+import Layout from "./components/Layout";
+import { AuthProvider, useAuth } from "./components/AuthContext";
+import Upload from "./components/Upload";
+import Claims from "./components/Claims";
+import Xero from "./components/Xero";
+
+const ProtectedRoute = ({ children, role }) => {
+  const { user, role: userRole } = useAuth();
+  if (!user) return <Navigate to="/login" />;
+  if (role && userRole !== role) return <Navigate to="/unauthorized" />;
+  return children;
+};
+
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <Routes>
+                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="uploads" element={<Upload />} />
+                    <Route path="claims" element={<Claims />} />
+                    <Route path="xero" element={<Xero />} />
+                    <Route path="*" element={<Navigate to="/dashboard" />} />
+                  </Routes>
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </AuthProvider>
+  );
+}
+
+export default App;
+
+// AuthContext.jsx (with roles)
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { app } from "./firebase";
+
+const AuthContext = createContext();
+export const useAuth = () => useContext(AuthContext);
+
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
+
+  useEffect(() => {
+    const auth = getAuth(app);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setUser(firebaseUser);
+      // Simulate role lookup, replace with DB call later
+      if (firebaseUser?.email === "david@example.com") setRole("broker");
+      else if (firebaseUser?.email === "nowa@example.com") setRole("solicitor");
+      else setRole("admin");
+    });
+    return () => unsubscribe();
+  }, []);
+
+  return <AuthContext.Provider value={{ user, role }}>{children}</AuthContext.Provider>;
+};
+
+// Upload.jsx
+import React, { useState } from "react";
+const Upload = () => {
+  const [file, setFile] = useState(null);
+
+  const handleUpload = async () => {
+    if (!file) return;
+    alert(`Simulating upload: ${file.name}`);
+  };
+
+  return (
+    <div className="p-6 max-w-xl mx-auto">
+      <h2 className="text-xl font-bold mb-4">Upload Documents</h2>
+      <input type="file" onChange={(e) => setFile(e.target.files[0])} />
+      <button className="bg-blue-600 text-white px-4 py-2 rounded mt-4" onClick={handleUpload}>Upload</button>
+    </div>
+  );
+};
+export default Upload;
+
+// Claims.jsx
+import React, { useState } from "react";
+const Claims = () => {
+  const [amount, setAmount] = useState("");
+  const [template, setTemplate] = useState("");
+  const generateClaim = () => {
+    alert(`Claim for $${amount} using template ${template} generated.`);
+  };
+
+  return (
+    <div className="p-6 max-w-xl mx-auto">
+      <h2 className="text-xl font-bold mb-4">Generate Progress Claim</h2>
+      <input className="border p-2 w-full mb-2" placeholder="Amount" type="number" onChange={(e) => setAmount(e.target.value)} />
+      <input className="border p-2 w-full mb-2" placeholder="Lender Template" onChange={(e) => setTemplate(e.target.value)} />
+      <button className="bg-green-700 text-white px-4 py-2 rounded" onClick={generateClaim}>Generate</button>
+    </div>
+  );
+};
+export default Claims;
+
+// Xero.jsx
+import React from "react";
+const Xero = () => {
+  return (
+    <div className="p-6 max-w-xl mx-auto">
+      <h2 className="text-xl font-bold mb-4">Xero Integration</h2>
+      <p>Coming soon: Sync invoices and payments with Xero.</p>
+    </div>
+  );
+};
+export default Xero;
+
+// Layout.jsx (updated nav)
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { getAuth, signOut } from "firebase/auth";
+import { useAuth } from "./AuthContext";
+
+const Layout = ({ children }) => {
+  const navigate = useNavigate();
+  const { role } = useAuth();
+  const logout = async () => {
+    await signOut(getAuth());
+    navigate("/login");
+  };
+
+  return (
+    <div>
+      <nav className="flex justify-between items-center p-4 bg-green-700 text-white">
+        <h1 className="font-bold text-xl">Lush Properties</h1>
+        <div className="space-x-4">
+          <Link to="/dashboard">Dashboard</Link>
+          <Link to="/uploads">Uploads</Link>
+          <Link to="/claims">Claims</Link>
+          {role === "admin" && <Link to="/xero">Xero</Link>}
+          <button onClick={logout} className="bg-red-600 px-3 py-1 rounded">Logout</button>
+        </div>
+      </nav>
+      <main className="p-4">{children}</main>
+    </div>
+  );
+};
+
+export default Layout;
