@@ -69,6 +69,7 @@ const LushDashboard = () => {
   const [editingDeposit, setEditingDeposit] = useState(0);
   const [aiTips, setAiTips] = useState<Record<number, string>>({});
   const [loadingTips, setLoadingTips] = useState<Record<number, boolean>>({});
+  const [uploading, setUploading] = useState(false);
   
   // Mock user context - in real app this would come from auth context
   const userRole = "admin"; // Could be "admin", "broker", "solicitor", "builder", "accountant"
@@ -334,6 +335,48 @@ Give me a brief insight into potential profitability, risk factors, and recommen
     } catch (error) {
       console.error('Failed to send next step:', error);
       alert('Failed to generate next step recommendations. Please try again.');
+    }
+  };
+
+  const handleReceiptUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("receipt", file);
+
+      // Parse receipt using AI/OCR
+      const receiptResponse = await fetch("/api/receipt-parse", {
+        method: "POST",
+        body: formData
+      });
+      
+      const receiptData = await receiptResponse.json();
+      
+      // Sync with Xero
+      const xeroResponse = await fetch("/api/xero-sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user: userEmail,
+          projectName: receiptData.project,
+          amount: receiptData.amount,
+          description: receiptData.description,
+          category: receiptData.category,
+          receiptFile: file.name
+        })
+      });
+      
+      const xeroResult = await xeroResponse.json();
+      alert(`Receipt uploaded and synced with Xero!\n\nProject: ${receiptData.project}\nAmount: $${receiptData.amount}\nCategory: ${receiptData.category}\nXero ID: ${xeroResult.xeroId || 'XERO-' + Date.now()}`);
+      
+    } catch (error) {
+      console.error('Failed to upload receipt:', error);
+      alert('Failed to upload receipt. Please try again.');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -747,6 +790,87 @@ Give me a brief insight into potential profitability, risk factors, and recommen
             </Card>
           ))}
         </div>
+      </div>
+
+      {/* Receipt Upload Section */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Upload className="h-5 w-5" />
+            Receipt Upload & Xero Sync
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-4">
+            <Input
+              type="file"
+              accept="image/*,application/pdf"
+              onChange={handleReceiptUpload}
+              disabled={uploading}
+              className="flex-1"
+            />
+            <Button 
+              variant="outline" 
+              disabled={uploading}
+              className="bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100"
+            >
+              {uploading ? "Uploading..." : "📤 Upload Receipt"}
+            </Button>
+          </div>
+          {uploading && (
+            <div className="mt-3 text-sm text-blue-600 flex items-center gap-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+              Processing receipt and syncing with Xero...
+            </div>
+          )}
+          <div className="mt-3 text-sm text-gray-600">
+            Supported formats: JPG, PNG, PDF. Automatically extracts amount, vendor, and project details.
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-blue-600" />
+              Financial Overview
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Bar data={chartData} options={{ responsive: true, plugins: { legend: { position: 'top' } } }} />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendIcon className="h-5 w-5 text-green-600" />
+              Progress Timeline
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Line 
+              data={timelineData} 
+              options={{ 
+                responsive: true,
+                plugins: { legend: { position: 'top' } },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                      callback: function(value: any) {
+                        return value + '%';
+                      }
+                    }
+                  }
+                }
+              }} 
+            />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

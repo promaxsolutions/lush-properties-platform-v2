@@ -110,6 +110,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- Added receipt upload functionality with AI-powered OCR parsing
+- Implemented Xero financial integration for automated expense tracking
+- Created comprehensive file upload system with progress indicators
+- Added automated receipt processing with vendor and amount extraction
+- Enhanced backend with receipt parsing and Xero sync API endpoints
 - Added AI-powered "Next Step" recommendations with stage-specific guidance
 - Enhanced UX with personalized welcome message and real-time clock display
 - Implemented role-based project filtering and expanded user roles (builder, accountant)

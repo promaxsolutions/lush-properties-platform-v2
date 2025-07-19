@@ -281,6 +281,68 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Receipt parsing API endpoint
+  app.post("/api/receipt-parse", (req, res) => {
+    try {
+      // Mock receipt parsing - in real app this would use OCR/AI services like AWS Textract, Google Vision, or Azure Form Recognizer
+      const mockReceiptData = {
+        project: "56 Inge King Crescent", // Default to first project
+        amount: Math.floor(Math.random() * 5000) + 500, // Random amount $500-$5500
+        description: "Construction materials and supplies",
+        category: "Building Materials",
+        vendor: "Bunnings Warehouse",
+        date: new Date().toISOString().split('T')[0],
+        confidence: 0.95
+      };
+      
+      console.log(`[RECEIPT-PARSE] Processing receipt:`, {
+        ...mockReceiptData,
+        processedAt: new Date().toISOString()
+      });
+      
+      res.json({
+        success: true,
+        ...mockReceiptData,
+        message: "Receipt parsed successfully"
+      });
+    } catch (error) {
+      console.error("[RECEIPT-PARSE] Error parsing receipt:", error);
+      res.status(500).json({ error: "Failed to parse receipt" });
+    }
+  });
+
+  // Xero sync API endpoint
+  app.post("/api/xero-sync", (req, res) => {
+    try {
+      const { user, projectName, amount, description, category, receiptFile } = req.body;
+      
+      // Mock Xero sync - in real app this would use Xero API
+      const xeroId = `XERO-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+      
+      console.log(`[XERO-SYNC] Syncing with Xero:`, {
+        user,
+        projectName,
+        amount,
+        description,
+        category,
+        receiptFile,
+        xeroId,
+        syncedAt: new Date().toISOString()
+      });
+      
+      res.json({
+        success: true,
+        xeroId,
+        message: `Expense synced to Xero successfully`,
+        status: "synced",
+        xeroLink: `https://go.xero.com/app/expense/${xeroId}`
+      });
+    } catch (error) {
+      console.error("[XERO-SYNC] Error syncing with Xero:", error);
+      res.status(500).json({ error: "Failed to sync with Xero" });
+    }
+  });
+
   // AI Chat endpoint - ready for OpenAI integration
   app.post("/api/ai-chat", async (req, res) => {
     try {

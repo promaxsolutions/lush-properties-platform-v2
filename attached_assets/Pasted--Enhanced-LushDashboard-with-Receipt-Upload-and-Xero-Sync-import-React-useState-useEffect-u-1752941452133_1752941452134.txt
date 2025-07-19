@@ -1,0 +1,150 @@
+// ✨ Enhanced LushDashboard with Receipt Upload and Xero Sync
+import React, { useState, useEffect, useContext } from "react";
+import ProjectCard from "./ProjectCard";
+import { Bar, Line } from "react-chartjs-2";
+import "chart.js/auto";
+import axios from "axios";
+import { UserContext } from "../context/UserContext";
+
+const LushDashboard = () => {
+  const [projects, setProjects] = useState([]);
+  const [globalSummary, setGlobalSummary] = useState({});
+  const [uploading, setUploading] = useState(false);
+  const { role, email, firstName } = useContext(UserContext);
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    const res = await axios.get("/api/projects");
+    let data = res.data;
+    if (role === "builder") {
+      data = data.filter((p) => p.builderEmail === email);
+    }
+    setProjects(data);
+    const totals = calculateGlobalSummary(data);
+    setGlobalSummary(totals);
+  };
+
+  const calculateGlobalSummary = (projects) => {
+    let loan = 0, sales = 0, cost = 0, equity = 0;
+    projects.forEach((p) => {
+      loan += p.loan;
+      sales += p.saleEstimate;
+      cost += p.landCost + p.buildCost;
+      equity += p.saleEstimate - (p.loan + (p.deposit || 0));
+    });
+    return { loan, sales, cost, equity };
+  };
+
+  const handleReceiptUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("receipt", file);
+
+    const receipt = await axios.post("/api/receipt-parse", formData);
+    await axios.post("/api/xero-sync", {
+      user: email,
+      projectName: receipt.data.project,
+      amount: receipt.data.amount,
+      description: receipt.data.description,
+      category: receipt.data.category
+    });
+    alert("✅ Receipt uploaded and synced with Xero!");
+    setUploading(false);
+  };
+
+  const chartData = {
+    labels: projects.map((p) => p.name),
+    datasets: [
+      {
+        label: "Loan",
+        data: projects.map((p) => p.loan),
+        backgroundColor: "#a3e635"
+      },
+      {
+        label: "Total Spend",
+        data: projects.map((p) => p.landCost + p.buildCost + (p.deposit || 0)),
+        backgroundColor: "#facc15"
+      },
+      {
+        label: "Projected Sale",
+        data: projects.map((p) => p.saleEstimate),
+        backgroundColor: "#38bdf8"
+      }
+    ]
+  };
+
+  const timelineData = {
+    labels: projects.map((p) => p.name),
+    datasets: [
+      {
+        label: "Progress %",
+        data: projects.map((p) => p.progress),
+        borderColor: "#10b981",
+        tension: 0.4
+      }
+    ]
+  };
+
+  const localTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+  return (
+    <div className="p-4 md:p-6 text-sm md:text-base">
+      <h2 className="text-xl font-bold mb-2">👋 Welcome, {firstName} – Local Time: {localTime}</h2>
+      <p className="text-gray-500 mb-4">Here’s a snapshot of your real estate empire.</p>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <SummaryCard label="Loan Approved" value={globalSummary.loan} color="bg-green-100" />
+        <SummaryCard label="Total Spend" value={globalSummary.cost} color="bg-yellow-100" />
+        <SummaryCard label="Projected Sales" value={globalSummary.sales} color="bg-blue-100" />
+        <SummaryCard label="Net Equity" value={globalSummary.equity} color="bg-gray-100" />
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-4 mb-6">
+        {projects.map((proj) => (
+          <div key={proj.id} className="bg-white rounded-lg shadow-md p-4">
+            <ProjectCard project={proj} />
+            <div className="mt-3 flex flex-wrap gap-2">
+              <button onClick={() => handleAI("reminder", proj)} className="bg-rose-600 text-white px-3 py-1 rounded text-sm">💬 AI Reminder</button>
+              <button onClick={() => handleAI("next", proj)} className="bg-green-600 text-white px-3 py-1 rounded text-sm">🤖 Next Step</button>
+              <button onClick={() => handleAI("claim", proj)} className="bg-indigo-600 text-white px-3 py-1 rounded text-sm">🧾 Raise Claim</button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="bg-white p-4 mb-6 rounded shadow">
+        <h4 className="text-md font-semibold mb-2">📤 Upload Receipt & Sync with Xero</h4>
+        <input type="file" accept="image/*,application/pdf" onChange={handleReceiptUpload} disabled={uploading} />
+        {uploading && <p className="text-blue-600 mt-2">Uploading...</p>}
+      </div>
+
+      <div className="bg-white rounded shadow p-4 mb-6">
+        <h4 className="text-md font-semibold mb-2">📊 Equity vs Spend vs Sale</h4>
+        <Bar data={chartData} />
+      </div>
+
+      <div className="bg-white rounded shadow p-4 mb-6">
+        <h4 className="text-md font-semibold mb-2">📈 Timeline Progress</h4>
+        <Line data={timelineData} />
+      </div>
+    </div>
+  );
+};
+
+const SummaryCard = ({ label, value, color }) => (
+  <div className={`rounded p-4 ${color}`}>
+    <h4 className="text-sm text-gray-600">{label}</h4>
+    <p className="text-lg font-bold">${value.toLocaleString()}</p>
+  </div>
+);
+
+export default LushDashboard;
+
+// 🧾 Uploads sync to /api/receipt-parse then /api/xero-sync
+// 🧠 AI reminders, next steps, claims still active
+// 📱 Mobile friendly + builder-filtered project list
