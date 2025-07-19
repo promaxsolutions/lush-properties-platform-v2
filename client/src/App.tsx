@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import LushDashboard from "./components/lush-dashboard";
+import Dashboard from "./components/lush-dashboard";
 import Layout from "./components/Layout";
 import { AuthProvider, useAuth } from "./components/AuthContext";
 import Upload from "./components/Upload";
@@ -21,7 +21,7 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ children, role }: ProtectedRouteProps) => {
   const { user, role: userRole } = useAuth();
   if (!user) return <Navigate to="/login" />;
-  if (role && userRole !== role) return <Navigate to="/login" />;
+  if (role && userRole !== role) return <Navigate to="/unauthorized" />;
   return <>{children}</>;
 };
 
@@ -41,17 +41,10 @@ function App() {
                   <ProtectedRoute>
                     <Layout>
                       <Routes>
-                        <Route path="dashboard" element={<LushDashboard />} />
+                        <Route path="dashboard" element={<Dashboard />} />
                         <Route path="uploads" element={<Upload />} />
                         <Route path="claims" element={<Claims />} />
-                        <Route 
-                          path="xero" 
-                          element={
-                            <ProtectedRoute role="admin">
-                              <Xero />
-                            </ProtectedRoute>
-                          } 
-                        />
+                        <Route path="xero" element={<Xero />} />
                         <Route path="*" element={<Navigate to="/dashboard" />} />
                       </Routes>
                     </Layout>

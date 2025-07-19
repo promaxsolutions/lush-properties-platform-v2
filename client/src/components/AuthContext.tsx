@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       else if (firebaseUser?.email === "nowa@example.com") setRole("solicitor");
       else setRole("admin");
     });
-    return unsubscribe;
+    return () => unsubscribe();
   }, []);
 
   return <AuthContext.Provider value={{ user, role }}>{children}</AuthContext.Provider>;
