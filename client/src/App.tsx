@@ -20,6 +20,7 @@ import ProfitCalculator from "./components/ProfitCalculator";
 import BuilderPortal from "./components/BuilderPortal";
 import ClientUpgradePanel from "./components/ClientUpgradePanel";
 import HeatmapVisualizer from "./components/HeatmapVisualizer";
+import AIWorkflowEngine from "./components/AIWorkflowEngine";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -62,6 +63,7 @@ function App() {
                         <Route path="builder" element={<BuilderPortal />} />
                         <Route path="client-upgrades" element={<ClientUpgradePanel />} />
                         <Route path="heatmap" element={<HeatmapVisualizer />} />
+                        <Route path="ai-workflows" element={<AIWorkflowEngine />} />
                         <Route path="*" element={<Navigate to="/dashboard" />} />
                       </Routes>
                       <AIChatWidget />

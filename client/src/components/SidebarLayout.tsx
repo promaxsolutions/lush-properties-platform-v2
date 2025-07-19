@@ -11,7 +11,8 @@ import {
   DollarSign, 
   Settings, 
   LogOut,
-  User
+  User,
+  Brain
 } from "lucide-react";
 
 interface SidebarLayoutProps {
@@ -56,6 +57,11 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
       path: "/xero", 
       icon: <DollarSign className="h-5 w-5" />,
       adminOnly: true 
+    },
+    { 
+      label: "AI Workflows", 
+      path: "/ai-workflows", 
+      icon: <Brain className="h-5 w-5" /> 
     },
     { 
       label: "Settings", 

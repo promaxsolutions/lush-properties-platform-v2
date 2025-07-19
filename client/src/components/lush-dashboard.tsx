@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Upload, FileText, DollarSign, Building, TrendingUp, PiggyBank, Target, Edit2, ExternalLink, Lightbulb, Save, X, RefreshCw, BarChart3, TrendingUp as TrendIcon, Mail, Bell, Calendar as CalendarIcon, Clock, AlertCircle } from "lucide-react";
+import { Upload, FileText, DollarSign, Building, TrendingUp, PiggyBank, Target, Edit2, ExternalLink, Lightbulb, Save, X, RefreshCw, BarChart3, TrendingUp as TrendIcon, Mail, Bell, Calendar as CalendarIcon, Clock, AlertCircle, Brain } from "lucide-react";
 import { Bar, Line, Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -95,6 +95,13 @@ const LushDashboard = () => {
     "📬 Builder notified of pending claim",
     "✅ Client upgrade request confirmed", 
     "🧠 AI: Estimated completion in 9 weeks"
+  ]);
+  const [aiInsights, setAiInsights] = useState<string[]>([
+    "💸 AI Suggests: ORDE loan 4.99% fixed is best option (saves $22K)",
+    "🧱 Builder 'MacHomes' has 4.7 star reliability, 3.9 on timelines",
+    "📈 Fundability: 8.7/10 — Project primed for investor proposal",
+    "📤 Smart reply sent to builder: 'Plumbing final due this week'",
+    "🚨 Cost Alert: Roofing quote is 12% above average in Whitlam"
   ]);
   const userRole = localRole; // Use localRole for role-based filtering
   const userEmail = "admin@lushproperties.com"; // Mock user email
@@ -837,6 +844,33 @@ Give me a brief insight into potential profitability, risk factors, and recommen
             <li key={i}>{alert}</li>
           ))}
         </ul>
+      </div>
+
+      {/* AI Workflow Insights */}
+      <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-b p-4">
+        <h2 className="text-lg font-semibold mb-2 flex items-center gap-2">
+          <Lightbulb className="h-5 w-5 text-purple-600" />
+          🤖 AI Workflow Insights
+        </h2>
+        <ul className="list-disc ml-4 text-sm text-gray-800 space-y-1">
+          {aiInsights.map((insight, i) => (
+            <li key={i} className="font-medium">{insight}</li>
+          ))}
+        </ul>
+        <div className="mt-3 flex justify-between items-center">
+          <div className="text-xs text-purple-600 font-medium">
+            All AI systems running ⚙️ — Lush OS powered by OpenAI
+          </div>
+          <Button 
+            size="sm" 
+            variant="outline"
+            onClick={() => window.location.href = '/ai-workflows'}
+            className="text-xs bg-purple-50 border-purple-200 hover:bg-purple-100"
+          >
+            <Brain className="h-3 w-3 mr-1" />
+            View All
+          </Button>
+        </div>
       </div>
 
       <main className="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
