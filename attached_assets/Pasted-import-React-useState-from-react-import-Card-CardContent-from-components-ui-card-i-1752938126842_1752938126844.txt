@@ -47,7 +47,7 @@ const initialProjects = [
   }
 ];
 
-const stageProgress = (stage: number) => (stage / (projectStages.length - 1)) * 100;
+const stageProgress = (stage) => (stage / (projectStages.length - 1)) * 100;
 
 const LushDashboard = () => {
   const [projects, setProjects] = useState(initialProjects);
@@ -61,7 +61,7 @@ const LushDashboard = () => {
     entity: ""
   });
 
-  const markStageComplete = (index: number) => {
+  const markStageComplete = (index) => {
     setProjects((prev) => {
       const updated = [...prev];
       if (updated[index].stage < projectStages.length - 1) {
@@ -171,7 +171,7 @@ const LushDashboard = () => {
                 ticks={[...Array(projectStages.length).keys()]}
                 tickFormatter={(v) => projectStages[v]}
               />
-              <Tooltip formatter={(val) => projectStages[val as number]} />
+              <Tooltip formatter={(val) => projectStages[val]} />
               <Bar dataKey="stage" fill="#10b981" />
             </BarChart>
           </ResponsiveContainer>
