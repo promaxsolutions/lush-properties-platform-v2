@@ -15,6 +15,11 @@ import Claims from "./components/Claims";
 import Xero from "./components/Xero";
 import Settings from "./components/Settings";
 import AIChatWidget from "./components/AIChatWidget";
+import ContractUpload from "./components/ContractUpload";
+import ProfitCalculator from "./components/ProfitCalculator";
+import BuilderPortal from "./components/BuilderPortal";
+import ClientUpgradePanel from "./components/ClientUpgradePanel";
+import HeatmapVisualizer from "./components/HeatmapVisualizer";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -52,6 +57,11 @@ function App() {
                         <Route path="claims" element={<Claims />} />
                         <Route path="xero" element={<Xero />} />
                         <Route path="settings" element={<Settings />} />
+                        <Route path="contracts" element={<ContractUpload />} />
+                        <Route path="profits" element={<ProfitCalculator />} />
+                        <Route path="builder" element={<BuilderPortal />} />
+                        <Route path="client-upgrades" element={<ClientUpgradePanel />} />
+                        <Route path="heatmap" element={<HeatmapVisualizer />} />
                         <Route path="*" element={<Navigate to="/dashboard" />} />
                       </Routes>
                       <AIChatWidget />

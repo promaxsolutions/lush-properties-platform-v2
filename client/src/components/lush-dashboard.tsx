@@ -90,7 +90,13 @@ const LushDashboard = () => {
   const [offlineQueue, setOfflineQueue] = useState<any[]>([]);
   
   // Mock user context - in real app this would come from auth context
-  const userRole = "admin"; // Could be "admin", "broker", "solicitor", "builder", "accountant", "client", "investor"
+  const [localRole, setLocalRole] = useState("admin"); // Role switching for testing
+  const [alerts, setAlerts] = useState<string[]>([
+    "📬 Builder notified of pending claim",
+    "✅ Client upgrade request confirmed", 
+    "🧠 AI: Estimated completion in 9 weeks"
+  ]);
+  const userRole = localRole; // Use localRole for role-based filtering
   const userEmail = "admin@lushproperties.com"; // Mock user email
   const firstName = "Alex"; // Mock user first name
 
@@ -781,13 +787,29 @@ Give me a brief insight into potential profitability, risk factors, and recommen
             </span>
           )}
         </div>
-        <div className="text-right">
-          <div className="text-xs sm:text-sm font-medium text-gray-900">Hi {firstName}</div>
-          <div className="text-xs text-gray-500">{localTime}</div>
-          <div className="sm:hidden text-xs">
-            {syncStatus === 'online' && <span className="text-green-600">🌐</span>}
-            {syncStatus === 'offline' && <span className="text-orange-600">📱</span>}
-            {syncStatus === 'syncing' && <span className="text-blue-600">🔄</span>}
+        <div className="flex items-center gap-4">
+          {/* Role Switcher */}
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-gray-600">Role:</label>
+            <select
+              className="border border-gray-300 px-2 py-1 rounded text-xs bg-white"
+              value={localRole}
+              onChange={(e) => setLocalRole(e.target.value)}
+            >
+              <option value="admin">👑 Admin</option>
+              <option value="builder">🔨 Builder</option>
+              <option value="client">🏠 Client</option>
+              <option value="investor">💼 Investor</option>
+            </select>
+          </div>
+          <div className="text-right">
+            <div className="text-xs sm:text-sm font-medium text-gray-900">Hi {firstName}</div>
+            <div className="text-xs text-gray-500">{localTime}</div>
+            <div className="sm:hidden text-xs">
+              {syncStatus === 'online' && <span className="text-green-600">🌐</span>}
+              {syncStatus === 'offline' && <span className="text-orange-600">📱</span>}
+              {syncStatus === 'syncing' && <span className="text-blue-600">🔄</span>}
+            </div>
           </div>
         </div>
       </header>
@@ -803,6 +825,19 @@ Give me a brief insight into potential profitability, risk factors, and recommen
           </button>
         </div>
       )}
+
+      {/* Smart Alerts Section */}
+      <div className="bg-white border-b p-4">
+        <h2 className="text-lg font-semibold mb-2 flex items-center gap-2">
+          <Bell className="h-5 w-5 text-blue-600" />
+          🔔 Smart Alerts
+        </h2>
+        <ul className="list-disc ml-4 text-sm text-gray-700 space-y-1">
+          {alerts.map((alert, i) => (
+            <li key={i}>{alert}</li>
+          ))}
+        </ul>
+      </div>
 
       <main className="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
         {/* Welcome Section */}

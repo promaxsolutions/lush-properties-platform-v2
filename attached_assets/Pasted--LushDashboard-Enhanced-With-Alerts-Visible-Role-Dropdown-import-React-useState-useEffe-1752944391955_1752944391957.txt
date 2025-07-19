@@ -1,0 +1,74 @@
+// 🔥 LushDashboard – Enhanced With Alerts + Visible Role Dropdown
+import React, { useState, useEffect, useContext } from "react";
+import { UserContext } from "../context/UserContext";
+
+export default function LushDashboard() {
+  const { email, firstName } = useContext(UserContext);
+  const [localRole, setLocalRole] = useState("admin");
+  const [alerts, setAlerts] = useState([]);
+
+  useEffect(() => {
+    sendEmailAlerts();
+    loadRoleData();
+  }, [localRole]);
+
+  const sendEmailAlerts = () => {
+    // Simulated AI alerts
+    setAlerts(["📬 Builder notified of pending claim", "✅ Client upgrade request confirmed", "🧠 AI: Estimated completion in 9 weeks"]);
+  };
+
+  const loadRoleData = () => {
+    // Future: fetch role-specific data here
+  };
+
+  return (
+    <div className="p-6">
+      <header className="flex justify-between items-center mb-4">
+        <div>
+          <h1 className="text-2xl font-bold">Welcome, {firstName}</h1>
+          <p className="text-gray-500 text-sm">Role: {localRole}</p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <label className="text-sm">🔽 Switch Role:</label>
+          <select
+            className="border border-gray-300 p-1 rounded text-sm"
+            value={localRole}
+            onChange={(e) => setLocalRole(e.target.value)}>
+            <option value="admin">Admin</option>
+            <option value="builder">Builder</option>
+            <option value="client">Client</option>
+            <option value="investor">Investor</option>
+          </select>
+        </div>
+      </header>
+
+      <section className="mb-4">
+        <h2 className="text-lg font-semibold mb-2">🔔 Smart Alerts</h2>
+        <ul className="list-disc ml-4 text-sm text-gray-700">
+          {alerts.map((alert, i) => (
+            <li key={i}>{alert}</li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-white p-4 rounded shadow">
+          <h3 className="font-semibold mb-2">📧 Builder Notification</h3>
+          <p className="text-sm text-gray-600">Auto-email sent to assigned builder when progress is uploaded.</p>
+        </div>
+        <div className="bg-white p-4 rounded shadow">
+          <h3 className="font-semibold mb-2">✅ Client Upgrade Confirmation</h3>
+          <p className="text-sm text-gray-600">Client receives email summary and estimated timeline from AI.</p>
+        </div>
+        <div className="bg-white p-4 rounded shadow">
+          <h3 className="font-semibold mb-2">🧠 Timeline Predictor</h3>
+          <p className="text-sm text-gray-600">AI estimates completion: 2–4 weeks for lockup, 6–8 weeks for handover.</p>
+        </div>
+      </section>
+
+      <footer className="text-center text-xs text-gray-400 mt-6 pt-6 border-t">
+        Built for Lush Group — All Systems AI Ready
+      </footer>
+    </div>
+  );
+}

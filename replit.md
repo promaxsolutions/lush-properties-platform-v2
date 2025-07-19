@@ -110,6 +110,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- Deployed complete upgrade bundle with 5 new advanced components (July 19, 2025):
+  * ContractUpload.tsx - PDF contract parser with auto data extraction
+  * ProfitCalculator.tsx - Real-time profit analysis with charts and ROI tracking
+  * BuilderPortal.tsx - Builder submission system with admin approval workflow
+  * ClientUpgradePanel.tsx - Client upgrade request management with quoting
+  * HeatmapVisualizer.tsx - Financial health dashboard with risk assessment
+- Enhanced main dashboard with visible role switcher and smart alerts system
+- Integrated all new components into App.tsx routing (/contracts, /profits, /builder, /client-upgrades, /heatmap)
+- Added comprehensive role-based testing functionality (Admin, Builder, Client, Investor)
 - Enhanced mobile optimization with comprehensive data sync capabilities and offline functionality
 - Added real-time sync status indicators with online/offline detection and queue management
 - Implemented offline-first architecture with automatic sync when connection returns
