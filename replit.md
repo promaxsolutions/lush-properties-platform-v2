@@ -110,6 +110,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- Added investor funding portal with AI fundability assessment and proposal submission
+- Implemented builder/agent onboarding system with role-based invitation management
+- Created AI-powered project analysis with location, budget, and market condition scoring
+- Enhanced admin capabilities with comprehensive user invitation and onboarding workflows
+- Added automated email invitation system with secure invite links and expiration tracking
 - Added export functionality and investor portal capabilities with project pack downloads
 - Implemented mobile PWA features with installation instructions and progressive web app support
 - Enhanced role-based access control to include investor role with filtered project views

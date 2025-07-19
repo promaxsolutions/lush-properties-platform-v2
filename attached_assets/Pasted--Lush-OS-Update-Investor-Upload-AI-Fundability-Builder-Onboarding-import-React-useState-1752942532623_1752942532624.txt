@@ -1,0 +1,201 @@
+// 💼 Lush OS Update: Investor Upload + AI Fundability + Builder Onboarding
+import React, { useState, useEffect, useContext } from "react";
+import ProjectCard from "./ProjectCard";
+import { Bar, Line, Pie } from "react-chartjs-2";
+import Calendar from "react-calendar";
+import "chart.js/auto";
+import axios from "axios";
+import { UserContext } from "../context/UserContext";
+
+const LushDashboard = () => {
+  const [projects, setProjects] = useState([]);
+  const [receipts, setReceipts] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [globalSummary, setGlobalSummary] = useState({});
+  const [uploading, setUploading] = useState(false);
+  const { role, email, firstName } = useContext(UserContext);
+
+  useEffect(() => {
+    fetchProjects();
+    fetchReceipts();
+    fetchEvents();
+  }, []);
+
+  const fetchProjects = async () => {
+    const res = await axios.get("/api/projects");
+    let data = res.data;
+    if (role === "builder") {
+      data = data.filter((p) => p.builderEmail === email);
+    } else if (role === "client") {
+      data = data.filter((p) => p.clientEmail === email);
+    } else if (role === "investor") {
+      data = data.filter((p) => p.investorEmails?.includes(email));
+    }
+    setProjects(data);
+    const totals = calculateGlobalSummary(data);
+    setGlobalSummary(totals);
+  };
+
+  const fetchReceipts = async () => {
+    const res = await axios.get("/api/receipts");
+    setReceipts(res.data);
+  };
+
+  const fetchEvents = async () => {
+    const res = await axios.get("/api/calendar-events");
+    setEvents(res.data);
+  };
+
+  const handleCalendarClick = async (date) => {
+    setSelectedDate(date);
+    const event = events.find((e) => new Date(e.date).toDateString() === date.toDateString());
+    if (event) {
+      alert(`🔔 ${event.title} at ${event.time}`);
+    }
+  };
+
+  const handleExportProject = async (id) => {
+    const res = await axios.get(`/api/export-pdf/${id}`, { responseType: "blob" });
+    const blob = new Blob([res.data], { type: "application/pdf" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `Lush_Project_${id}.pdf`;
+    link.click();
+  };
+
+  const localTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+  const builderBreakdown = () => {
+    const byBuilder = {};
+    receipts.forEach((r) => {
+      const key = r.builder || "Unknown";
+      byBuilder[key] = (byBuilder[key] || 0) + parseFloat(r.amount);
+    });
+    return {
+      labels: Object.keys(byBuilder),
+      datasets: [{
+        label: "Spend per Builder",
+        data: Object.values(byBuilder),
+        backgroundColor: ["#3b82f6", "#10b981", "#f59e0b"]
+      }]
+    };
+  };
+
+  const handleAIProposalReview = async (formData) => {
+    const res = await axios.post("/api/ai-funding-check", formData);
+    alert(`🧠 AI Review: ${res.data.message}`);
+  };
+
+  return (
+    <div className="p-4 md:p-6 text-sm md:text-base">
+      <h2 className="text-xl font-bold mb-2">👋 Welcome, {firstName} – Local Time: {localTime}</h2>
+      <p className="text-gray-500 mb-4">Here’s a snapshot of your real estate empire.</p>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <SummaryCard label="Loan Approved" value={globalSummary.loan} color="bg-green-100" />
+        <SummaryCard label="Total Spend" value={globalSummary.cost} color="bg-yellow-100" />
+        <SummaryCard label="Projected Sales" value={globalSummary.sales} color="bg-blue-100" />
+        <SummaryCard label="Net Equity" value={globalSummary.equity} color="bg-gray-100" />
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-4 mb-6">
+        {projects.map((proj) => (
+          <div key={proj.id} className="bg-white rounded-lg shadow-md p-4">
+            <ProjectCard project={proj} role={role} />
+            {role === "admin" || role === "investor" ? (
+              <button className="mt-2 text-blue-600" onClick={() => handleExportProject(proj.id)}>📤 Export Project Pack</button>
+            ) : null}
+          </div>
+        ))}
+      </div>
+
+      {role === "investor" && (
+        <div className="bg-white rounded shadow p-4 mb-6">
+          <h4 className="text-md font-semibold mb-2">💼 Submit Funding Proposal</h4>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = {
+                projectName: e.target.name.value,
+                budget: e.target.budget.value,
+                location: e.target.location.value
+              };
+              handleAIProposalReview(formData);
+            }}>
+            <input className="border p-1 rounded mr-2" name="name" placeholder="Project name" required />
+            <input className="border p-1 rounded mr-2" name="budget" placeholder="Budget" required />
+            <input className="border p-1 rounded mr-2" name="location" placeholder="Location" required />
+            <button type="submit" className="bg-green-600 text-white px-3 py-1 rounded">Check Fundability</button>
+          </form>
+        </div>
+      )}
+
+      {role === "admin" && (
+        <div className="bg-white rounded shadow p-4 mb-6">
+          <h4 className="text-md font-semibold mb-2">📦 Onboard Builder or Agent</h4>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const data = {
+                name: e.target.fullname.value,
+                email: e.target.email.value,
+                role: e.target.role.value
+              };
+              axios.post("/api/invite-user", data).then(() => alert("User invited successfully"));
+            }}>
+            <input className="border p-1 rounded mr-2" name="fullname" placeholder="Full name" required />
+            <input className="border p-1 rounded mr-2" name="email" placeholder="Email" required />
+            <select name="role" className="border p-1 rounded mr-2">
+              <option value="builder">Builder</option>
+              <option value="agent">Agent</option>
+              <option value="client">Client</option>
+            </select>
+            <button type="submit" className="bg-blue-600 text-white px-3 py-1 rounded">Send Invite</button>
+          </form>
+        </div>
+      )}
+
+      <div className="bg-white p-4 mb-6 rounded shadow">
+        <h4 className="text-md font-semibold mb-2">📅 Scheduled Milestones & Tasks</h4>
+        <Calendar onClickDay={handleCalendarClick} value={selectedDate} />
+        <p className="mt-2 text-sm text-gray-600">Tap on any date to view event.</p>
+      </div>
+
+      <div className="bg-white p-4 mb-6 rounded shadow">
+        <h4 className="text-md font-semibold mb-2">📊 Spend Breakdown Per Builder</h4>
+        <Pie data={builderBreakdown()} />
+      </div>
+
+      <div className="bg-white rounded shadow p-4 mb-6">
+        <h4 className="text-md font-semibold mb-2">📊 Equity vs Spend vs Sale</h4>
+        <Bar data={chartData} />
+      </div>
+
+      <div className="bg-white rounded shadow p-4 mb-6">
+        <h4 className="text-md font-semibold mb-2">📈 Timeline Progress</h4>
+        <Line data={timelineData} />
+      </div>
+
+      <footer className="mt-12 text-center text-gray-500 text-xs">
+        <p>Install this app to your phone via browser menu → "Add to Home Screen"</p>
+        <p>Built for Lush Group • Mobile PWA Ready 🌍</p>
+      </footer>
+    </div>
+  );
+};
+
+const SummaryCard = ({ label, value, color }) => (
+  <div className={`rounded p-4 ${color}`}>
+    <h4 className="text-sm text-gray-600">{label}</h4>
+    <p className="text-lg font-bold">${value.toLocaleString()}</p>
+  </div>
+);
+
+export default LushDashboard;
+
+// ✅ Phase Includes:
+// 💼 Investor upload portal
+// 💸 AI project fundability estimator
+// 📦 Builder/agent onboarding

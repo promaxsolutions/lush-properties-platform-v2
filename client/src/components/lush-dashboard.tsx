@@ -473,6 +473,38 @@ Give me a brief insight into potential profitability, risk factors, and recommen
     };
   };
 
+  // Handle AI funding proposal review
+  const handleAIProposalReview = async (formData: any) => {
+    try {
+      const response = await fetch("/api/ai-funding-check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+      const result = await response.json();
+      alert(`🧠 AI Fundability Analysis: ${result.message}\n\nScore: ${result.score}/100\nRecommendation: ${result.recommendation}`);
+    } catch (error) {
+      console.error('Failed to get AI funding review:', error);
+      alert('Failed to analyze project fundability. Please try again.');
+    }
+  };
+
+  // Handle builder/agent onboarding
+  const handleUserInvite = async (userData: any) => {
+    try {
+      const response = await fetch("/api/invite-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData)
+      });
+      const result = await response.json();
+      alert(`✅ Invitation sent successfully to ${userData.email}\n\nRole: ${userData.role}\nInvite ID: ${result.inviteId}`);
+    } catch (error) {
+      console.error('Failed to send user invite:', error);
+      alert('Failed to send invitation. Please try again.');
+    }
+  };
+
   // Handle project export for investors and admins
   const handleExportProject = async (projectId: number) => {
     try {
@@ -1064,6 +1096,95 @@ Give me a brief insight into potential profitability, risk factors, and recommen
                 </tbody>
               </table>
             </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Investor Funding Portal */}
+      {userRole === "investor" && (
+        <Card className="mb-6 bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-purple-700">
+              <DollarSign className="h-5 w-5" />
+              💼 Submit Funding Proposal
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target as HTMLFormElement);
+                const data = {
+                  projectName: formData.get('name') as string,
+                  budget: parseInt(formData.get('budget') as string),
+                  location: formData.get('location') as string,
+                  description: formData.get('description') as string
+                };
+                handleAIProposalReview(data);
+              }}
+              className="space-y-4"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input name="name" placeholder="Project Name" required />
+                <Input name="budget" type="number" placeholder="Budget ($)" required />
+                <Input name="location" placeholder="Location" required />
+                <textarea 
+                  name="description" 
+                  placeholder="Project Description" 
+                  className="border rounded-md p-2 col-span-2"
+                  rows={3}
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700">
+                🧠 Check AI Fundability Score
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Admin Builder Onboarding */}
+      {userRole === "admin" && (
+        <Card className="mb-6 bg-gradient-to-r from-green-50 to-teal-50 border-green-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-green-700">
+              <Building className="h-5 w-5" />
+              📦 Onboard Builder or Agent
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target as HTMLFormElement);
+                const data = {
+                  name: formData.get('fullname') as string,
+                  email: formData.get('email') as string,
+                  role: formData.get('role') as string,
+                  company: formData.get('company') as string
+                };
+                handleUserInvite(data);
+              }}
+              className="space-y-4"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input name="fullname" placeholder="Full Name" required />
+                <Input name="email" type="email" placeholder="Email Address" required />
+                <Input name="company" placeholder="Company Name" />
+                <select name="role" className="border rounded-md p-2" required>
+                  <option value="">Select Role</option>
+                  <option value="builder">Builder</option>
+                  <option value="agent">Real Estate Agent</option>
+                  <option value="client">Client</option>
+                  <option value="accountant">Accountant</option>
+                  <option value="solicitor">Solicitor</option>
+                </select>
+              </div>
+              <Button type="submit" className="w-full bg-green-600 hover:bg-green-700">
+                📧 Send Invitation
+              </Button>
+            </form>
           </CardContent>
         </Card>
       )}

@@ -602,6 +602,128 @@ startxref
     }
   });
 
+  // AI funding check API endpoint
+  app.post("/api/ai-funding-check", (req, res) => {
+    try {
+      const { projectName, budget, location, description } = req.body;
+      
+      // Mock AI analysis - in real app this would use OpenAI or similar AI service
+      const analysisFactors = {
+        locationScore: location.toLowerCase().includes('canberra') || location.toLowerCase().includes('act') ? 85 : Math.floor(Math.random() * 40) + 60,
+        budgetScore: budget > 500000 ? 90 : budget > 300000 ? 75 : budget > 100000 ? 60 : 40,
+        projectTypeScore: description.toLowerCase().includes('residential') ? 80 : description.toLowerCase().includes('commercial') ? 70 : 65,
+        marketConditionsScore: 78 // Mock current market conditions
+      };
+      
+      const overallScore = Math.floor(
+        (analysisFactors.locationScore + analysisFactors.budgetScore + 
+         analysisFactors.projectTypeScore + analysisFactors.marketConditionsScore) / 4
+      );
+      
+      let recommendation = "";
+      let message = "";
+      
+      if (overallScore >= 80) {
+        recommendation = "Highly Recommended for Funding";
+        message = "Excellent fundability potential. Strong location, appropriate budget, and favorable market conditions.";
+      } else if (overallScore >= 65) {
+        recommendation = "Recommended with Conditions";
+        message = "Good fundability potential. Consider market timing and risk management strategies.";
+      } else if (overallScore >= 50) {
+        recommendation = "Proceed with Caution";
+        message = "Moderate fundability. Recommend additional due diligence and risk assessment.";
+      } else {
+        recommendation = "Not Recommended";
+        message = "Low fundability score. Consider revising project scope or market positioning.";
+      }
+      
+      const result = {
+        projectName,
+        score: overallScore,
+        recommendation,
+        message,
+        factors: analysisFactors,
+        analysisDate: new Date().toISOString(),
+        riskLevel: overallScore >= 75 ? "Low" : overallScore >= 60 ? "Medium" : "High"
+      };
+      
+      console.log(`[AI-FUNDING-CHECK] Analysis completed:`, {
+        projectName,
+        score: overallScore,
+        recommendation,
+        analyzedAt: new Date().toISOString()
+      });
+      
+      res.json(result);
+    } catch (error) {
+      console.error("[AI-FUNDING-CHECK] Error analyzing project fundability:", error);
+      res.status(500).json({ error: "Failed to analyze project fundability" });
+    }
+  });
+
+  // User invitation API endpoint
+  app.post("/api/invite-user", (req, res) => {
+    try {
+      const { name, email, role, company } = req.body;
+      
+      // Mock invitation system - in real app this would send actual emails
+      const inviteId = `INV-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+      
+      const invitationData = {
+        inviteId,
+        name,
+        email,
+        role,
+        company: company || "Lush Properties",
+        invitedBy: "System Admin",
+        invitedAt: new Date().toISOString(),
+        status: "pending",
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days
+        inviteLink: `https://lush-portal.com/invite/${inviteId}`
+      };
+      
+      // Mock email template
+      const emailContent = `
+Welcome to Lush Properties Platform!
+
+Hi ${name},
+
+You've been invited to join the Lush Properties project management platform as a ${role}.
+
+Role: ${role}
+Company: ${company || "Lush Properties"}
+Invited by: System Admin
+
+Click here to accept your invitation:
+${invitationData.inviteLink}
+
+This invitation expires in 7 days.
+
+Best regards,
+Lush Properties Team
+      `;
+      
+      console.log(`[USER-INVITE] Invitation sent:`, {
+        inviteId,
+        name,
+        email,
+        role,
+        invitedAt: new Date().toISOString(),
+        emailContent: emailContent.substring(0, 100) + "..."
+      });
+      
+      res.json({
+        success: true,
+        inviteId,
+        message: `Invitation sent successfully to ${email}`,
+        ...invitationData
+      });
+    } catch (error) {
+      console.error("[USER-INVITE] Error sending user invitation:", error);
+      res.status(500).json({ error: "Failed to send user invitation" });
+    }
+  });
+
   // AI Chat endpoint - ready for OpenAI integration
   app.post("/api/ai-chat", async (req, res) => {
     try {
