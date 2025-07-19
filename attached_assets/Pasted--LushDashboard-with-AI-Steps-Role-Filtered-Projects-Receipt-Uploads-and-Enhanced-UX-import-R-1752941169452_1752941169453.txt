@@ -1,0 +1,170 @@
+// 💼 LushDashboard with AI Steps, Role-Filtered Projects, Receipt Uploads, and Enhanced UX
+import React, { useState, useEffect, useContext } from "react";
+import ProjectCard from "./ProjectCard";
+import { Bar, Line } from "react-chartjs-2";
+import "chart.js/auto";
+import axios from "axios";
+import { UserContext } from "../context/UserContext";
+
+const LushDashboard = () => {
+  const [projects, setProjects] = useState([]);
+  const [globalSummary, setGlobalSummary] = useState({});
+  const { role, email, firstName } = useContext(UserContext);
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    const res = await axios.get("/api/projects");
+    let data = res.data;
+
+    // Filter projects by assigned user (builders see only their jobs)
+    if (role === "builder") {
+      data = data.filter((p) => p.builderEmail === email);
+    }
+    setProjects(data);
+    const totals = calculateGlobalSummary(data);
+    setGlobalSummary(totals);
+  };
+
+  const calculateGlobalSummary = (projects) => {
+    let loan = 0,
+      sales = 0,
+      cost = 0,
+      equity = 0;
+    projects.forEach((p) => {
+      loan += p.loan;
+      sales += p.saleEstimate;
+      cost += p.landCost + p.buildCost;
+      equity += p.saleEstimate - (p.loan + (p.deposit || 0));
+    });
+    return { loan, sales, cost, equity };
+  };
+
+  const chartData = {
+    labels: projects.map((p) => p.name),
+    datasets: [
+      {
+        label: "Loan",
+        data: projects.map((p) => p.loan),
+        backgroundColor: "#a3e635"
+      },
+      {
+        label: "Total Spend (Land+Build+Deposit)",
+        data: projects.map((p) => p.landCost + p.buildCost + (p.deposit || 0)),
+        backgroundColor: "#facc15"
+      },
+      {
+        label: "Projected Sale",
+        data: projects.map((p) => p.saleEstimate),
+        backgroundColor: "#38bdf8"
+      }
+    ]
+  };
+
+  const timelineData = {
+    labels: projects.map((p) => p.name),
+    datasets: [
+      {
+        label: "Progress %",
+        data: projects.map((p) => p.progress),
+        borderColor: "#10b981",
+        tension: 0.4
+      }
+    ]
+  };
+
+  const sendNextStep = async (project) => {
+    const res = await axios.post("/api/ai-chat", {
+      prompt: `What is the recommended next step in a real estate project at stage: ${project.stage} with this task: ${project.action}`
+    });
+    const reply = res.data.reply;
+    await axios.post("/api/notify", {
+      to: email,
+      subject: `Next Step for ${project.name}`,
+      body: reply
+    });
+    alert("AI next step sent ✅");
+  };
+
+  const sendReminder = async (project) => {
+    const res = await axios.post("/api/ai-chat", {
+      prompt: `Create a polite reminder to builder/plumber to complete: ${project.action} for ${project.name}`
+    });
+    const reply = res.data.reply;
+    await axios.post("/api/email", {
+      to: project.stakeholderEmail,
+      subject: `Reminder for ${project.name}`,
+      body: reply
+    });
+    alert("Reminder sent ✅");
+  };
+
+  const raiseClaim = async (project) => {
+    const res = await axios.post("/api/claims", {
+      projectId: project.id,
+      user: email,
+      lender: project.lender
+    });
+    alert(res.data.message || "Claim created ✅");
+  };
+
+  const localTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+  return (
+    <div className="p-4 md:p-6 text-sm md:text-base">
+      <h2 className="text-xl font-bold mb-2">👋 Welcome, {firstName} – Local Time: {localTime}</h2>
+      <p className="text-gray-500 mb-4">Here’s a snapshot of your real estate empire.</p>
+
+      {/* Global Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <SummaryCard label="Loan Approved" value={globalSummary.loan} color="bg-green-100" />
+        <SummaryCard label="Total Spend" value={globalSummary.cost} color="bg-yellow-100" />
+        <SummaryCard label="Projected Sales" value={globalSummary.sales} color="bg-blue-100" />
+        <SummaryCard label="Net Equity" value={globalSummary.equity} color="bg-gray-100" />
+      </div>
+
+      {/* Projects */}
+      <div className="grid md:grid-cols-2 gap-4 mb-6">
+        {projects.map((proj) => (
+          <div key={proj.id} className="bg-white rounded-lg shadow-md p-4">
+            <ProjectCard project={proj} />
+            {role !== "accountant" && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button onClick={() => raiseClaim(proj)} className="bg-indigo-600 text-white px-3 py-1 rounded text-sm">🧾 Raise Claim</button>
+                <button onClick={() => sendReminder(proj)} className="bg-rose-600 text-white px-3 py-1 rounded text-sm">💬 AI Reminder</button>
+                <button onClick={() => sendNextStep(proj)} className="bg-green-600 text-white px-3 py-1 rounded text-sm">🤖 Next Step</button>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Charts */}
+      <div className="bg-white rounded shadow p-4 mb-6">
+        <h4 className="text-md font-semibold mb-2">📊 Equity vs Spend vs Sale</h4>
+        <Bar data={chartData} />
+      </div>
+
+      <div className="bg-white rounded shadow p-4 mb-6">
+        <h4 className="text-md font-semibold mb-2">📈 Timeline Progress</h4>
+        <Line data={timelineData} />
+      </div>
+    </div>
+  );
+};
+
+const SummaryCard = ({ label, value, color }) => (
+  <div className={`rounded p-4 ${color}`}>
+    <h4 className="text-sm text-gray-600">{label}</h4>
+    <p className="text-lg font-bold">${value.toLocaleString()}</p>
+  </div>
+);
+
+export default LushDashboard;
+
+// ✅ Auto AI next steps, smart reminder, live claim button
+// 📤 Role-filtered project visibility (builders only see theirs)
+// 🧾 Coming next: receipt uploads + Xero sync for spend tracking
+// 📱 Fully mobile responsive with greeting + time display

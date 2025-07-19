@@ -110,12 +110,17 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
-- Enhanced authentication with role-based access control (admin, broker, solicitor roles)
+- Added AI-powered "Next Step" recommendations with stage-specific guidance
+- Enhanced UX with personalized welcome message and real-time clock display
+- Implemented role-based project filtering and expanded user roles (builder, accountant)
+- Added internal notification system for AI-generated project recommendations
+- Created mobile-responsive design with flexible text sizing and layouts
+- Enhanced authentication with role-based access control (admin, broker, solicitor, builder, accountant roles)
 - Added AI-powered reminder system with automated email generation
 - Implemented professional claims API with backend integration and tracking
 - Created role-specific action buttons with conditional visibility
 - Added email API endpoint for automated contractor notifications
-- Enhanced AI chat to generate professional reminder emails
+- Enhanced AI chat to generate professional reminder emails and next step guidance
 - Added interactive Chart.js visualizations with equity overview and progress timeline
 - Implemented functional "Raise Claim" buttons with project-specific claim generation
 - Enhanced dashboard with dual chart layout showing financial comparisons and progress trends

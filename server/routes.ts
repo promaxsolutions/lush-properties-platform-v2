@@ -255,6 +255,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Notification API endpoint for internal notifications
+  app.post("/api/notify", (req, res) => {
+    try {
+      const { to, subject, body, projectId } = req.body;
+      
+      // Mock internal notification - in real app this would use internal notification system
+      console.log(`[NOTIFY] Sending internal notification:`, {
+        to,
+        subject,
+        body: body.substring(0, 100) + "...",
+        projectId,
+        sentAt: new Date().toISOString()
+      });
+      
+      res.json({
+        success: true,
+        message: "Internal notification sent successfully",
+        notificationId: `NOTIFY-${Date.now()}`,
+        sentTo: to
+      });
+    } catch (error) {
+      console.error("[NOTIFY] Error sending notification:", error);
+      res.status(500).json({ error: "Failed to send notification" });
+    }
+  });
+
   // AI Chat endpoint - ready for OpenAI integration
   app.post("/api/ai-chat", async (req, res) => {
     try {
@@ -310,6 +336,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
 - Consider market trends in outer Canberra areas
 
 **Financial Health:** Conservative loan structure provides good safety margin.`;
+        }
+      } else if (prompt.toLowerCase().includes('next step') || prompt.toLowerCase().includes('recommended')) {
+        // Handle AI next step recommendations
+        if (prompt.includes('Stage 7') || prompt.includes('Fitout')) {
+          reply = `**Next Step Recommendations for Final Stage:**
+
+1. **Quality Inspections:** Coordinate final building inspections with council and certifiers
+2. **Compliance Certificates:** Ensure all occupation certificates and compliance documentation is complete
+3. **Marketing Preparation:** Professional photography and property styling for market presentation
+4. **Legal Preparation:** Title documentation and settlement preparation with solicitors
+5. **Market Timing:** Analyze current market conditions for optimal listing timing
+
+**Priority Actions:**
+- Schedule final inspection within 2 weeks
+- Coordinate with marketing team for property presentation
+- Prepare all settlement documentation
+
+**Risk Mitigation:** Monitor any outstanding compliance items that could delay completion.`;
+        } else if (prompt.includes('Stage 2') || prompt.includes('Slab')) {
+          reply = `**Next Step Recommendations for Early Stage:**
+
+1. **Construction Monitoring:** Regular site visits to ensure slab quality and timeline adherence
+2. **Cost Control:** Track expenses against budget to prevent cost overruns
+3. **Stage Payment Planning:** Prepare documentation for next progress payment to lender
+4. **Weather Contingency:** Monitor weather conditions that could impact construction timeline
+5. **Supplier Coordination:** Ensure next phase materials are ordered and scheduled
+
+**Priority Actions:**
+- Weekly progress reviews with builder
+- Update project timeline based on current progress
+- Prepare for frame inspection scheduling
+
+**Risk Mitigation:** Early-stage projects require careful cost and timeline monitoring.`;
+        } else {
+          reply = `**General Next Step Recommendations:**
+
+1. **Progress Review:** Assess current project status and timeline adherence
+2. **Budget Analysis:** Review expenses and projected costs for remaining stages
+3. **Stakeholder Communication:** Update all parties on project progress
+4. **Risk Assessment:** Identify and mitigate potential project risks
+5. **Planning Ahead:** Prepare for next phase requirements and approvals
+
+**Key Focus Areas:**
+- Maintain project momentum
+- Ensure quality standards
+- Monitor financial performance
+- Communicate with team regularly`;
         }
       } else if (prompt.toLowerCase().includes('reminder') || prompt.toLowerCase().includes('urgent')) {
         // Handle AI reminder generation

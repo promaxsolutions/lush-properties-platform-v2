@@ -71,8 +71,9 @@ const LushDashboard = () => {
   const [loadingTips, setLoadingTips] = useState<Record<number, boolean>>({});
   
   // Mock user context - in real app this would come from auth context
-  const userRole = "admin"; // Could be "admin", "broker", "solicitor"
+  const userRole = "admin"; // Could be "admin", "broker", "solicitor", "builder", "accountant"
   const userEmail = "admin@lushproperties.com"; // Mock user email
+  const firstName = "Alex"; // Mock user first name
 
   // Calculate global summary from projects including deposits
   const globalSummary = {
@@ -301,12 +302,54 @@ Give me a brief insight into potential profitability, risk factors, and recommen
       alert('Failed to send AI reminder. Please try again.');
     }
   };
+
+  const sendAINextStep = async (project: any) => {
+    try {
+      // Generate AI next step recommendations
+      const nextStepResponse = await fetch("/api/ai-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: `What is the recommended next step in a real estate project at stage: ${project.stage} with this current task: ${project.nextAction}? Provide specific, actionable recommendations for ${project.name} at ${project.progressPercentage}% completion.`
+        })
+      });
+      
+      const nextStepData = await nextStepResponse.json();
+      
+      // Send notification to user
+      const notifyResponse = await fetch("/api/notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: userEmail,
+          subject: `Next Step Recommendations for ${project.name}`,
+          body: nextStepData.reply,
+          projectId: project.id
+        })
+      });
+      
+      const notifyResult = await notifyResponse.json();
+      alert(`AI next step recommendations sent!\n\nTo: ${userEmail}\nSubject: Next Step for ${project.name}\n\nRecommendations: ${nextStepData.reply.substring(0, 100)}...`);
+      
+    } catch (error) {
+      console.error('Failed to send next step:', error);
+      alert('Failed to generate next step recommendations. Please try again.');
+    }
+  };
+
+  // Get current time for display
+  const localTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-6 text-sm md:text-base">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900">Lush Properties Dashboard</h1>
-        <div className="text-sm text-gray-500">
-          {projects.length} Active Projects
+        <div>
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900">
+            👋 Welcome, {firstName} – Local Time: {localTime}
+          </h1>
+          <p className="text-gray-600 mt-1">
+            Here's a snapshot of your real estate empire – {projects.length} Active Projects
+          </p>
         </div>
       </div>
 
@@ -639,40 +682,65 @@ Give me a brief insight into potential profitability, risk factors, and recommen
                 </div>
 
                 {/* Role-Based Action Buttons */}
-                {(userRole === "admin" || userRole === "broker") && (
-                  <div className="flex gap-2 pt-3 border-t border-gray-100">
-                    <Button 
-                      variant="default" 
-                      size="sm" 
-                      className="flex-1 bg-indigo-600 hover:bg-indigo-700"
-                      onClick={() => handleRaiseClaim(project)}
-                    >
-                      <DollarSign className="h-4 w-4 mr-1" />
-                      Raise Claim
-                    </Button>
-                    <Button 
-                      variant="default" 
-                      size="sm" 
-                      className="flex-1 bg-rose-600 hover:bg-rose-700"
-                      onClick={() => sendAIReminder(project)}
-                    >
-                      <Mail className="h-4 w-4 mr-1" />
-                      AI Reminder
-                    </Button>
-                  </div>
-                )}
+                {userRole !== "accountant" && (
+                  <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
+                    {(userRole === "admin" || userRole === "broker") && (
+                      <>
+                        <Button 
+                          variant="default" 
+                          size="sm" 
+                          className="flex-1 bg-indigo-600 hover:bg-indigo-700"
+                          onClick={() => handleRaiseClaim(project)}
+                        >
+                          <DollarSign className="h-4 w-4 mr-1" />
+                          Raise Claim
+                        </Button>
+                        <Button 
+                          variant="default" 
+                          size="sm" 
+                          className="flex-1 bg-rose-600 hover:bg-rose-700"
+                          onClick={() => sendAIReminder(project)}
+                        >
+                          <Mail className="h-4 w-4 mr-1" />
+                          AI Reminder
+                        </Button>
+                        <Button 
+                          variant="default" 
+                          size="sm" 
+                          className="flex-1 bg-green-600 hover:bg-green-700"
+                          onClick={() => sendAINextStep(project)}
+                        >
+                          <Lightbulb className="h-4 w-4 mr-1" />
+                          Next Step
+                        </Button>
+                      </>
+                    )}
+                    
+                    {userRole === "solicitor" && (
+                      <>
+                        <Button variant="outline" size="sm" className="flex-1">
+                          <FileText className="h-4 w-4 mr-1" />
+                          Legal Review
+                        </Button>
+                        <Button variant="outline" size="sm" className="flex-1">
+                          <Building className="h-4 w-4 mr-1" />
+                          Compliance
+                        </Button>
+                      </>
+                    )}
 
-                {/* Solicitor-Only Actions */}
-                {userRole === "solicitor" && (
-                  <div className="flex gap-2 pt-3 border-t border-gray-100">
-                    <Button variant="outline" size="sm" className="flex-1">
-                      <FileText className="h-4 w-4 mr-1" />
-                      Legal Review
-                    </Button>
-                    <Button variant="outline" size="sm" className="flex-1">
-                      <Building className="h-4 w-4 mr-1" />
-                      Compliance
-                    </Button>
+                    {userRole === "builder" && (
+                      <>
+                        <Button variant="outline" size="sm" className="flex-1">
+                          <Upload className="h-4 w-4 mr-1" />
+                          Upload Progress
+                        </Button>
+                        <Button variant="outline" size="sm" className="flex-1">
+                          <FileText className="h-4 w-4 mr-1" />
+                          Submit Report
+                        </Button>
+                      </>
+                    )}
                   </div>
                 )}
               </CardContent>
