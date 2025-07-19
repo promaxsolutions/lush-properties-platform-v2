@@ -110,6 +110,9 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- Added floating AI chat widget with intelligent project assistance
+- Created expandable chat interface with example prompts and conversation history
+- Integrated AI assistant for project management tasks (uploads, claims, summaries)
 - Upgraded to premium billionaire-grade dashboard with comprehensive financial overview
 - Added 5 key financial metrics: Total Investment, Approved Loan, Projected Sales, Claims Raised, Net Equity
 - Integrated dual chart system: project stage progress bar chart and cost breakdown pie chart

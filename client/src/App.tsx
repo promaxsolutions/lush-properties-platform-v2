@@ -13,6 +13,7 @@ import Upload from "./components/Upload";
 import Claims from "./components/Claims";
 import Xero from "./components/Xero";
 import Settings from "./components/Settings";
+import AIChatWidget from "./components/AIChatWidget";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -49,6 +50,7 @@ function App() {
                         <Route path="settings" element={<Settings />} />
                         <Route path="*" element={<Navigate to="/dashboard" />} />
                       </Routes>
+                      <AIChatWidget />
                     </SidebarLayout>
                   </ProtectedRoute>
                 }
