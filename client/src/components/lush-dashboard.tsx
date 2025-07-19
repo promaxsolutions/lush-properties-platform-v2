@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Upload, FileText, DollarSign, Building, TrendingUp, PiggyBank, Target, Edit2, ExternalLink, Lightbulb, Save, X, RefreshCw, BarChart3, TrendingUp as TrendIcon } from "lucide-react";
+import { Upload, FileText, DollarSign, Building, TrendingUp, PiggyBank, Target, Edit2, ExternalLink, Lightbulb, Save, X, RefreshCw, BarChart3, TrendingUp as TrendIcon, Mail, Bell } from "lucide-react";
 import { Bar, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -70,8 +70,9 @@ const LushDashboard = () => {
   const [aiTips, setAiTips] = useState<Record<number, string>>({});
   const [loadingTips, setLoadingTips] = useState<Record<number, boolean>>({});
   
-  // Mock user role - in real app this would come from auth context
+  // Mock user context - in real app this would come from auth context
   const userRole = "admin"; // Could be "admin", "broker", "solicitor"
+  const userEmail = "admin@lushproperties.com"; // Mock user email
 
   // Calculate global summary from projects including deposits
   const globalSummary = {
@@ -240,8 +241,6 @@ Give me a brief insight into potential profitability, risk factors, and recommen
   };
 
   const handleRaiseClaim = async (project: any) => {
-    // In real implementation, this would navigate to claims page or open modal
-    // For now, simulate claim creation
     try {
       const claimData = {
         projectId: project.id,
@@ -249,18 +248,57 @@ Give me a brief insight into potential profitability, risk factors, and recommen
         stage: project.stage,
         amount: Math.round(project.loanApproved * 0.15), // 15% of loan for this stage
         lender: project.lender,
-        progress: project.progressPercentage
+        progress: project.progressPercentage,
+        user: userEmail
       };
 
-      // Mock API call - in real app this would create the claim
-      console.log('Creating claim:', claimData);
+      // API call to create claim with backend integration
+      const response = await fetch("/api/claims", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(claimData)
+      });
       
-      // Show success feedback (could be replaced with toast notification)
-      alert(`Progress claim initiated for ${project.name}\nStage: ${project.stage}\nAmount: $${claimData.amount.toLocaleString()}`);
+      const result = await response.json();
+      alert(result.message || `Progress claim created for ${project.name}\nStage: ${project.stage}\nAmount: $${claimData.amount.toLocaleString()}\nClaim ID: ${result.claimId || 'PCL-' + Date.now()}`);
       
     } catch (error) {
       console.error('Failed to create claim:', error);
       alert('Failed to create progress claim. Please try again.');
+    }
+  };
+
+  const sendAIReminder = async (project: any) => {
+    try {
+      // Generate AI reminder content
+      const reminderResponse = await fetch("/api/ai-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: `Create a polite but urgent reminder to the builder or contractor about the next action: ${project.nextAction} for ${project.name}. The project is currently at ${project.stage} (${project.progressPercentage}% complete). Make it professional and actionable.`
+        })
+      });
+      
+      const reminderData = await reminderResponse.json();
+      
+      // Send email via backend
+      const emailResponse = await fetch("/api/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: `contractor@${project.name.toLowerCase().replace(/\s+/g, '')}.com`, // Mock contractor email
+          subject: `Action Required: ${project.name} - ${project.stage}`,
+          body: reminderData.reply,
+          projectId: project.id
+        })
+      });
+      
+      const emailResult = await emailResponse.json();
+      alert(`AI reminder sent successfully!\n\nTo: contractor@${project.name.toLowerCase().replace(/\s+/g, '')}.com\nSubject: Action Required: ${project.name}\n\nMessage: ${reminderData.reply.substring(0, 100)}...`);
+      
+    } catch (error) {
+      console.error('Failed to send reminder:', error);
+      alert('Failed to send AI reminder. Please try again.');
     }
   };
   return (
@@ -589,15 +627,6 @@ Give me a brief insight into potential profitability, risk factors, and recommen
                     View Docs
                   </Button>
                   <Button 
-                    variant="default" 
-                    size="sm" 
-                    className="flex-1 bg-green-600 hover:bg-green-700"
-                    onClick={() => handleRaiseClaim(project)}
-                  >
-                    <DollarSign className="h-4 w-4 mr-1" />
-                    Raise Claim
-                  </Button>
-                  <Button 
                     variant="outline" 
                     size="sm" 
                     onClick={() => fetchAIInsight(project, true)}
@@ -608,6 +637,44 @@ Give me a brief insight into potential profitability, risk factors, and recommen
                     {loadingTips[project.id] ? "..." : "Refresh AI"}
                   </Button>
                 </div>
+
+                {/* Role-Based Action Buttons */}
+                {(userRole === "admin" || userRole === "broker") && (
+                  <div className="flex gap-2 pt-3 border-t border-gray-100">
+                    <Button 
+                      variant="default" 
+                      size="sm" 
+                      className="flex-1 bg-indigo-600 hover:bg-indigo-700"
+                      onClick={() => handleRaiseClaim(project)}
+                    >
+                      <DollarSign className="h-4 w-4 mr-1" />
+                      Raise Claim
+                    </Button>
+                    <Button 
+                      variant="default" 
+                      size="sm" 
+                      className="flex-1 bg-rose-600 hover:bg-rose-700"
+                      onClick={() => sendAIReminder(project)}
+                    >
+                      <Mail className="h-4 w-4 mr-1" />
+                      AI Reminder
+                    </Button>
+                  </div>
+                )}
+
+                {/* Solicitor-Only Actions */}
+                {userRole === "solicitor" && (
+                  <div className="flex gap-2 pt-3 border-t border-gray-100">
+                    <Button variant="outline" size="sm" className="flex-1">
+                      <FileText className="h-4 w-4 mr-1" />
+                      Legal Review
+                    </Button>
+                    <Button variant="outline" size="sm" className="flex-1">
+                      <Building className="h-4 w-4 mr-1" />
+                      Compliance
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           ))}

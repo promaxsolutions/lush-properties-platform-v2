@@ -198,6 +198,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Claims API endpoint
+  app.post("/api/claims", (req, res) => {
+    try {
+      const { projectId, projectName, stage, amount, lender, user } = req.body;
+      
+      // Mock claim creation - in real app this would save to database
+      const claimId = `PCL-${Date.now()}-${projectId}`;
+      
+      console.log(`[CLAIMS] New claim created:`, {
+        claimId,
+        projectId,
+        projectName,
+        stage,
+        amount,
+        lender,
+        user,
+        createdAt: new Date().toISOString()
+      });
+      
+      res.json({
+        success: true,
+        claimId,
+        message: `Progress claim ${claimId} created successfully for ${projectName}. Amount: $${amount.toLocaleString()}. Lender: ${lender} will be notified.`,
+        status: "pending_review"
+      });
+    } catch (error) {
+      console.error("[CLAIMS] Error creating claim:", error);
+      res.status(500).json({ error: "Failed to create claim" });
+    }
+  });
+
+  // Email API endpoint
+  app.post("/api/email", (req, res) => {
+    try {
+      const { to, subject, body, projectId } = req.body;
+      
+      // Mock email sending - in real app this would use SendGrid, Nodemailer, etc.
+      console.log(`[EMAIL] Sending reminder:`, {
+        to,
+        subject,
+        body: body.substring(0, 100) + "...",
+        projectId,
+        sentAt: new Date().toISOString()
+      });
+      
+      res.json({
+        success: true,
+        message: "Reminder email sent successfully",
+        emailId: `EMAIL-${Date.now()}`,
+        sentTo: to
+      });
+    } catch (error) {
+      console.error("[EMAIL] Error sending email:", error);
+      res.status(500).json({ error: "Failed to send email" });
+    }
+  });
+
   // AI Chat endpoint - ready for OpenAI integration
   app.post("/api/ai-chat", async (req, res) => {
     try {
@@ -254,6 +311,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 **Financial Health:** Conservative loan structure provides good safety margin.`;
         }
+      } else if (prompt.toLowerCase().includes('reminder') || prompt.toLowerCase().includes('urgent')) {
+        // Handle AI reminder generation
+        reply = `Subject: Urgent Action Required
+
+Dear Team,
+
+This is a professional reminder regarding the upcoming milestone for your project. Please prioritize the following action to keep the project on schedule:
+
+**Required Action:** ${prompt.includes('next action:') ? prompt.split('next action:')[1].split('.')[0] : 'Complete pending task'}
+
+**Project Status:** Currently in progress with attention needed for timely completion.
+
+**Next Steps:**
+1. Review current work status
+2. Complete the required action
+3. Update project team on progress
+4. Schedule follow-up if needed
+
+Please confirm completion at your earliest convenience.
+
+Best regards,
+Lush Properties Project Management`;
       } else if (prompt.toLowerCase().includes('upload')) {
         reply = "I can assist with document uploads and analysis. Navigate to the Uploads section to select your file.";
       } else if (prompt.toLowerCase().includes('claim')) {
