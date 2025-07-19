@@ -1,0 +1,164 @@
+// 🌟 Lush OS UI Polish + Builder & Client Expansion
+import React, { useState, useEffect, useContext } from "react";
+import ProjectCard from "./ProjectCard";
+import { Bar, Line, Pie } from "react-chartjs-2";
+import Calendar from "react-calendar";
+import "chart.js/auto";
+import axios from "axios";
+import { UserContext } from "../context/UserContext";
+
+const LushDashboard = () => {
+  const [projects, setProjects] = useState([]);
+  const [receipts, setReceipts] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [globalSummary, setGlobalSummary] = useState({});
+  const { role, email, firstName } = useContext(UserContext);
+
+  useEffect(() => {
+    fetchProjects();
+    fetchReceipts();
+    fetchEvents();
+  }, []);
+
+  const fetchProjects = async () => {
+    const res = await axios.get("/api/projects");
+    let data = res.data;
+    if (role === "builder") {
+      data = data.filter((p) => p.builderEmail === email);
+    } else if (role === "client") {
+      data = data.filter((p) => p.clientEmail === email);
+    } else if (role === "investor") {
+      data = data.filter((p) => p.investorEmails?.includes(email));
+    }
+    setProjects(data);
+    const totals = calculateGlobalSummary(data);
+    setGlobalSummary(totals);
+  };
+
+  const fetchReceipts = async () => {
+    const res = await axios.get("/api/receipts");
+    setReceipts(res.data);
+  };
+
+  const fetchEvents = async () => {
+    const res = await axios.get("/api/calendar-events");
+    setEvents(res.data);
+  };
+
+  const localTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+  const builderBreakdown = () => {
+    const byBuilder = {};
+    receipts.forEach((r) => {
+      const key = r.builder || "Unknown";
+      byBuilder[key] = (byBuilder[key] || 0) + parseFloat(r.amount);
+    });
+    return {
+      labels: Object.keys(byBuilder),
+      datasets: [{
+        label: "Spend per Builder",
+        data: Object.values(byBuilder),
+        backgroundColor: ["#3b82f6", "#10b981", "#f59e0b"]
+      }]
+    };
+  };
+
+  const renderStatus = (proj) => {
+    const stages = ["Land Settled", "Slab", "Framing", "Lockup", "Fixing", "C of O"];
+    const current = proj.stage || 0;
+    const next = stages[current + 1] || "Complete";
+    return `Next: ${next}`;
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white shadow px-4 py-2 flex justify-between items-center">
+        <div className="text-xl font-bold">🏠 Lush OS</div>
+        <div className="text-sm text-gray-600">Hi {firstName}, {localTime}</div>
+      </header>
+
+      <main className="p-4 md:p-6">
+        <section className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <SummaryCard label="Loan Approved" value={globalSummary.loan} color="bg-green-100" />
+          <SummaryCard label="Total Spend" value={globalSummary.cost} color="bg-yellow-100" />
+          <SummaryCard label="Projected Sales" value={globalSummary.sales} color="bg-blue-100" />
+          <SummaryCard label="Net Equity" value={globalSummary.equity} color="bg-gray-100" />
+        </section>
+
+        <h3 className="text-lg font-semibold mb-2">🏗️ Projects Overview</h3>
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
+          {projects.map((proj) => (
+            <div key={proj.id} className="bg-white rounded-lg shadow-md p-4 border-l-4 border-blue-500">
+              <div className="flex justify-between items-center">
+                <h4 className="text-md font-bold">{proj.name || proj.address}</h4>
+                <span className="text-sm text-green-600 font-semibold">{renderStatus(proj)}</span>
+              </div>
+              <p className="text-sm text-gray-500 mt-1">{proj.description}</p>
+              <div className="w-full bg-gray-200 h-2 mt-3 rounded">
+                <div className="h-2 rounded bg-blue-500" style={{ width: `${(proj.stage || 0) * 20}%` }}></div>
+              </div>
+              {role === "client" && <p className="text-xs text-gray-400 mt-1">Loan Drawdown: ${proj.loanDraw || 0}</p>}
+              {role === "admin" && <button className="text-blue-600 mt-2">📤 Export Project Pack</button>}
+            </div>
+          ))}
+        </div>
+
+        <h3 className="text-lg font-semibold mb-2">📅 Milestone Calendar</h3>
+        <div className="bg-white p-4 rounded shadow mb-6">
+          <Calendar onClickDay={(date) => setSelectedDate(date)} value={selectedDate} />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="bg-white p-4 rounded shadow">
+            <h4 className="font-semibold mb-2">📊 Spend Breakdown Per Builder</h4>
+            <Pie data={builderBreakdown()} />
+          </div>
+
+          <div className="bg-white p-4 rounded shadow">
+            <h4 className="font-semibold mb-2">📈 Equity vs Spend</h4>
+            <Bar data={{ labels: ["Equity", "Spend"], datasets: [{ label: "Value", data: [globalSummary.equity, globalSummary.cost], backgroundColor: ["#16a34a", "#f59e0b"] }] }} />
+          </div>
+        </div>
+
+        {role === "builder" && (
+          <div className="bg-white rounded shadow p-4 mb-6">
+            <h4 className="text-md font-semibold mb-2">📷 Upload Site Photo / Quote</h4>
+            <input type="file" className="mb-2" />
+            <textarea className="border rounded w-full p-2" placeholder="Note about this upload"></textarea>
+            <button className="mt-2 bg-blue-600 text-white px-3 py-1 rounded">Upload</button>
+          </div>
+        )}
+
+        {role === "client" && (
+          <div className="bg-white rounded shadow p-4 mb-6">
+            <h4 className="text-md font-semibold mb-2">🔧 Request Upgrade</h4>
+            <textarea className="border rounded w-full p-2" placeholder="What would you like to request?"></textarea>
+            <button className="mt-2 bg-green-600 text-white px-3 py-1 rounded">Submit Request</button>
+          </div>
+        )}
+      </main>
+
+      <footer className="bg-gray-100 text-center text-xs text-gray-600 py-3">
+        Built for Lush Group • {new Date().getFullYear()} • Mobile Optimized
+      </footer>
+    </div>
+  );
+};
+
+const SummaryCard = ({ label, value, color }) => (
+  <div className={`rounded p-4 ${color}`}>
+    <h4 className="text-sm text-gray-600">{label}</h4>
+    <p className="text-lg font-bold">${value.toLocaleString()}</p>
+  </div>
+);
+
+export default LushDashboard;
+
+// 🌟 Includes:
+// ✔️ Project progress bar + next stage
+// ✔️ Builder upload tools
+// ✔️ Client dashboard view
+// ✔️ Header + welcome + mobile layout
+// ✔️ Charts below project list
+// ✔️ Responsive UI polish

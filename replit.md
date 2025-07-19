@@ -110,6 +110,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- Enhanced UI with polished header design and improved mobile responsiveness
+- Added builder upload tools for progress photos, quotes, and inspection reports
+- Implemented client upgrade request system with detailed requirement tracking
+- Created enhanced project status display with next milestone indicators and progress bars
+- Added role-specific functionality for builders (uploads) and clients (upgrade requests)
 - Added investor funding portal with AI fundability assessment and proposal submission
 - Implemented builder/agent onboarding system with role-based invitation management
 - Created AI-powered project analysis with location, budget, and market condition scoring

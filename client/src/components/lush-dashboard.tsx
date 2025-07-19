@@ -85,9 +85,9 @@ const LushDashboard = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   
   // Mock user context - in real app this would come from auth context
-  const userRole = "investor"; // Could be "admin", "broker", "solicitor", "builder", "accountant", "client", "investor"
-  const userEmail = "investor1@example.com"; // Mock user email
-  const firstName = "Sarah"; // Mock user first name
+  const userRole = "builder"; // Could be "admin", "broker", "solicitor", "builder", "accountant", "client", "investor"
+  const userEmail = "builder@example.com"; // Mock user email
+  const firstName = "Mike"; // Mock user first name
 
   // Fetch receipts data
   const fetchReceipts = async () => {
@@ -535,6 +535,46 @@ Give me a brief insight into potential profitability, risk factors, and recommen
 
   // Get current time for display
   const localTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+  // Render project status helper
+  const renderStatus = (project: any) => {
+    const stages = ["Land Settled", "Slab", "Framing", "Lockup", "Fixing", "C of O"];
+    const currentStageIndex = Math.floor((project.progressPercentage || 0) / 16.67); // 6 stages = ~16.67% each
+    const nextStage = stages[currentStageIndex + 1] || "Complete";
+    return `Next: ${nextStage}`;
+  };
+
+  // Handle builder uploads
+  const handleBuilderUpload = async (formData: any) => {
+    try {
+      const response = await fetch("/api/builder-upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+      const result = await response.json();
+      alert(`✅ Upload successful!\n\nFile: ${result.filename}\nProject: ${formData.projectId}\nUploaded at: ${new Date().toLocaleTimeString()}`);
+    } catch (error) {
+      console.error('Failed to upload:', error);
+      alert('Upload failed. Please try again.');
+    }
+  };
+
+  // Handle client upgrade requests
+  const handleClientRequest = async (requestData: any) => {
+    try {
+      const response = await fetch("/api/client-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestData)
+      });
+      const result = await response.json();
+      alert(`✅ Upgrade request submitted!\n\nRequest ID: ${result.requestId}\nEstimated response: 2-3 business days`);
+    } catch (error) {
+      console.error('Failed to submit request:', error);
+      alert('Request submission failed. Please try again.');
+    }
+  };
 
   // Chart data for financial overview
   const chartData = {

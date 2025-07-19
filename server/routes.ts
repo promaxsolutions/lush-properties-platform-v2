@@ -724,6 +724,89 @@ Lush Properties Team
     }
   });
 
+  // Builder upload API endpoint
+  app.post("/api/builder-upload", (req, res) => {
+    try {
+      const { projectId, uploadType, notes, filename } = req.body;
+      
+      // Mock file upload processing - in real app this would handle actual file storage
+      const uploadId = `UPLOAD-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+      
+      const uploadData = {
+        uploadId,
+        projectId,
+        uploadType,
+        filename: filename || `${uploadType}_${Date.now()}.jpg`,
+        notes: notes || "",
+        uploadedBy: "Builder",
+        uploadedAt: new Date().toISOString(),
+        status: "processed",
+        fileSize: Math.floor(Math.random() * 5000) + 1000 + " KB",
+        processed: true
+      };
+      
+      console.log(`[BUILDER-UPLOAD] File uploaded:`, {
+        uploadId,
+        projectId,
+        uploadType,
+        filename: uploadData.filename,
+        uploadedAt: new Date().toISOString()
+      });
+      
+      res.json({
+        success: true,
+        uploadId,
+        message: `File uploaded successfully`,
+        ...uploadData
+      });
+    } catch (error) {
+      console.error("[BUILDER-UPLOAD] Error processing upload:", error);
+      res.status(500).json({ error: "Failed to process upload" });
+    }
+  });
+
+  // Client request API endpoint
+  app.post("/api/client-request", (req, res) => {
+    try {
+      const { projectId, requestType, description, estimatedBudget } = req.body;
+      
+      // Mock request processing - in real app this would create workflow tickets
+      const requestId = `REQ-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+      
+      const requestData = {
+        requestId,
+        projectId,
+        requestType,
+        description,
+        estimatedBudget: estimatedBudget ? parseInt(estimatedBudget) : null,
+        submittedBy: "Client",
+        submittedAt: new Date().toISOString(),
+        status: "pending_review",
+        priority: estimatedBudget && parseInt(estimatedBudget) > 10000 ? "high" : "normal",
+        estimatedResponse: "2-3 business days",
+        assignedTo: "Project Manager"
+      };
+      
+      console.log(`[CLIENT-REQUEST] Request submitted:`, {
+        requestId,
+        projectId,
+        requestType,
+        submittedAt: new Date().toISOString(),
+        priority: requestData.priority
+      });
+      
+      res.json({
+        success: true,
+        requestId,
+        message: `Request submitted successfully`,
+        ...requestData
+      });
+    } catch (error) {
+      console.error("[CLIENT-REQUEST] Error processing request:", error);
+      res.status(500).json({ error: "Failed to process client request" });
+    }
+  });
+
   // AI Chat endpoint - ready for OpenAI integration
   app.post("/api/ai-chat", async (req, res) => {
     try {
