@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload, FileText, DollarSign, Building, TrendingUp, PiggyBank, Target } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Upload, FileText, DollarSign, Building, TrendingUp, PiggyBank, Target, Edit2, ExternalLink } from "lucide-react";
 
-// Mock project data
-const projects = [
+// Mock project data with deposits
+const initialProjects = [
   {
     id: 1,
     name: "56 Inge King Crescent",
@@ -14,6 +15,7 @@ const projects = [
     loanApproved: 1100000,
     landCost: 650000,
     buildCost: 450000,
+    userDeposit: 150000,
     progressPercentage: 85,
     documentsCount: 12,
     nextAction: "Final inspection scheduled",
@@ -28,6 +30,7 @@ const projects = [
     loanApproved: 400000,
     landCost: 280000,
     buildCost: 320000,
+    userDeposit: 80000,
     progressPercentage: 25,
     documentsCount: 8,
     nextAction: "Slab inspection due",
@@ -35,16 +38,44 @@ const projects = [
   }
 ];
 
-// Calculate global summary from projects
-const globalSummary = {
-  totalLoanApproved: projects.reduce((sum, p) => sum + p.loanApproved, 0),
-  totalProjectedSales: 1800000, // Based on market projections
-  totalInvestment: projects.reduce((sum, p) => sum + p.landCost + p.buildCost, 0),
-  totalClaimsRaised: projects.reduce((sum, p) => sum + p.claimsRaised, 0),
-  netEquity: 1800000 - projects.reduce((sum, p) => sum + p.loanApproved, 0)
-};
-
 const LushDashboard = () => {
+  const [projects, setProjects] = useState(initialProjects);
+  const [editingProjectId, setEditingProjectId] = useState<number | null>(null);
+  const [editingName, setEditingName] = useState("");
+
+  // Calculate global summary from projects including deposits
+  const globalSummary = {
+    totalLoanApproved: projects.reduce((sum, p) => sum + p.loanApproved, 0),
+    totalProjectedSales: 1800000, // Based on market projections
+    totalInvestment: projects.reduce((sum, p) => sum + p.landCost + p.buildCost, 0),
+    totalUserDeposit: projects.reduce((sum, p) => sum + p.userDeposit, 0),
+    totalClaimsRaised: projects.reduce((sum, p) => sum + p.claimsRaised, 0),
+    netEquity: 1800000 - projects.reduce((sum, p) => sum + p.loanApproved, 0) + projects.reduce((sum, p) => sum + p.userDeposit, 0)
+  };
+
+  const handleNameEdit = (projectId: number, currentName: string) => {
+    setEditingProjectId(projectId);
+    setEditingName(currentName);
+  };
+
+  const handleNameSave = (projectId: number) => {
+    setProjects(prev => 
+      prev.map(p => 
+        p.id === projectId ? { ...p, name: editingName } : p
+      )
+    );
+    setEditingProjectId(null);
+    setEditingName("");
+  };
+
+  const handleNameCancel = () => {
+    setEditingProjectId(null);
+    setEditingName("");
+  };
+
+  const createGoogleMapsUrl = (address: string) => {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+  };
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -55,7 +86,7 @@ const LushDashboard = () => {
       </div>
 
       {/* Global Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         <Card className="bg-gradient-to-r from-green-50 to-green-100 border-green-200">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm font-medium text-green-700">
@@ -113,6 +144,20 @@ const LushDashboard = () => {
           </CardContent>
         </Card>
 
+        <Card className="bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-200">
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-sm font-medium text-yellow-700">
+              <PiggyBank className="h-4 w-4" />
+              Total Deposits
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-yellow-900">
+              ${globalSummary.totalUserDeposit.toLocaleString()}
+            </div>
+          </CardContent>
+        </Card>
+
         <Card className="bg-gradient-to-r from-indigo-50 to-indigo-100 border-indigo-200">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm font-medium text-indigo-700">
@@ -124,6 +169,7 @@ const LushDashboard = () => {
             <div className="text-2xl font-bold text-indigo-900">
               ${globalSummary.netEquity.toLocaleString()}
             </div>
+            <div className="text-xs text-indigo-600 mt-1">Incl. Deposits</div>
           </CardContent>
         </Card>
       </div>
@@ -135,8 +181,58 @@ const LushDashboard = () => {
           {projects.map((project) => (
             <Card key={project.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
-                <CardTitle className="text-lg">{project.name}</CardTitle>
-                <p className="text-sm text-gray-600">{project.address}</p>
+                <div className="flex items-center gap-2">
+                  {editingProjectId === project.id ? (
+                    <div className="flex items-center gap-2 flex-1">
+                      <Input
+                        value={editingName}
+                        onChange={(e) => setEditingName(e.target.value)}
+                        className="text-lg font-semibold"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleNameSave(project.id);
+                          if (e.key === 'Escape') handleNameCancel();
+                        }}
+                        autoFocus
+                      />
+                      <Button
+                        size="sm"
+                        onClick={() => handleNameSave(project.id)}
+                        className="h-8 px-2"
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handleNameCancel}
+                        className="h-8 px-2"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
+                      <CardTitle className="text-lg flex-1">{project.name}</CardTitle>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleNameEdit(project.id, project.name)}
+                        className="h-8 w-8 p-0"
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
+                    </>
+                  )}
+                </div>
+                <a
+                  href={createGoogleMapsUrl(project.address)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1 w-fit"
+                >
+                  {project.address}
+                  <ExternalLink className="h-3 w-3" />
+                </a>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Project Details */}
@@ -152,11 +248,17 @@ const LushDashboard = () => {
                 </div>
 
                 {/* Financial Summary */}
-                <div className="grid grid-cols-3 gap-4 text-sm">
+                <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <div className="font-medium text-gray-700">Loan Approved</div>
                     <div className="text-green-600 font-semibold">
                       ${project.loanApproved.toLocaleString()}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-medium text-gray-700">User Deposit</div>
+                    <div className="text-yellow-600 font-semibold">
+                      ${project.userDeposit.toLocaleString()}
                     </div>
                   </div>
                   <div>
@@ -170,6 +272,19 @@ const LushDashboard = () => {
                     <div className="text-orange-600 font-semibold">
                       ${project.claimsRaised.toLocaleString()}
                     </div>
+                  </div>
+                </div>
+
+                {/* Project Net Equity */}
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-gray-700">Project Net Equity</span>
+                    <span className="text-lg font-bold text-indigo-600">
+                      ${((1800000 * (project.id === 1 ? 0.6 : 0.4)) - project.loanApproved + project.userDeposit).toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    Projected sale value + deposit - loan
                   </div>
                 </div>
 
