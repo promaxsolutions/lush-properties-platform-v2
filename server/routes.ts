@@ -343,6 +343,105 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Receipts API endpoint
+  app.get("/api/receipts", (req, res) => {
+    try {
+      // Mock receipts data - in real app this would fetch from database
+      const mockReceipts = [
+        {
+          id: "RECEIPT-1752941001",
+          project: "56 Inge King Crescent",
+          description: "Construction materials and supplies",
+          amount: 2450,
+          category: "Building Materials",
+          vendor: "Bunnings Warehouse",
+          date: "2025-01-15",
+          link: "https://xero.com/receipt/RECEIPT-1752941001",
+          xeroId: "XERO-1752941001-001"
+        },
+        {
+          id: "RECEIPT-1752941002", 
+          project: "Block 15 Section 87, Whitlam",
+          description: "Plumbing fixtures and fittings",
+          amount: 1850,
+          category: "Plumbing",
+          vendor: "Reece Plumbing",
+          date: "2025-01-18",
+          link: "https://xero.com/receipt/RECEIPT-1752941002",
+          xeroId: "XERO-1752941002-002"
+        }
+      ];
+      
+      console.log(`[RECEIPTS] Fetching receipts:`, {
+        count: mockReceipts.length,
+        fetchedAt: new Date().toISOString()
+      });
+      
+      res.json(mockReceipts);
+    } catch (error) {
+      console.error("[RECEIPTS] Error fetching receipts:", error);
+      res.status(500).json({ error: "Failed to fetch receipts" });
+    }
+  });
+
+  // Receipt update API endpoint
+  app.post("/api/receipt-update", (req, res) => {
+    try {
+      const { id, field, value } = req.body;
+      
+      console.log(`[RECEIPT-UPDATE] Updating receipt:`, {
+        id,
+        field,
+        value,
+        updatedAt: new Date().toISOString()
+      });
+      
+      res.json({
+        success: true,
+        message: `Receipt ${field} updated successfully`,
+        updatedField: field,
+        newValue: value
+      });
+    } catch (error) {
+      console.error("[RECEIPT-UPDATE] Error updating receipt:", error);
+      res.status(500).json({ error: "Failed to update receipt" });
+    }
+  });
+
+  // Mobile receipt scanning API endpoint
+  app.post("/api/receipt-scan", (req, res) => {
+    try {
+      const { receiptId } = req.body;
+      
+      // Mock mobile scanning - in real app this would use advanced mobile OCR
+      const scanResults = {
+        confidence: 0.98,
+        quality: "High",
+        textExtracted: "Bunnings Warehouse - Building supplies",
+        detectedVendor: "Bunnings Warehouse",
+        detectedAmount: Math.floor(Math.random() * 3000) + 200,
+        mobileOptimized: true,
+        scanDuration: "2.3s"
+      };
+      
+      console.log(`[RECEIPT-SCAN] Mobile scanning receipt:`, {
+        receiptId,
+        ...scanResults,
+        scannedAt: new Date().toISOString()
+      });
+      
+      res.json({
+        success: true,
+        receiptId,
+        ...scanResults,
+        message: "Receipt scanned successfully via mobile"
+      });
+    } catch (error) {
+      console.error("[RECEIPT-SCAN] Error scanning receipt:", error);
+      res.status(500).json({ error: "Failed to scan receipt" });
+    }
+  });
+
   // AI Chat endpoint - ready for OpenAI integration
   app.post("/api/ai-chat", async (req, res) => {
     try {

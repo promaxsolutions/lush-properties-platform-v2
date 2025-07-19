@@ -14,6 +14,8 @@ import {
   Title,
   Tooltip,
   Legend,
+  Filler,
+  ArcElement,
 } from "chart.js";
 
 // Register Chart.js components
@@ -25,10 +27,12 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler,
+  ArcElement
 );
 
-// Mock project data with deposits
+// Mock project data with deposits and role assignments
 const initialProjects = [
   {
     id: 1,
@@ -43,7 +47,9 @@ const initialProjects = [
     progressPercentage: 85,
     documentsCount: 12,
     nextAction: "Final inspection scheduled",
-    claimsRaised: 935000
+    claimsRaised: 935000,
+    builderEmail: "builder@example.com",
+    clientEmail: "client@example.com"
   },
   {
     id: 2,
@@ -58,7 +64,9 @@ const initialProjects = [
     progressPercentage: 25,
     documentsCount: 8,
     nextAction: "Slab inspection due",
-    claimsRaised: 200000
+    claimsRaised: 200000,
+    builderEmail: "builder@example.com",
+    clientEmail: "otherclient@example.com"
   }
 ];
 
@@ -70,20 +78,42 @@ const LushDashboard = () => {
   const [aiTips, setAiTips] = useState<Record<number, string>>({});
   const [loadingTips, setLoadingTips] = useState<Record<number, boolean>>({});
   const [uploading, setUploading] = useState(false);
+  const [receipts, setReceipts] = useState([]);
   
   // Mock user context - in real app this would come from auth context
-  const userRole = "admin"; // Could be "admin", "broker", "solicitor", "builder", "accountant"
+  const userRole = "admin"; // Could be "admin", "broker", "solicitor", "builder", "accountant", "client"
   const userEmail = "admin@lushproperties.com"; // Mock user email
   const firstName = "Alex"; // Mock user first name
 
-  // Calculate global summary from projects including deposits
+  // Fetch receipts data
+  const fetchReceipts = async () => {
+    try {
+      const response = await fetch("/api/receipts");
+      const data = await response.json();
+      setReceipts(data);
+    } catch (error) {
+      console.error('Failed to fetch receipts:', error);
+    }
+  };
+
+  // Filter projects based on user role
+  const filteredProjects = projects.filter(project => {
+    if (userRole === "builder") {
+      return project.builderEmail === userEmail;
+    } else if (userRole === "client") {
+      return project.clientEmail === userEmail;
+    }
+    return true; // Admin, broker, solicitor see all projects
+  });
+
+  // Calculate global summary from filtered projects including deposits
   const globalSummary = {
-    totalLoanApproved: projects.reduce((sum, p) => sum + p.loanApproved, 0),
-    totalProjectedSales: 1800000, // Based on market projections
-    totalInvestment: projects.reduce((sum, p) => sum + p.landCost + p.buildCost, 0),
-    totalUserDeposit: projects.reduce((sum, p) => sum + p.userDeposit, 0),
-    totalClaimsRaised: projects.reduce((sum, p) => sum + p.claimsRaised, 0),
-    netEquity: 1800000 - projects.reduce((sum, p) => sum + p.loanApproved, 0) + projects.reduce((sum, p) => sum + p.userDeposit, 0)
+    totalLoanApproved: filteredProjects.reduce((sum, p) => sum + p.loanApproved, 0),
+    totalProjectedSales: filteredProjects.reduce((sum, p) => sum + (p.id === 1 ? 1080000 : 720000), 0),
+    totalInvestment: filteredProjects.reduce((sum, p) => sum + p.landCost + p.buildCost, 0),
+    totalUserDeposit: filteredProjects.reduce((sum, p) => sum + p.userDeposit, 0),
+    totalClaimsRaised: filteredProjects.reduce((sum, p) => sum + p.claimsRaised, 0),
+    netEquity: filteredProjects.reduce((sum, p) => sum + (p.id === 1 ? 1080000 : 720000), 0) - filteredProjects.reduce((sum, p) => sum + p.loanApproved, 0) + filteredProjects.reduce((sum, p) => sum + p.userDeposit, 0)
   };
 
   const handleEdit = (projectId: number, currentName: string, currentDeposit: number) => {
@@ -377,11 +407,66 @@ Give me a brief insight into potential profitability, risk factors, and recommen
       alert('Failed to upload receipt. Please try again.');
     } finally {
       setUploading(false);
+      fetchReceipts(); // Refresh receipts after upload
+    }
+  };
+
+  const updateSpend = async (receiptId: string, field: string, value: string) => {
+    try {
+      await fetch("/api/receipt-update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: receiptId,
+          field,
+          value
+        })
+      });
+      fetchReceipts(); // Refresh receipts after update
+    } catch (error) {
+      console.error('Failed to update receipt:', error);
     }
   };
 
   // Get current time for display
   const localTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+  // Chart data for financial overview
+  const chartData = {
+    labels: filteredProjects.map(p => p.name),
+    datasets: [
+      {
+        label: "Loan Approved",
+        data: filteredProjects.map(p => p.loanApproved),
+        backgroundColor: "#10b981"
+      },
+      {
+        label: "Total Investment",
+        data: filteredProjects.map(p => p.landCost + p.buildCost),
+        backgroundColor: "#f59e0b"
+      },
+      {
+        label: "Projected Sale",
+        data: filteredProjects.map(p => p.id === 1 ? 1080000 : 720000),
+        backgroundColor: "#3b82f6"
+      }
+    ]
+  };
+
+  // Timeline data for progress tracking
+  const timelineData = {
+    labels: filteredProjects.map(p => p.name),
+    datasets: [
+      {
+        label: "Progress %",
+        data: filteredProjects.map(p => p.progressPercentage),
+        borderColor: "#10b981",
+        backgroundColor: "rgba(16, 185, 129, 0.1)",
+        tension: 0.4,
+        fill: true
+      }
+    ]
+  };
 
   return (
     <div className="p-4 md:p-6 space-y-6 text-sm md:text-base">
@@ -391,7 +476,7 @@ Give me a brief insight into potential profitability, risk factors, and recommen
             👋 Welcome, {firstName} – Local Time: {localTime}
           </h1>
           <p className="text-gray-600 mt-1">
-            Here's a snapshot of your real estate empire – {projects.length} Active Projects
+            {userRole === "client" ? "Track your property development progress" : "Here's a snapshot of your real estate empire"} – {filteredProjects.length} Active Project{filteredProjects.length !== 1 ? 's' : ''}
           </p>
         </div>
       </div>
@@ -792,42 +877,108 @@ Give me a brief insight into potential profitability, risk factors, and recommen
         </div>
       </div>
 
-      {/* Receipt Upload Section */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Upload className="h-5 w-5" />
-            Receipt Upload & Xero Sync
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-4">
-            <Input
-              type="file"
-              accept="image/*,application/pdf"
-              onChange={handleReceiptUpload}
-              disabled={uploading}
-              className="flex-1"
-            />
-            <Button 
-              variant="outline" 
-              disabled={uploading}
-              className="bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100"
-            >
-              {uploading ? "Uploading..." : "📤 Upload Receipt"}
-            </Button>
-          </div>
-          {uploading && (
-            <div className="mt-3 text-sm text-blue-600 flex items-center gap-2">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-              Processing receipt and syncing with Xero...
+      {/* Receipt Upload Section - Hidden for clients */}
+      {userRole !== "client" && (
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Upload className="h-5 w-5" />
+              📷 Mobile Receipt Upload & Xero Sync
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-4">
+              <Input
+                type="file"
+                capture="environment"
+                accept="image/*,application/pdf"
+                onChange={handleReceiptUpload}
+                disabled={uploading}
+                className="flex-1"
+              />
+              <Button 
+                variant="outline" 
+                disabled={uploading}
+                className="bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100"
+              >
+                {uploading ? "Uploading..." : "📤 Upload Receipt"}
+              </Button>
             </div>
-          )}
-          <div className="mt-3 text-sm text-gray-600">
-            Supported formats: JPG, PNG, PDF. Automatically extracts amount, vendor, and project details.
-          </div>
-        </CardContent>
-      </Card>
+            {uploading && (
+              <div className="mt-3 text-sm text-blue-600 flex items-center gap-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                Processing receipt and syncing with Xero...
+              </div>
+            )}
+            <div className="mt-3 text-sm text-gray-600">
+              📱 Mobile camera supported. Automatically extracts amount, vendor, and project details from JPG, PNG, PDF.
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Receipt Management Section - Hidden for clients */}
+      {userRole !== "client" && receipts.length > 0 && (
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Receipt Management
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="min-w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-2 px-3">Project</th>
+                    <th className="text-left py-2 px-3">Description</th>
+                    <th className="text-left py-2 px-3">Amount</th>
+                    <th className="text-left py-2 px-3">Category</th>
+                    <th className="text-left py-2 px-3">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {receipts.map((receipt: any) => (
+                    <tr key={receipt.id} className="border-b">
+                      <td className="py-2 px-3">{receipt.project}</td>
+                      <td className="py-2 px-3">
+                        <Input
+                          defaultValue={receipt.description}
+                          onBlur={(e) => updateSpend(receipt.id, "description", e.target.value)}
+                          className="w-full"
+                        />
+                      </td>
+                      <td className="py-2 px-3">
+                        <Input
+                          defaultValue={receipt.amount}
+                          onBlur={(e) => updateSpend(receipt.id, "amount", e.target.value)}
+                          className="w-full"
+                        />
+                      </td>
+                      <td className="py-2 px-3">
+                        <Input
+                          defaultValue={receipt.category}
+                          onBlur={(e) => updateSpend(receipt.id, "category", e.target.value)}
+                          className="w-full"
+                        />
+                      </td>
+                      <td className="py-2 px-3">
+                        <Button variant="outline" size="sm" asChild>
+                          <a href={receipt.link || '#'} target="_blank" rel="noreferrer">
+                            <ExternalLink className="h-4 w-4 mr-1" />
+                            View
+                          </a>
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">

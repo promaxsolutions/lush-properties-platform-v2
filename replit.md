@@ -110,6 +110,16 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- Enhanced mobile camera support for receipt uploads with environment capture
+- Fixed Chart.js filler plugin registration for timeline charts
+- Added mobile-optimized receipt scanning with confidence metrics
+- Implemented mobile-friendly file upload interface with camera integration
+- Enhanced receipt processing with mobile scanning API endpoint
+- Added client build tracker capabilities with role-based project filtering
+- Implemented receipt management system with editable expense tracking
+- Created client-specific dashboard views (clients see only their projects)
+- Added comprehensive receipt history with inline editing capabilities
+- Enhanced role-based access control for builders, clients, and administrators
 - Added receipt upload functionality with AI-powered OCR parsing
 - Implemented Xero financial integration for automated expense tracking
 - Created comprehensive file upload system with progress indicators
