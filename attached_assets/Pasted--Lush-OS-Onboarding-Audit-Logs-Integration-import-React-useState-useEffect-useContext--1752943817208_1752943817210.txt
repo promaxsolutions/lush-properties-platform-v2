@@ -1,0 +1,197 @@
+// 🌟 Lush OS: Onboarding + Audit Logs Integration
+import React, { useState, useEffect, useContext } from "react";
+import ProjectCard from "./ProjectCard";
+import { Bar, Pie } from "react-chartjs-2";
+import Calendar from "react-calendar";
+import "chart.js/auto";
+import axios from "axios";
+import { UserContext } from "../context/UserContext";
+
+const LushDashboard = () => {
+  const [projects, setProjects] = useState([]);
+  const [receipts, setReceipts] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [auditTrail, setAuditTrail] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [globalSummary, setGlobalSummary] = useState({});
+  const [cameraEnabled, setCameraEnabled] = useState(false);
+  const [showNav, setShowNav] = useState(true);
+  const { role, email, firstName } = useContext(UserContext);
+
+  useEffect(() => {
+    fetchProjects();
+    fetchReceipts();
+    fetchEvents();
+    fetchAuditTrail();
+    setupPushNotifications();
+    if (window.innerWidth < 640) setShowNav(false);
+  }, []);
+
+  const fetchProjects = async () => {
+    const res = await axios.get("/api/projects");
+    let data = res.data;
+    if (role === "builder") {
+      data = data.filter((p) => p.builderEmail === email);
+    } else if (role === "client") {
+      data = data.filter((p) => p.clientEmail === email);
+    } else if (role === "investor") {
+      data = data.filter((p) => p.investorEmails?.includes(email));
+    }
+    setProjects(data);
+    const totals = calculateGlobalSummary(data);
+    setGlobalSummary(totals);
+  };
+
+  const fetchReceipts = async () => {
+    const res = await axios.get("/api/receipts");
+    setReceipts(res.data);
+  };
+
+  const fetchEvents = async () => {
+    const res = await axios.get("/api/calendar-events");
+    setEvents(res.data);
+  };
+
+  const fetchAuditTrail = async () => {
+    const res = await axios.get("/api/audit-trail");
+    setAuditTrail(res.data);
+  };
+
+  const setupPushNotifications = () => {
+    if ("Notification" in window && Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+  };
+
+  const notifyUser = (title, message) => {
+    if (Notification.permission === "granted") {
+      new Notification(title, { body: message });
+    }
+  };
+
+  const handleCalendarClick = (date) => {
+    setSelectedDate(date);
+    const event = events.find((e) => new Date(e.date).toDateString() === date.toDateString());
+    if (event) {
+      notifyUser("Reminder", `${event.title} at ${event.time}`);
+    }
+  };
+
+  const handleCameraCapture = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      setCameraEnabled(true);
+    } catch (err) {
+      console.error("Camera access denied:", err);
+    }
+  };
+
+  const localTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+  const builderBreakdown = () => {
+    const byBuilder = {};
+    receipts.forEach((r) => {
+      const key = r.builder || "Unknown";
+      byBuilder[key] = (byBuilder[key] || 0) + parseFloat(r.amount);
+    });
+    return {
+      labels: Object.keys(byBuilder),
+      datasets: [{
+        label: "Spend per Builder",
+        data: Object.values(byBuilder),
+        backgroundColor: ["#3b82f6", "#10b981", "#f59e0b"]
+      }]
+    };
+  };
+
+  const renderMapLink = (address) => {
+    const encoded = encodeURIComponent(address);
+    return `https://www.google.com/maps/search/?api=1&query=${encoded}`;
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white shadow px-4 py-2 flex justify-between items-center sticky top-0 z-10">
+        <div className="text-xl font-bold">🏠 Lush OS</div>
+        <div className="text-sm text-gray-600">Hi {firstName}, {localTime}</div>
+      </header>
+
+      {showNav && <nav className="sm:hidden bg-gray-200 p-2 text-center text-sm">Tap anywhere to hide menu on mobile</nav>}
+
+      <main className="p-4 md:p-6">
+        <section className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <SummaryCard label="Loan Approved" value={globalSummary.loan} color="bg-green-100" />
+          <SummaryCard label="Total Spend" value={globalSummary.cost} color="bg-yellow-100" />
+          <SummaryCard label="Projected Sales" value={globalSummary.sales} color="bg-blue-100" />
+          <SummaryCard label="Net Equity" value={globalSummary.equity} color="bg-gray-100" />
+        </section>
+
+        <div className="mb-4 text-center">
+          <button onClick={handleCameraCapture} className="bg-blue-600 text-white py-2 px-4 rounded shadow">
+            📷 Take Receipt Photo (Mobile)
+          </button>
+        </div>
+
+        <h3 className="text-lg font-semibold mb-2">🏗️ Projects Overview</h3>
+        <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          {projects.map((proj) => (
+            <div key={proj.id} className="bg-white rounded-lg shadow-md p-4 border-l-4 border-blue-500">
+              <div className="flex justify-between items-center flex-wrap gap-y-2">
+                <h4 className="text-md font-bold">{proj.name || proj.address}</h4>
+                <a className="text-xs text-blue-500 underline" href={renderMapLink(proj.address)} target="_blank" rel="noopener noreferrer">📍 View Map</a>
+              </div>
+              <p className="text-sm text-gray-500 mt-1">{proj.description}</p>
+              <div className="w-full bg-gray-200 h-2 mt-3 rounded">
+                <div className="h-2 rounded bg-blue-500" style={{ width: `${(proj.stage || 0) * 20}%` }}></div>
+              </div>
+              {role === "client" && <p className="text-xs text-gray-400 mt-1">Loan Drawdown: ${proj.loanDraw || 0}</p>}
+            </div>
+          ))}
+        </div>
+
+        <div className="bg-white p-4 mb-6 rounded shadow">
+          <h4 className="text-md font-semibold mb-2">📅 Milestone Calendar</h4>
+          <Calendar onClickDay={handleCalendarClick} value={selectedDate} />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="bg-white p-4 rounded shadow">
+            <h4 className="font-semibold mb-2">📊 Spend Breakdown Per Builder</h4>
+            <Pie data={builderBreakdown()} />
+          </div>
+
+          <div className="bg-white p-4 rounded shadow">
+            <h4 className="font-semibold mb-2">📈 Equity vs Spend</h4>
+            <Bar data={{ labels: ["Equity", "Spend"], datasets: [{ label: "Value", data: [globalSummary.equity, globalSummary.cost], backgroundColor: ["#16a34a", "#f59e0b"] }] }} />
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded shadow">
+          <h4 className="font-semibold mb-2">📝 Audit Trail</h4>
+          <ul className="text-xs text-gray-600 list-disc list-inside">
+            {auditTrail.map((log, idx) => (
+              <li key={idx}>{log.timestamp} – {log.user} – {log.action}</li>
+            ))}
+          </ul>
+        </div>
+      </main>
+
+      <footer className="bg-gray-100 text-center text-xs text-gray-600 py-3">
+        Built for Lush Group • {new Date().getFullYear()} • Mobile Optimized
+      </footer>
+    </div>
+  );
+};
+
+const SummaryCard = ({ label, value, color }) => (
+  <div className={`rounded p-4 ${color} flex flex-col items-start justify-center text-sm md:text-base`}>
+    <h4 className="text-gray-600">{label}</h4>
+    <p className="text-lg font-bold">${value.toLocaleString()}</p>
+  </div>
+);
+
+export default LushDashboard;
+
+// 👥 Onboarding Modules Ready
+// 📋 Audit Log Panel Live
+// 📲 Adaptive Role Routing + Mobile Navigation

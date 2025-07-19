@@ -765,79 +765,121 @@ Give me a brief insight into potential profitability, risk factors, and recommen
   };
 
   return (
-    <div className="p-4 md:p-6 space-y-6 text-sm md:text-base">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl md:text-2xl font-bold text-gray-900">
-            👋 Welcome, {firstName} – Local Time: {localTime}
+    <div className="min-h-screen bg-gray-50">
+      {/* Mobile-Optimized Header */}
+      <header className="bg-white shadow-sm border-b px-3 py-2 flex justify-between items-center sticky top-0 z-10">
+        <div className="flex items-center gap-2">
+          <div className="text-lg sm:text-xl font-bold text-blue-600">🏠 Lush OS</div>
+          <div className="hidden sm:flex items-center gap-2">
+            {syncStatus === 'online' && <span className="text-xs text-green-600">🌐 Online</span>}
+            {syncStatus === 'offline' && <span className="text-xs text-orange-600">📱 Offline</span>}
+            {syncStatus === 'syncing' && <span className="text-xs text-blue-600">🔄 Syncing</span>}
+          </div>
+          {offlineQueue.length > 0 && (
+            <span className="text-xs bg-orange-100 text-orange-800 px-1 py-0.5 rounded text-center min-w-[20px]">
+              {offlineQueue.length}
+            </span>
+          )}
+        </div>
+        <div className="text-right">
+          <div className="text-xs sm:text-sm font-medium text-gray-900">Hi {firstName}</div>
+          <div className="text-xs text-gray-500">{localTime}</div>
+          <div className="sm:hidden text-xs">
+            {syncStatus === 'online' && <span className="text-green-600">🌐</span>}
+            {syncStatus === 'offline' && <span className="text-orange-600">📱</span>}
+            {syncStatus === 'syncing' && <span className="text-blue-600">🔄</span>}
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Navigation Helper */}
+      {showNav && (
+        <div className="sm:hidden bg-blue-50 border-b border-blue-200 p-2 text-center">
+          <button 
+            onClick={() => setShowNav(false)}
+            className="text-xs text-blue-700 hover:text-blue-900"
+          >
+            📱 Tap to hide mobile helper • Optimized for touch
+          </button>
+        </div>
+      )}
+
+      <main className="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
+        {/* Welcome Section */}
+        <div className="bg-white rounded-lg p-4 shadow-sm">
+          <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
+            👋 Welcome, {firstName}
           </h1>
-          <p className="text-gray-600 mt-1">
-            {userRole === "client" ? "Track your property development progress" : "Here's a snapshot of your real estate empire"} – {filteredProjects.length} Active Project{filteredProjects.length !== 1 ? 's' : ''}
+          <p className="text-xs sm:text-sm text-gray-600 mt-1">
+            {userRole === "client" ? "Track your property development" : "Real estate portfolio overview"} • {filteredProjects.length} Active Project{filteredProjects.length !== 1 ? 's' : ''}
           </p>
         </div>
-      </div>
 
-      {/* Global Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        <Card className="bg-gradient-to-r from-green-50 to-green-100 border-green-200">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium text-green-700">
-              <PiggyBank className="h-4 w-4" />
-              Total Loan Approved
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-900">
-              ${globalSummary.totalLoanApproved.toLocaleString()}
-            </div>
-          </CardContent>
-        </Card>
+        {/* Mobile-Optimized Summary Cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-4">
+          <Card className="bg-gradient-to-r from-green-50 to-green-100 border-green-200">
+            <CardHeader className="pb-1 sm:pb-2">
+              <CardTitle className="flex items-center gap-1 text-xs sm:text-sm font-medium text-green-700">
+                <PiggyBank className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Total Loan</span>
+                <span className="sm:hidden">Loan</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="text-sm sm:text-xl md:text-2xl font-bold text-green-900">
+                ${globalSummary.totalLoanApproved.toLocaleString()}
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium text-blue-700">
-              <TrendingUp className="h-4 w-4" />
-              Projected Sales
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-900">
-              ${globalSummary.totalProjectedSales.toLocaleString()}
-            </div>
-          </CardContent>
-        </Card>
+          <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
+            <CardHeader className="pb-1 sm:pb-2">
+              <CardTitle className="flex items-center gap-1 text-xs sm:text-sm font-medium text-blue-700">
+                <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Projected Sales</span>
+                <span className="sm:hidden">Sales</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="text-sm sm:text-xl md:text-2xl font-bold text-blue-900">
+                ${globalSummary.totalProjectedSales.toLocaleString()}
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card className="bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium text-purple-700">
-              <Building className="h-4 w-4" />
-              Total Investment
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-purple-900">
-              ${globalSummary.totalInvestment.toLocaleString()}
-            </div>
-            <div className="text-xs text-purple-600 mt-1">Land + Build</div>
-          </CardContent>
-        </Card>
+          <Card className="bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200">
+            <CardHeader className="pb-1 sm:pb-2">
+              <CardTitle className="flex items-center gap-1 text-xs sm:text-sm font-medium text-purple-700">
+                <Building className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Total Investment</span>
+                <span className="sm:hidden">Investment</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="text-sm sm:text-xl md:text-2xl font-bold text-purple-900">
+                ${globalSummary.totalInvestment.toLocaleString()}
+              </div>
+              <div className="text-xs text-purple-600 mt-1 hidden sm:block">Land + Build</div>
+            </CardContent>
+          </Card>
 
-        <Card className="bg-gradient-to-r from-orange-50 to-orange-100 border-orange-200">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium text-orange-700">
-              <DollarSign className="h-4 w-4" />
-              Claims Raised
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-orange-900">
-              ${globalSummary.totalClaimsRaised.toLocaleString()}
-            </div>
-          </CardContent>
-        </Card>
+          <Card className="bg-gradient-to-r from-orange-50 to-orange-100 border-orange-200">
+            <CardHeader className="pb-1 sm:pb-2">
+              <CardTitle className="flex items-center gap-1 text-xs sm:text-sm font-medium text-orange-700">
+                <DollarSign className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Claims Raised</span>
+                <span className="sm:hidden">Claims</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="text-sm sm:text-xl md:text-2xl font-bold text-orange-900">
+                ${globalSummary.totalClaimsRaised.toLocaleString()}
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card className="bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-200">
-          <CardHeader className="pb-2">
+          <Card className="bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-200">
+            <CardHeader className="pb-1 sm:pb-2">
             <CardTitle className="flex items-center gap-2 text-sm font-medium text-yellow-700">
               <PiggyBank className="h-4 w-4" />
               Total Deposits
@@ -1532,14 +1574,26 @@ Give me a brief insight into potential profitability, risk factors, and recommen
         </Card>
       </div>
 
-      {/* Mobile PWA Footer */}
-      <footer className="mt-12 text-center text-gray-500 text-xs space-y-2">
-        <p className="text-sm">📱 Install this app to your phone via browser menu → "Add to Home Screen"</p>
-        <p className="font-medium">Built for Lush Group • Mobile PWA Ready 🌍</p>
-        {userRole === "investor" && (
-          <p className="text-purple-600 font-medium">Investor Portal Access Enabled</p>
-        )}
-      </footer>
+        {/* Mobile-Optimized Footer */}
+        <footer className="mt-8 bg-white rounded-lg p-4 text-center border-t">
+          <div className="space-y-2">
+            <p className="text-xs sm:text-sm text-gray-600">
+              📱 Mobile PWA • 🔔 Push Notifications • 🌐 Offline Ready
+            </p>
+            <p className="text-xs text-gray-500">
+              Built for Lush Group • {new Date().getFullYear()}
+            </p>
+            {userRole === "investor" && (
+              <p className="text-xs text-purple-600 font-medium">
+                💼 Investor Portal Active
+              </p>
+            )}
+            <p className="text-xs text-blue-600">
+              Add to Home Screen for best mobile experience
+            </p>
+          </div>
+        </footer>
+      </main>
     </div>
   );
 };
