@@ -83,6 +83,8 @@ const LushDashboard = () => {
   const [receipts, setReceipts] = useState([]);
   const [events, setEvents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [cameraEnabled, setCameraEnabled] = useState(false);
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
   
   // Mock user context - in real app this would come from auth context
   const userRole = "admin"; // Could be "admin", "broker", "solicitor", "builder", "accountant", "client", "investor"
@@ -120,6 +122,56 @@ const LushDashboard = () => {
   const handleMapClick = (project: any) => {
     notifyUser("📍 Opening Maps", `Opening ${project.address} in Google Maps`);
     window.open(renderMapLink(project.address), '_blank');
+  };
+
+  // Mobile camera capture functionality
+  const handleCameraCapture = async () => {
+    try {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { 
+            facingMode: 'environment', // Use back camera for receipts
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+          } 
+        });
+        setCameraEnabled(true);
+        notifyUser("📷 Camera Ready", "Camera activated for receipt capture");
+        
+        // In a real implementation, this would show a camera preview
+        // For demo purposes, we'll simulate capturing an image
+        setTimeout(() => {
+          stream.getTracks().forEach(track => track.stop());
+          setCameraEnabled(false);
+          setCapturedImage("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/...");
+          notifyUser("✅ Photo Captured", "Receipt photo ready for processing");
+        }, 3000);
+      }
+    } catch (err) {
+      console.error("Camera access denied:", err);
+      notifyUser("❌ Camera Error", "Unable to access camera. Please allow camera permissions.");
+    }
+  };
+
+  // Process captured receipt with OCR
+  const processReceiptPhoto = async (imageData: string) => {
+    try {
+      const response = await fetch("/api/process-receipt-mobile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          imageData,
+          confidence: "high",
+          mobileCapture: true
+        })
+      });
+      const result = await response.json();
+      notifyUser("🔍 Receipt Processed", `Vendor: ${result.vendor}, Amount: $${result.amount}`);
+      setCapturedImage(null);
+    } catch (error) {
+      console.error('Receipt processing failed:', error);
+      notifyUser("❌ Processing Failed", "Unable to process receipt. Please try again.");
+    }
   };
 
   // Fetch receipts data

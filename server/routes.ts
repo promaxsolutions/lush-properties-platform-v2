@@ -846,6 +846,47 @@ Lush Properties Team
     }
   });
 
+  // Mobile receipt processing API endpoint
+  app.post("/api/process-receipt-mobile", (req, res) => {
+    try {
+      const { imageData, confidence, mobileCapture } = req.body;
+      
+      // Mock OCR processing - in real app this would use OCR service like Tesseract or AWS Textract
+      const receiptId = `MOBILE-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+      
+      // Simulate AI-powered receipt extraction
+      const mockExtractedData = {
+        receiptId,
+        vendor: ["Bunnings Warehouse", "Home Depot", "Mitre 10", "Tool Station"][Math.floor(Math.random() * 4)],
+        amount: (Math.random() * 500 + 50).toFixed(2),
+        date: new Date().toISOString().split('T')[0],
+        category: "Building Materials",
+        confidence: confidence === "high" ? Math.random() * 0.15 + 0.85 : Math.random() * 0.3 + 0.7,
+        mobileCapture: true,
+        ocrMethod: "AI-powered mobile extraction",
+        processedAt: new Date().toISOString()
+      };
+      
+      console.log(`[MOBILE-RECEIPT] Receipt processed:`, {
+        receiptId,
+        vendor: mockExtractedData.vendor,
+        amount: mockExtractedData.amount,
+        confidence: mockExtractedData.confidence,
+        mobileCapture: true
+      });
+      
+      res.json({
+        success: true,
+        receiptId,
+        message: "Mobile receipt processed successfully",
+        ...mockExtractedData
+      });
+    } catch (error) {
+      console.error("[MOBILE-RECEIPT] Error processing receipt:", error);
+      res.status(500).json({ error: "Failed to process mobile receipt" });
+    }
+  });
+
   // AI Chat endpoint - ready for OpenAI integration
   app.post("/api/ai-chat", async (req, res) => {
     try {

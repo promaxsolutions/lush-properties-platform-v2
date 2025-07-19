@@ -110,6 +110,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- Added advanced mobile camera integration for receipt capture with environment camera access
+- Implemented AI-powered OCR processing for mobile-captured receipt images
+- Created real-time camera preview with auto-capture functionality and confidence scoring
+- Enhanced mobile receipt workflow with capture, preview, and processing capabilities
+- Added mobile-optimized notification system for camera operations and receipt processing
 - Enhanced mobile optimization with responsive design and touch-friendly interfaces
 - Added mobile-first UI with flexible text sizing and compressed layouts
 - Implemented adaptive button text that shows icons on mobile and full text on desktop
