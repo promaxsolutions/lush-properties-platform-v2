@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Dashboard from "./components/lush-dashboard";
+import MobileDashboard from "./components/MobileDashboard";
 import SidebarLayout from "./components/SidebarLayout";
 import { AuthProvider, useAuth } from "./components/AuthContext";
 import Upload from "./components/Upload";
@@ -43,7 +44,10 @@ function App() {
                   <ProtectedRoute>
                     <SidebarLayout>
                       <Routes>
-                        <Route path="dashboard" element={<Dashboard />} />
+                        <Route path="dashboard" element={
+                          window.innerWidth < 768 ? <MobileDashboard /> : <Dashboard />
+                        } />
+                        <Route path="mobile" element={<MobileDashboard />} />
                         <Route path="uploads" element={<Upload />} />
                         <Route path="claims" element={<Claims />} />
                         <Route path="xero" element={<Xero />} />
