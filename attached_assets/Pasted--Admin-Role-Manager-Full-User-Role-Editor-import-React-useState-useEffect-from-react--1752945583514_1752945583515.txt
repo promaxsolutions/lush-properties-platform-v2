@@ -1,0 +1,65 @@
+// 🔐 Admin Role Manager – Full User Role Editor
+import React, { useState, useEffect } from "react";
+
+const mockUsers = [
+  { id: 1, name: "David", email: "david@lush.com", role: "broker" },
+  { id: 2, name: "Amaka", email: "amaka@lush.com", role: "builder" },
+  { id: 3, name: "Tunde", email: "tunde@lush.com", role: "client" },
+  { id: 4, name: "Zainab", email: "zainab@lush.com", role: "admin" }
+];
+
+export default function RoleManager() {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    // Replace with API fetch later
+    setUsers(mockUsers);
+  }, []);
+
+  const updateRole = (id, newRole) => {
+    const updated = users.map(u => u.id === id ? { ...u, role: newRole } : u);
+    setUsers(updated);
+    alert(`✅ Role updated for ${updated.find(u => u.id === id).name}`);
+  };
+
+  return (
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-4">👥 User Role Editor</h2>
+      <table className="min-w-full table-auto border">
+        <thead>
+          <tr className="bg-gray-100">
+            <th className="px-4 py-2">Name</th>
+            <th className="px-4 py-2">Email</th>
+            <th className="px-4 py-2">Role</th>
+            <th className="px-4 py-2">Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map(user => (
+            <tr key={user.id} className="text-sm border-t">
+              <td className="px-4 py-2">{user.name}</td>
+              <td className="px-4 py-2">{user.email}</td>
+              <td className="px-4 py-2">{user.role}</td>
+              <td className="px-4 py-2">
+                <select
+                  value={user.role}
+                  onChange={e => updateRole(user.id, e.target.value)}
+                  className="border p-1 rounded text-sm">
+                  <option value="admin">Admin</option>
+                  <option value="builder">Builder</option>
+                  <option value="client">Client</option>
+                  <option value="investor">Investor</option>
+                  <option value="broker">Broker</option>
+                  <option value="accountant">Accountant</option>
+                </select>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <footer className="text-xs text-center text-gray-400 mt-8 pt-4 border-t">
+        Manage all roles and team access from here — Lush OS Secure Panel
+      </footer>
+    </div>
+  );
+}

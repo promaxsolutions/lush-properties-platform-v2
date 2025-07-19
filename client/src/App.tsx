@@ -22,6 +22,7 @@ import ClientUpgradePanel from "./components/ClientUpgradePanel";
 import HeatmapVisualizer from "./components/HeatmapVisualizer";
 import AIWorkflowEngine from "./components/AIWorkflowEngine";
 import RoleBasedDashboard from "./components/RoleBasedDashboard";
+import AdminRoleManager from "./components/AdminRoleManager";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -66,6 +67,7 @@ function App() {
                         <Route path="heatmap" element={<HeatmapVisualizer />} />
                         <Route path="ai-workflows" element={<AIWorkflowEngine />} />
                         <Route path="role-dashboard" element={<RoleBasedDashboard />} />
+                        <Route path="admin/role-manager" element={<AdminRoleManager />} />
                         <Route path="*" element={<Navigate to="/dashboard" />} />
                       </Routes>
                       <AIChatWidget />

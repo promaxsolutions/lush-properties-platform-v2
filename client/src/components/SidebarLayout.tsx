@@ -69,6 +69,12 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
       icon: <User className="h-5 w-5" /> 
     },
     { 
+      label: "Role Manager", 
+      path: "/admin/role-manager", 
+      icon: <User className="h-5 w-5" />,
+      adminOnly: true 
+    },
+    { 
       label: "Settings", 
       path: "/settings", 
       icon: <Settings className="h-5 w-5" /> 
