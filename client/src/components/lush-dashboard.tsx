@@ -85,9 +85,42 @@ const LushDashboard = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   
   // Mock user context - in real app this would come from auth context
-  const userRole = "builder"; // Could be "admin", "broker", "solicitor", "builder", "accountant", "client", "investor"
-  const userEmail = "builder@example.com"; // Mock user email
-  const firstName = "Mike"; // Mock user first name
+  const userRole = "admin"; // Could be "admin", "broker", "solicitor", "builder", "accountant", "client", "investor"
+  const userEmail = "admin@lushproperties.com"; // Mock user email
+  const firstName = "Alex"; // Mock user first name
+
+  // Push notifications setup
+  React.useEffect(() => {
+    if ("Notification" in window && Notification.permission !== "granted") {
+      Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+          console.log("🔔 Push notifications enabled for Lush OS");
+        }
+      });
+    }
+  }, []);
+
+  // Utility functions for maps and notifications
+  const notifyUser = (title: string, message: string) => {
+    if (Notification.permission === "granted") {
+      new Notification(title, { 
+        body: message,
+        icon: "/favicon.ico",
+        badge: "/favicon.ico",
+        tag: "lush-os-notification"
+      });
+    }
+  };
+
+  const renderMapLink = (address: string) => {
+    const encoded = encodeURIComponent(address);
+    return `https://www.google.com/maps/search/?api=1&query=${encoded}`;
+  };
+
+  const handleMapClick = (project: any) => {
+    notifyUser("📍 Opening Maps", `Opening ${project.address} in Google Maps`);
+    window.open(renderMapLink(project.address), '_blank');
+  };
 
   // Fetch receipts data
   const fetchReceipts = async () => {

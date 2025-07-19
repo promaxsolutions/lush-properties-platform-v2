@@ -807,6 +807,45 @@ Lush Properties Team
     }
   });
 
+  // Push notification API endpoint
+  app.post("/api/push-notification", (req, res) => {
+    try {
+      const { title, message, userId, projectId } = req.body;
+      
+      // Mock push notification sending - in real app this would use service worker/Firebase
+      const notificationId = `NOTIF-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+      
+      const notificationData = {
+        notificationId,
+        title,
+        message,
+        userId,
+        projectId,
+        sentAt: new Date().toISOString(),
+        status: "delivered",
+        type: "project_update",
+        clickAction: projectId ? `/project/${projectId}` : "/dashboard"
+      };
+      
+      console.log(`[PUSH-NOTIFICATION] Notification sent:`, {
+        notificationId,
+        title,
+        userId,
+        sentAt: new Date().toISOString()
+      });
+      
+      res.json({
+        success: true,
+        notificationId,
+        message: `Push notification sent successfully`,
+        ...notificationData
+      });
+    } catch (error) {
+      console.error("[PUSH-NOTIFICATION] Error sending notification:", error);
+      res.status(500).json({ error: "Failed to send push notification" });
+    }
+  });
+
   // AI Chat endpoint - ready for OpenAI integration
   app.post("/api/ai-chat", async (req, res) => {
     try {

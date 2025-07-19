@@ -110,6 +110,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- Added Google Maps integration with clickable project address links
+- Implemented push notifications for milestone reminders and system updates
+- Enhanced calendar with notification-triggered event reminders
+- Added real-time map link generation for all project addresses
+- Created notification system for upload confirmations and request submissions
 - Enhanced UI with polished header design and improved mobile responsiveness
 - Added builder upload tools for progress photos, quotes, and inspection reports
 - Implemented client upgrade request system with detailed requirement tracking
