@@ -1,3 +1,5 @@
+// LushDashboard.jsx — Premium Billionaire-Grade Dashboard UI
+
 import React from "react";
 import {
   BarChart,
