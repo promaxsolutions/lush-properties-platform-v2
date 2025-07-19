@@ -110,6 +110,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- Added export functionality and investor portal capabilities with project pack downloads
+- Implemented mobile PWA features with installation instructions and progressive web app support
+- Enhanced role-based access control to include investor role with filtered project views
+- Created PDF export system for comprehensive project reports with financial summaries
+- Added mobile-optimized footer with PWA installation guidance and investor portal indicators
 - Added scheduling and forecasting capabilities with interactive calendar
 - Implemented inspection tracker with milestone management
 - Created builder spend breakdown visualization with pie charts

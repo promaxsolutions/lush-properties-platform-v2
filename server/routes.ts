@@ -497,6 +497,111 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Project export PDF API endpoint
+  app.get("/api/export-pdf/:projectId", (req, res) => {
+    try {
+      const { projectId } = req.params;
+      
+      // Mock PDF generation - in real app this would use a PDF library like PDFKit or Puppeteer
+      const projectData = {
+        id: projectId,
+        title: `Project ${projectId} - Comprehensive Report`,
+        generatedAt: new Date().toISOString(),
+        financialSummary: {
+          loanApproved: projectId === "1" ? 790000 : 400000,
+          landCost: projectId === "1" ? 430000 : 280000,
+          buildCost: projectId === "1" ? 360000 : 320000,
+          projectedSale: projectId === "1" ? 1080000 : 720000
+        },
+        progress: projectId === "1" ? "85%" : "25%",
+        stage: projectId === "1" ? "Stage 7 - Final Inspection" : "Stage 2 - Slab",
+        documents: ["Land Contract", "Building Contract", "Council Approvals", "Insurance"],
+        receipts: ["$2,450 - Concrete Supply", "$1,890 - Electrical Work", "$3,200 - Plumbing"],
+        nextMilestones: ["Final Inspection", "Handover", "Settlement"]
+      };
+      
+      // Mock PDF content (in real app this would be actual PDF binary data)
+      const pdfContent = `
+%PDF-1.4
+1 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+>>
+endobj
+
+2 0 obj
+<<
+/Type /Pages
+/Kids [3 0 R]
+/Count 1
+>>
+endobj
+
+3 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [0 0 612 792]
+/Contents 4 0 R
+>>
+endobj
+
+4 0 obj
+<<
+/Length 200
+>>
+stream
+BT
+/F1 12 Tf
+72 720 Td
+(Lush Project Report - Project ${projectId}) Tj
+0 -20 Td
+(Generated: ${new Date().toLocaleDateString()}) Tj
+0 -20 Td
+(Financial Summary: $${projectData.financialSummary.loanApproved.toLocaleString()}) Tj
+0 -20 Td
+(Progress: ${projectData.progress}) Tj
+0 -20 Td
+(Stage: ${projectData.stage}) Tj
+ET
+endstream
+endobj
+
+xref
+0 5
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000189 00000 n 
+trailer
+<<
+/Size 5
+/Root 1 0 R
+>>
+startxref
+440
+%%EOF`;
+      
+      console.log(`[EXPORT-PDF] Generating PDF for project:`, {
+        projectId,
+        exportedAt: new Date().toISOString(),
+        fileSize: `${pdfContent.length} bytes`
+      });
+      
+      // Set PDF headers
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="Lush_Project_${projectId}_Report.pdf"`);
+      res.setHeader('Content-Length', pdfContent.length);
+      
+      res.send(Buffer.from(pdfContent));
+    } catch (error) {
+      console.error("[EXPORT-PDF] Error generating project export:", error);
+      res.status(500).json({ error: "Failed to generate project export" });
+    }
+  });
+
   // AI Chat endpoint - ready for OpenAI integration
   app.post("/api/ai-chat", async (req, res) => {
     try {

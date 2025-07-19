@@ -49,7 +49,8 @@ const initialProjects = [
     nextAction: "Final inspection scheduled",
     claimsRaised: 935000,
     builderEmail: "builder@example.com",
-    clientEmail: "client@example.com"
+    clientEmail: "client@example.com",
+    investorEmails: ["investor1@example.com", "investor2@example.com"]
   },
   {
     id: 2,
@@ -66,7 +67,8 @@ const initialProjects = [
     nextAction: "Slab inspection due",
     claimsRaised: 200000,
     builderEmail: "builder@example.com",
-    clientEmail: "otherclient@example.com"
+    clientEmail: "otherclient@example.com",
+    investorEmails: ["investor3@example.com"]
   }
 ];
 
@@ -83,9 +85,9 @@ const LushDashboard = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   
   // Mock user context - in real app this would come from auth context
-  const userRole = "admin"; // Could be "admin", "broker", "solicitor", "builder", "accountant", "client"
-  const userEmail = "admin@lushproperties.com"; // Mock user email
-  const firstName = "Alex"; // Mock user first name
+  const userRole = "investor"; // Could be "admin", "broker", "solicitor", "builder", "accountant", "client", "investor"
+  const userEmail = "investor1@example.com"; // Mock user email
+  const firstName = "Sarah"; // Mock user first name
 
   // Fetch receipts data
   const fetchReceipts = async () => {
@@ -104,6 +106,8 @@ const LushDashboard = () => {
       return project.builderEmail === userEmail;
     } else if (userRole === "client") {
       return project.clientEmail === userEmail;
+    } else if (userRole === "investor") {
+      return project.investorEmails?.includes(userEmail);
     }
     return true; // Admin, broker, solicitor see all projects
   });
@@ -467,6 +471,34 @@ Give me a brief insight into potential profitability, risk factors, and recommen
         backgroundColor: ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"]
       }]
     };
+  };
+
+  // Handle project export for investors and admins
+  const handleExportProject = async (projectId: number) => {
+    try {
+      const response = await fetch(`/api/export-pdf/${projectId}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/pdf" }
+      });
+      
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `Lush_Project_${projectId}_Report.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        alert("Project export downloaded successfully!");
+      } else {
+        throw new Error("Export failed");
+      }
+    } catch (error) {
+      console.error('Failed to export project:', error);
+      alert('Failed to export project. Please try again.');
+    }
   };
 
   // Get current time for display
@@ -912,6 +944,21 @@ Give me a brief insight into potential profitability, risk factors, and recommen
                     )}
                   </div>
                 )}
+
+                {/* Export Button for Investors and Admins */}
+                {(userRole === "admin" || userRole === "investor") && (
+                  <div className="pt-3 border-t border-gray-100">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100"
+                      onClick={() => handleExportProject(project.id)}
+                    >
+                      <FileText className="h-4 w-4 mr-1" />
+                      📤 Export Project Pack
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           ))}
@@ -1152,6 +1199,15 @@ Give me a brief insight into potential profitability, risk factors, and recommen
           </CardContent>
         </Card>
       </div>
+
+      {/* Mobile PWA Footer */}
+      <footer className="mt-12 text-center text-gray-500 text-xs space-y-2">
+        <p className="text-sm">📱 Install this app to your phone via browser menu → "Add to Home Screen"</p>
+        <p className="font-medium">Built for Lush Group • Mobile PWA Ready 🌍</p>
+        {userRole === "investor" && (
+          <p className="text-purple-600 font-medium">Investor Portal Access Enabled</p>
+        )}
+      </footer>
     </div>
   );
 };
