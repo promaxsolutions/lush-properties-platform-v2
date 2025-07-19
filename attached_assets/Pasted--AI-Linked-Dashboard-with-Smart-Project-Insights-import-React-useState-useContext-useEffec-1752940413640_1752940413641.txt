@@ -1,0 +1,105 @@
+// 🔗 AI-Linked Dashboard with Smart Project Insights
+import React, { useState, useContext, useEffect } from "react";
+import { UserContext } from "../context/UserContext";
+import axios from "axios";
+
+const ProjectCard = ({ project }) => {
+  const { role } = useContext(UserContext);
+  const [editing, setEditing] = useState(false);
+  const [name, setName] = useState(project.name);
+  const [deposit, setDeposit] = useState(project.deposit);
+  const [aiTip, setAiTip] = useState(null);
+
+  useEffect(() => {
+    if (!aiTip) fetchAIInsight();
+  }, []);
+
+  const saveChanges = async () => {
+    await axios.put(`/api/projects/${project.id}`, { name, deposit });
+    setEditing(false);
+  };
+
+  const fetchAIInsight = async () => {
+    const prompt = `This is a financial summary of a real estate development project:
+- Land Cost: ${project.landCost}
+- Build Cost: ${project.buildCost}
+- Loan Approved: ${project.loan}
+- Projected Sale Price: ${project.saleEstimate}
+- Current Stage: ${project.stage}
+
+Give me a brief insight into potential profitability and risk.`;
+
+    const res = await axios.post("/api/ai-chat", { prompt });
+    setAiTip(res.data.reply);
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-md p-4 mb-4">
+      <div className="flex justify-between items-center">
+        {editing && role === "admin" ? (
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="border rounded p-1 text-sm"
+          />
+        ) : (
+          <h3 className="text-md font-bold">
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-green-700 hover:underline"
+            >
+              {name}
+            </a>
+          </h3>
+        )}
+        {role === "admin" && (
+          <button onClick={() => (editing ? saveChanges() : setEditing(true))}>
+            {editing ? "💾" : "✏️"}
+          </button>
+        )}
+      </div>
+
+      <div className="text-sm text-gray-600 mt-1">
+        Lender: {project.lender} <br />
+        Stage: {project.stage} <br />
+        Progress: {project.progress}% <br />
+        Loan Approved: ${project.loan.toLocaleString()} <br />
+        Deposit: 
+        {role === "admin" && editing ? (
+          <input
+            type="number"
+            value={deposit}
+            onChange={(e) => setDeposit(e.target.value)}
+            className="border p-1 w-24 text-sm"
+          />
+        ) : (
+          <> ${deposit.toLocaleString()}</>
+        )}<br />
+        Total Spend: ${(project.landCost + project.buildCost).toLocaleString()}<br />
+        Docs Uploaded: {project.docs} <br />
+        Next: {project.action}
+      </div>
+
+      {aiTip && (
+        <div className="mt-2 text-sm text-green-700 font-medium whitespace-pre-wrap">
+          💡 <strong>Insight:</strong> {aiTip}
+        </div>
+      )}
+
+      <div className="mt-3 flex gap-2">
+        <button className="bg-gray-200 text-sm px-3 py-1 rounded">Upload</button>
+        <button className="bg-gray-200 text-sm px-3 py-1 rounded">View Docs</button>
+        <button className="bg-gray-200 text-sm px-3 py-1 rounded">Raise Claim</button>
+        <button onClick={fetchAIInsight} className="bg-green-700 text-white text-sm px-3 py-1 rounded">↻ Refresh AI</button>
+      </div>
+    </div>
+  );
+};
+
+export default ProjectCard;
+
+// 🔁 This version auto-fetches AI tips per project, and updates them live
+// ✅ Powered by OpenAI, gives profit + risk insights using uploaded project data
+// ☁️ Connects to /api/ai-chat backend endpoint

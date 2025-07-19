@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Upload, FileText, DollarSign, Building, TrendingUp, PiggyBank, Target, Edit2, ExternalLink, Lightbulb, Save, X } from "lucide-react";
+import { Upload, FileText, DollarSign, Building, TrendingUp, PiggyBank, Target, Edit2, ExternalLink, Lightbulb, Save, X, RefreshCw } from "lucide-react";
 
 // Mock project data with deposits
 const initialProjects = [
@@ -89,16 +89,26 @@ const LushDashboard = () => {
     setEditingDeposit(0);
   };
 
-  const getAIProfitTip = async (project: any) => {
+  const fetchAIInsight = async (project: any, isRefresh = false) => {
     setLoadingTips(prev => ({ ...prev, [project.id]: true }));
     
     try {
+      const prompt = `This is a financial summary of a real estate development project:
+- Project: ${project.name}
+- Land Cost: $${project.landCost.toLocaleString()}
+- Build Cost: $${project.buildCost.toLocaleString()}
+- Loan Approved: $${project.loanApproved.toLocaleString()}
+- User Deposit: $${project.userDeposit.toLocaleString()}
+- Projected Sale Price: $${(1800000 * (project.id === 1 ? 0.6 : 0.4)).toLocaleString()}
+- Current Stage: ${project.stage}
+- Progress: ${project.progressPercentage}%
+
+Give me a brief insight into potential profitability, risk factors, and recommendations for this stage of development.`;
+
       const response = await fetch("/api/ai-chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          prompt: `What is the estimated profit for this real estate project? Land cost is $${project.landCost.toLocaleString()}, build cost is $${project.buildCost.toLocaleString()}, loan is $${project.loanApproved.toLocaleString()}, user deposit is $${project.userDeposit.toLocaleString()}, and projected sale is $${(1800000 * (project.id === 1 ? 0.6 : 0.4)).toLocaleString()}. Provide a brief analysis.`
-        })
+        body: JSON.stringify({ prompt })
       });
       
       const data = await response.json();
@@ -109,6 +119,16 @@ const LushDashboard = () => {
     
     setLoadingTips(prev => ({ ...prev, [project.id]: false }));
   };
+
+  // Auto-fetch AI insights on component mount
+  useEffect(() => {
+    projects.forEach(project => {
+      // Only fetch if we don't already have an insight for this project
+      if (!aiTips[project.id]) {
+        fetchAIInsight(project);
+      }
+    });
+  }, [projects.length]); // Re-run if projects change
 
   const createGoogleMapsUrl = (address: string) => {
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
@@ -367,14 +387,30 @@ const LushDashboard = () => {
                   </div>
                 </div>
 
-                {/* AI Tip Section */}
-                {aiTips[project.id] && (
+                {/* AI Insight Section */}
+                {(aiTips[project.id] || loadingTips[project.id]) && (
                   <div className="bg-green-50 border border-green-200 rounded-lg p-3">
                     <div className="flex items-start gap-2">
                       <Lightbulb className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <div className="text-sm text-green-800">
-                        <strong>AI Analysis:</strong> {aiTips[project.id]}
+                      <div className="text-sm text-green-800 flex-1">
+                        <strong>AI Insight:</strong>{" "}
+                        {loadingTips[project.id] ? (
+                          <span className="text-gray-600">Analyzing project financials...</span>
+                        ) : (
+                          <span className="whitespace-pre-wrap">{aiTips[project.id]}</span>
+                        )}
                       </div>
+                      {aiTips[project.id] && !loadingTips[project.id] && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => fetchAIInsight(project, true)}
+                          className="h-6 w-6 p-0 text-green-600 hover:text-green-700"
+                          title="Refresh AI analysis"
+                        >
+                          <RefreshCw className="h-3 w-3" />
+                        </Button>
+                      )}
                     </div>
                   </div>
                 )}
@@ -400,12 +436,12 @@ const LushDashboard = () => {
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    onClick={() => getAIProfitTip(project)}
+                    onClick={() => fetchAIInsight(project, true)}
                     disabled={loadingTips[project.id]}
                     className="bg-blue-50 hover:bg-blue-100 border-blue-200"
                   >
-                    <Lightbulb className="h-4 w-4 mr-1" />
-                    {loadingTips[project.id] ? "..." : "AI Tip"}
+                    <RefreshCw className="h-4 w-4 mr-1" />
+                    {loadingTips[project.id] ? "..." : "Refresh AI"}
                   </Button>
                 </div>
               </CardContent>

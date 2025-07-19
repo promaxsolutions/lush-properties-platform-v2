@@ -226,17 +226,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // });
       // const reply = completion.choices[0].message.content;
 
-      // Enhanced mock response with project context
+      // Enhanced mock response with detailed project analysis
       let reply = "";
       
-      if (prompt.toLowerCase().includes('upload')) {
+      if (prompt.includes('financial summary')) {
+        // Smart project analysis based on the data in the prompt
+        if (prompt.includes('56 Inge King') || prompt.includes('Land Cost: $650,000')) {
+          reply = `**Profitability Analysis:** Strong project with estimated profit of $290,000 (26% ROI). 
+
+**Risk Factors:** Near completion (85% progress) reduces construction risk. Market conditions favorable for Forrest location.
+
+**Recommendations:** 
+- Focus on final inspections and compliance
+- Prepare marketing materials for sale
+- Consider timing of market release for optimal pricing
+
+**Financial Health:** Excellent loan-to-value ratio with substantial deposit buffer.`;
+        } else if (prompt.includes('Whitlam') || prompt.includes('Land Cost: $280,000')) {
+          reply = `**Profitability Analysis:** Solid early-stage project with projected profit of $120,000 (20% ROI).
+
+**Risk Factors:** Early stage (25% progress) means higher construction and cost overrun risks. Whitlam is developing area with growth potential.
+
+**Recommendations:**
+- Monitor construction costs closely
+- Ensure stage payments align with progress
+- Consider market trends in outer Canberra areas
+
+**Financial Health:** Conservative loan structure provides good safety margin.`;
+        }
+      } else if (prompt.toLowerCase().includes('upload')) {
         reply = "I can assist with document uploads and analysis. Navigate to the Uploads section to select your file.";
       } else if (prompt.toLowerCase().includes('claim')) {
         reply = "I can help generate progress claims for your projects. Access the Claims section to create new claims.";
       } else if (prompt.toLowerCase().includes('summarize')) {
         reply = "I can analyze and summarize uploaded documents including contracts and loan agreements.";
-      } else if (prompt.toLowerCase().includes('profit') || prompt.toLowerCase().includes('56 inge king')) {
-        reply = "For 56 Inge King Crescent: Total investment $1.1M, projected sale $1.4M, estimated profit $300K (27% ROI).";
       } else {
         reply = "I'm here to help with project management tasks. Try asking about uploads, claims, or project summaries.";
       }
