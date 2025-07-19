@@ -1,0 +1,95 @@
+// 🎯 LushDashboard – Role-Cleaned Views & Decluttered UI
+import React, { useState, useContext } from "react";
+import { UserContext } from "../context/UserContext";
+
+export default function LushDashboard() {
+  const { email, firstName, role } = useContext(UserContext);
+
+  const renderAdminView = () => (
+    <>
+      <section className="mb-6">
+        <h2 className="text-lg font-semibold">🤖 AI Workflow Insights</h2>
+        <details className="bg-gray-50 border p-3 rounded">
+          <summary className="cursor-pointer text-sm">View AI suggestions</summary>
+          <ul className="list-disc ml-5 text-sm mt-2">
+            <li>💸 Best lender: ORDE (saves $22K)</li>
+            <li>📈 Fundability: 8.7/10 – investor ready</li>
+            <li>🧱 Builder MacHomes rated 4.7</li>
+          </ul>
+        </details>
+      </section>
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="p-4 bg-white shadow rounded">📁 View All Projects</div>
+        <div className="p-4 bg-white shadow rounded">📤 Manage Claims</div>
+        <div className="p-4 bg-white shadow rounded">📄 Upload Contracts</div>
+        <div className="p-4 bg-white shadow rounded">📊 Full Financial Charts</div>
+      </section>
+    </>
+  );
+
+  const renderBuilderView = () => (
+    <>
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="p-4 bg-white shadow rounded">🧱 Your Assigned Projects</div>
+        <div className="p-4 bg-white shadow rounded">📸 Upload Progress + Receipts</div>
+        <div className="p-4 bg-white shadow rounded">🔔 Timeline & Reminders</div>
+      </section>
+    </>
+  );
+
+  const renderClientView = () => (
+    <>
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="p-4 bg-white shadow rounded">🏠 Your Build Progress</div>
+        <div className="p-4 bg-white shadow rounded">🔁 Upgrade Requests</div>
+        <div className="p-4 bg-white shadow rounded">💳 Loan Drawdown Timeline</div>
+      </section>
+    </>
+  );
+
+  const renderInvestorView = () => (
+    <>
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="p-4 bg-white shadow rounded">📈 Fundability Scores</div>
+        <div className="p-4 bg-white shadow rounded">📥 Investment Pack</div>
+        <div className="p-4 bg-white shadow rounded">💼 Upload Funding Proposal</div>
+      </section>
+    </>
+  );
+
+  const renderView = () => {
+    switch (role) {
+      case "admin": return renderAdminView();
+      case "builder": return renderBuilderView();
+      case "client": return renderClientView();
+      case "investor": return renderInvestorView();
+      default: return <p className="text-red-500">Unknown role</p>;
+    }
+  };
+
+  return (
+    <div className="p-6">
+      <header className="flex justify-between items-center mb-4">
+        <div>
+          <h1 className="text-2xl font-bold">Welcome, {firstName}</h1>
+          <p className="text-gray-600 text-sm">Role: {role}</p>
+        </div>
+        <select
+          value={role}
+          onChange={(e) => window.location.reload()} // For now force refresh for role test
+          className="p-2 border text-sm">
+          <option value="admin">Admin</option>
+          <option value="builder">Builder</option>
+          <option value="client">Client</option>
+          <option value="investor">Investor</option>
+        </select>
+      </header>
+
+      {renderView()}
+
+      <footer className="mt-10 text-center text-xs text-gray-400 pt-6 border-t">
+        Lush OS — Dashboard view filtered by user role
+      </footer>
+    </div>
+  );
+}

@@ -64,6 +64,11 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
       icon: <Brain className="h-5 w-5" /> 
     },
     { 
+      label: "Role Dashboard", 
+      path: "/role-dashboard", 
+      icon: <User className="h-5 w-5" /> 
+    },
+    { 
       label: "Settings", 
       path: "/settings", 
       icon: <Settings className="h-5 w-5" /> 

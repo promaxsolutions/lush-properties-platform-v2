@@ -21,6 +21,7 @@ import BuilderPortal from "./components/BuilderPortal";
 import ClientUpgradePanel from "./components/ClientUpgradePanel";
 import HeatmapVisualizer from "./components/HeatmapVisualizer";
 import AIWorkflowEngine from "./components/AIWorkflowEngine";
+import RoleBasedDashboard from "./components/RoleBasedDashboard";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -64,6 +65,7 @@ function App() {
                         <Route path="client-upgrades" element={<ClientUpgradePanel />} />
                         <Route path="heatmap" element={<HeatmapVisualizer />} />
                         <Route path="ai-workflows" element={<AIWorkflowEngine />} />
+                        <Route path="role-dashboard" element={<RoleBasedDashboard />} />
                         <Route path="*" element={<Navigate to="/dashboard" />} />
                       </Routes>
                       <AIChatWidget />
