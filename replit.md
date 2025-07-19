@@ -110,11 +110,17 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- Enhanced project cards with role-based editing capabilities for admin users
+- Added inline editing for project names and deposit amounts with save/cancel functionality
+- Integrated AI profit analysis feature with contextual project data
+- Implemented clickable Google Maps links for all project addresses
+- Added user deposit tracking with updated net equity calculations
+- Created visual AI tip display with green highlighting and lightbulb icons
 - Added floating AI chat widget with intelligent project assistance
 - Created expandable chat interface with example prompts and conversation history
 - Integrated AI assistant for project management tasks (uploads, claims, summaries)
 - Upgraded to premium billionaire-grade dashboard with comprehensive financial overview
-- Added 5 key financial metrics: Total Investment, Approved Loan, Projected Sales, Claims Raised, Net Equity
+- Added 6 key financial metrics including Total Deposits ($230K)
 - Integrated dual chart system: project stage progress bar chart and cost breakdown pie chart
 - Implemented action reminders system with upcoming tasks and due dates
 - Created modern sidebar navigation with role-based access control

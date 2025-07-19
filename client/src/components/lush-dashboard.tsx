@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Upload, FileText, DollarSign, Building, TrendingUp, PiggyBank, Target, Edit2, ExternalLink } from "lucide-react";
+import { Upload, FileText, DollarSign, Building, TrendingUp, PiggyBank, Target, Edit2, ExternalLink, Lightbulb, Save, X } from "lucide-react";
 
 // Mock project data with deposits
 const initialProjects = [
@@ -42,6 +42,12 @@ const LushDashboard = () => {
   const [projects, setProjects] = useState(initialProjects);
   const [editingProjectId, setEditingProjectId] = useState<number | null>(null);
   const [editingName, setEditingName] = useState("");
+  const [editingDeposit, setEditingDeposit] = useState(0);
+  const [aiTips, setAiTips] = useState<Record<number, string>>({});
+  const [loadingTips, setLoadingTips] = useState<Record<number, boolean>>({});
+  
+  // Mock user role - in real app this would come from auth context
+  const userRole = "admin"; // Could be "admin", "broker", "solicitor"
 
   // Calculate global summary from projects including deposits
   const globalSummary = {
@@ -53,24 +59,55 @@ const LushDashboard = () => {
     netEquity: 1800000 - projects.reduce((sum, p) => sum + p.loanApproved, 0) + projects.reduce((sum, p) => sum + p.userDeposit, 0)
   };
 
-  const handleNameEdit = (projectId: number, currentName: string) => {
+  const handleEdit = (projectId: number, currentName: string, currentDeposit: number) => {
     setEditingProjectId(projectId);
     setEditingName(currentName);
+    setEditingDeposit(currentDeposit);
   };
 
-  const handleNameSave = (projectId: number) => {
+  const handleSave = async (projectId: number) => {
+    // In real app, this would make API call
+    // await fetch(`/api/projects/${projectId}`, {
+    //   method: 'PUT',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ name: editingName, userDeposit: editingDeposit })
+    // });
+
     setProjects(prev => 
       prev.map(p => 
-        p.id === projectId ? { ...p, name: editingName } : p
+        p.id === projectId ? { ...p, name: editingName, userDeposit: editingDeposit } : p
       )
     );
     setEditingProjectId(null);
     setEditingName("");
+    setEditingDeposit(0);
   };
 
-  const handleNameCancel = () => {
+  const handleCancel = () => {
     setEditingProjectId(null);
     setEditingName("");
+    setEditingDeposit(0);
+  };
+
+  const getAIProfitTip = async (project: any) => {
+    setLoadingTips(prev => ({ ...prev, [project.id]: true }));
+    
+    try {
+      const response = await fetch("/api/ai-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          prompt: `What is the estimated profit for this real estate project? Land cost is $${project.landCost.toLocaleString()}, build cost is $${project.buildCost.toLocaleString()}, loan is $${project.loanApproved.toLocaleString()}, user deposit is $${project.userDeposit.toLocaleString()}, and projected sale is $${(1800000 * (project.id === 1 ? 0.6 : 0.4)).toLocaleString()}. Provide a brief analysis.`
+        })
+      });
+      
+      const data = await response.json();
+      setAiTips(prev => ({ ...prev, [project.id]: data.reply }));
+    } catch (error) {
+      setAiTips(prev => ({ ...prev, [project.id]: "Unable to get AI analysis at this time." }));
+    }
+    
+    setLoadingTips(prev => ({ ...prev, [project.id]: false }));
   };
 
   const createGoogleMapsUrl = (address: string) => {
@@ -188,39 +225,42 @@ const LushDashboard = () => {
                         value={editingName}
                         onChange={(e) => setEditingName(e.target.value)}
                         className="text-lg font-semibold"
+                        placeholder="Project name"
                         onKeyDown={(e) => {
-                          if (e.key === 'Enter') handleNameSave(project.id);
-                          if (e.key === 'Escape') handleNameCancel();
+                          if (e.key === 'Enter') handleSave(project.id);
+                          if (e.key === 'Escape') handleCancel();
                         }}
                         autoFocus
                       />
                       <Button
                         size="sm"
-                        onClick={() => handleNameSave(project.id)}
-                        className="h-8 px-2"
+                        onClick={() => handleSave(project.id)}
+                        className="h-8 px-2 bg-green-600 hover:bg-green-700"
                       >
-                        Save
+                        <Save className="h-3 w-3" />
                       </Button>
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={handleNameCancel}
+                        onClick={handleCancel}
                         className="h-8 px-2"
                       >
-                        Cancel
+                        <X className="h-3 w-3" />
                       </Button>
                     </div>
                   ) : (
                     <>
                       <CardTitle className="text-lg flex-1">{project.name}</CardTitle>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleNameEdit(project.id, project.name)}
-                        className="h-8 w-8 p-0"
-                      >
-                        <Edit2 className="h-4 w-4" />
-                      </Button>
+                      {userRole === "admin" && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleEdit(project.id, project.name, project.userDeposit)}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
+                      )}
                     </>
                   )}
                 </div>
@@ -257,9 +297,19 @@ const LushDashboard = () => {
                   </div>
                   <div>
                     <div className="font-medium text-gray-700">User Deposit</div>
-                    <div className="text-yellow-600 font-semibold">
-                      ${project.userDeposit.toLocaleString()}
-                    </div>
+                    {editingProjectId === project.id && userRole === "admin" ? (
+                      <Input
+                        type="number"
+                        value={editingDeposit}
+                        onChange={(e) => setEditingDeposit(Number(e.target.value))}
+                        className="h-8 text-sm w-full"
+                        placeholder="Deposit amount"
+                      />
+                    ) : (
+                      <div className="text-yellow-600 font-semibold">
+                        ${project.userDeposit.toLocaleString()}
+                      </div>
+                    )}
                   </div>
                   <div>
                     <div className="font-medium text-gray-700">Land + Build</div>
@@ -317,6 +367,18 @@ const LushDashboard = () => {
                   </div>
                 </div>
 
+                {/* AI Tip Section */}
+                {aiTips[project.id] && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                    <div className="flex items-start gap-2">
+                      <Lightbulb className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                      <div className="text-sm text-green-800">
+                        <strong>AI Analysis:</strong> {aiTips[project.id]}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Action Buttons */}
                 <div className="flex gap-2 pt-2">
                   <Button variant="outline" size="sm" className="flex-1">
@@ -334,6 +396,16 @@ const LushDashboard = () => {
                   >
                     <DollarSign className="h-4 w-4 mr-1" />
                     Raise Claim
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => getAIProfitTip(project)}
+                    disabled={loadingTips[project.id]}
+                    className="bg-blue-50 hover:bg-blue-100 border-blue-200"
+                  >
+                    <Lightbulb className="h-4 w-4 mr-1" />
+                    {loadingTips[project.id] ? "..." : "AI Tip"}
                   </Button>
                 </div>
               </CardContent>

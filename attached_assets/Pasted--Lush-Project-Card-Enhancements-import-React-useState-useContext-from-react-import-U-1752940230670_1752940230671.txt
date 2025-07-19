@@ -1,0 +1,91 @@
+// 🔧 Lush Project Card Enhancements
+import React, { useState, useContext } from "react";
+import { UserContext } from "../context/UserContext"; // assumes role data is here
+import axios from "axios";
+
+const ProjectCard = ({ project }) => {
+  const { role } = useContext(UserContext);
+  const [editing, setEditing] = useState(false);
+  const [name, setName] = useState(project.name);
+  const [deposit, setDeposit] = useState(project.deposit);
+  const [aiTip, setAiTip] = useState(null);
+
+  const saveChanges = async () => {
+    await axios.put(`/api/projects/${project.id}`, { name, deposit });
+    setEditing(false);
+  };
+
+  const getAIProfitTip = async () => {
+    const res = await axios.post("/api/ai-chat", {
+      prompt: `What is the estimated profit for this real estate project? Land cost is ${project.landCost}, build cost is ${project.buildCost}, loan is ${project.loan}, projected sale is ${project.saleEstimate}`
+    });
+    setAiTip(res.data.reply);
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-md p-4 mb-4">
+      <div className="flex justify-between items-center">
+        {editing && role === "admin" ? (
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="border rounded p-1 text-sm"
+          />
+        ) : (
+          <h3 className="text-md font-bold">
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-green-700 hover:underline"
+            >
+              {name}
+            </a>
+          </h3>
+        )}
+        {role === "admin" && (
+          <button onClick={() => (editing ? saveChanges() : setEditing(true))}>
+            {editing ? "💾" : "✏️"}
+          </button>
+        )}
+      </div>
+
+      <div className="text-sm text-gray-600 mt-1">
+        Lender: {project.lender} <br />
+        Stage: {project.stage} <br />
+        Progress: {project.progress}% <br />
+        Loan Approved: ${project.loan.toLocaleString()} <br />
+        Deposit: 
+        {role === "admin" && editing ? (
+          <input
+            type="number"
+            value={deposit}
+            onChange={(e) => setDeposit(e.target.value)}
+            className="border p-1 w-24 text-sm"
+          />
+        ) : (
+          <> ${deposit.toLocaleString()}</>
+        )}<br />
+        Total Spend: ${(project.landCost + project.buildCost).toLocaleString()}<br />
+        Docs Uploaded: {project.docs} <br />
+        Next: {project.action}
+      </div>
+
+      {aiTip && <div className="mt-2 text-sm text-green-700 font-medium">💡 {aiTip}</div>}
+
+      <div className="mt-3 flex gap-2">
+        <button className="bg-gray-200 text-sm px-3 py-1 rounded">Upload</button>
+        <button className="bg-gray-200 text-sm px-3 py-1 rounded">View Docs</button>
+        <button className="bg-gray-200 text-sm px-3 py-1 rounded">Raise Claim</button>
+        <button onClick={getAIProfitTip} className="bg-green-700 text-white text-sm px-3 py-1 rounded">AI Tip</button>
+      </div>
+    </div>
+  );
+};
+
+export default ProjectCard;
+
+// 📌 Backend notes:
+// /api/projects/:id should handle PUT to save name + deposit
+// /api/ai-chat handles profit logic via OpenAI
+// UserContext should provide role ('admin', 'broker', etc.)
