@@ -965,29 +965,37 @@ Give me a brief insight into potential profitability, risk factors, and recommen
                   </div>
                 )}
 
-                {/* Action Buttons */}
-                <div className="flex gap-2 pt-2">
-                  <Button variant="outline" size="sm" className="flex-1">
+                {/* Mobile-Optimized Action Buttons */}
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <Button variant="outline" size="sm" className="flex-1 min-w-0">
                     <Upload className="h-4 w-4 mr-1" />
-                    Upload
+                    <span className="hidden sm:inline">Upload</span>
+                    <span className="sm:hidden">📤</span>
                   </Button>
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <FileText className="h-4 w-4 mr-1" />
-                    View Docs
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => handleMapClick(project)}
+                    className="flex-1 min-w-0 text-blue-600 hover:text-blue-700"
+                  >
+                    <span className="mr-1">📍</span>
+                    <span className="hidden sm:inline">View Map</span>
+                    <span className="sm:hidden">Map</span>
                   </Button>
                   <Button 
                     variant="outline" 
                     size="sm" 
                     onClick={() => fetchAIInsight(project, true)}
                     disabled={loadingTips[project.id]}
-                    className="bg-blue-50 hover:bg-blue-100 border-blue-200"
+                    className="bg-blue-50 hover:bg-blue-100 border-blue-200 flex-1 min-w-0"
                   >
                     <RefreshCw className="h-4 w-4 mr-1" />
-                    {loadingTips[project.id] ? "..." : "Refresh AI"}
+                    <span className="hidden sm:inline">{loadingTips[project.id] ? "..." : "Refresh AI"}</span>
+                    <span className="sm:hidden">🤖</span>
                   </Button>
                 </div>
 
-                {/* Role-Based Action Buttons */}
+                {/* Mobile-Optimized Role-Based Action Buttons */}
                 {userRole !== "accountant" && (
                   <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
                     {(userRole === "admin" || userRole === "broker") && (
@@ -995,29 +1003,41 @@ Give me a brief insight into potential profitability, risk factors, and recommen
                         <Button 
                           variant="default" 
                           size="sm" 
-                          className="flex-1 bg-indigo-600 hover:bg-indigo-700"
-                          onClick={() => handleRaiseClaim(project)}
+                          className="flex-1 bg-indigo-600 hover:bg-indigo-700 min-w-0"
+                          onClick={() => {
+                            handleRaiseClaim(project);
+                            notifyUser("💰 Claim Processing", "Your claim is being submitted");
+                          }}
                         >
                           <DollarSign className="h-4 w-4 mr-1" />
-                          Raise Claim
+                          <span className="hidden sm:inline">Raise Claim</span>
+                          <span className="sm:hidden">💰</span>
                         </Button>
                         <Button 
                           variant="default" 
                           size="sm" 
-                          className="flex-1 bg-rose-600 hover:bg-rose-700"
-                          onClick={() => sendAIReminder(project)}
+                          className="flex-1 bg-rose-600 hover:bg-rose-700 min-w-0"
+                          onClick={() => {
+                            sendAIReminder(project);
+                            notifyUser("📧 Reminder Sent", "AI reminder email has been generated");
+                          }}
                         >
                           <Mail className="h-4 w-4 mr-1" />
-                          AI Reminder
+                          <span className="hidden sm:inline">AI Reminder</span>
+                          <span className="sm:hidden">📧</span>
                         </Button>
                         <Button 
                           variant="default" 
                           size="sm" 
-                          className="flex-1 bg-green-600 hover:bg-green-700"
-                          onClick={() => sendAINextStep(project)}
+                          className="flex-1 bg-green-600 hover:bg-green-700 min-w-0"
+                          onClick={() => {
+                            sendAINextStep(project);
+                            notifyUser("💡 Next Step Generated", "AI has provided next step recommendations");
+                          }}
                         >
                           <Lightbulb className="h-4 w-4 mr-1" />
-                          Next Step
+                          <span className="hidden sm:inline">Next Step</span>
+                          <span className="sm:hidden">💡</span>
                         </Button>
                       </>
                     )}
