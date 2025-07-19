@@ -2,7 +2,31 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Upload, FileText, DollarSign, Building, TrendingUp, PiggyBank, Target, Edit2, ExternalLink, Lightbulb, Save, X, RefreshCw } from "lucide-react";
+import { Upload, FileText, DollarSign, Building, TrendingUp, PiggyBank, Target, Edit2, ExternalLink, Lightbulb, Save, X, RefreshCw, BarChart3, TrendingUp as TrendIcon } from "lucide-react";
+import { Bar, Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+// Register Chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 // Mock project data with deposits
 const initialProjects = [
@@ -130,8 +154,114 @@ Give me a brief insight into potential profitability, risk factors, and recommen
     });
   }, [projects.length]); // Re-run if projects change
 
+  // Chart data configuration
+  const equityChartData = {
+    labels: projects.map(p => p.name.split(' ')[0] + '...'), // Shortened names for charts
+    datasets: [
+      {
+        label: "Loan Approved",
+        data: projects.map(p => p.loanApproved),
+        backgroundColor: "#10b981",
+        borderRadius: 4,
+      },
+      {
+        label: "Total Investment",
+        data: projects.map(p => p.landCost + p.buildCost + p.userDeposit),
+        backgroundColor: "#f59e0b",
+        borderRadius: 4,
+      },
+      {
+        label: "Projected Sale",
+        data: projects.map(p => (1800000 * (p.id === 1 ? 0.6 : 0.4))),
+        backgroundColor: "#3b82f6",
+        borderRadius: 4,
+      }
+    ]
+  };
+
+  const progressTimelineData = {
+    labels: projects.map(p => p.name.split(' ')[0] + '...'),
+    datasets: [
+      {
+        label: "Progress %",
+        data: projects.map(p => p.progressPercentage),
+        borderColor: "#10b981",
+        backgroundColor: "rgba(16, 185, 129, 0.1)",
+        tension: 0.4,
+        pointBackgroundColor: "#10b981",
+        pointBorderColor: "#ffffff",
+        pointBorderWidth: 2,
+        pointRadius: 6,
+      }
+    ]
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: function(value: any) {
+            return '$' + value.toLocaleString();
+          }
+        }
+      }
+    },
+  };
+
+  const timelineOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 100,
+        ticks: {
+          callback: function(value: any) {
+            return value + '%';
+          }
+        }
+      }
+    },
+  };
+
   const createGoogleMapsUrl = (address: string) => {
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+  };
+
+  const handleRaiseClaim = async (project: any) => {
+    // In real implementation, this would navigate to claims page or open modal
+    // For now, simulate claim creation
+    try {
+      const claimData = {
+        projectId: project.id,
+        projectName: project.name,
+        stage: project.stage,
+        amount: Math.round(project.loanApproved * 0.15), // 15% of loan for this stage
+        lender: project.lender,
+        progress: project.progressPercentage
+      };
+
+      // Mock API call - in real app this would create the claim
+      console.log('Creating claim:', claimData);
+      
+      // Show success feedback (could be replaced with toast notification)
+      alert(`Progress claim initiated for ${project.name}\nStage: ${project.stage}\nAmount: $${claimData.amount.toLocaleString()}`);
+      
+    } catch (error) {
+      console.error('Failed to create claim:', error);
+      alert('Failed to create progress claim. Please try again.');
+    }
   };
   return (
     <div className="p-6 space-y-6">
@@ -227,6 +357,39 @@ Give me a brief insight into potential profitability, risk factors, and recommen
               ${globalSummary.netEquity.toLocaleString()}
             </div>
             <div className="text-xs text-indigo-600 mt-1">Incl. Deposits</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* Equity & Claims Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-blue-600" />
+              Project Equity & Claims Overview
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64">
+              <Bar data={equityChartData} options={chartOptions} />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Progress Timeline */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendIcon className="h-5 w-5 text-green-600" />
+              Project Progress Timeline
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64">
+              <Line data={progressTimelineData} options={timelineOptions} />
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -429,6 +592,7 @@ Give me a brief insight into potential profitability, risk factors, and recommen
                     variant="default" 
                     size="sm" 
                     className="flex-1 bg-green-600 hover:bg-green-700"
+                    onClick={() => handleRaiseClaim(project)}
                   >
                     <DollarSign className="h-4 w-4 mr-1" />
                     Raise Claim

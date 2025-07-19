@@ -110,9 +110,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- Added interactive Chart.js visualizations with equity overview and progress timeline
+- Implemented functional "Raise Claim" buttons with project-specific claim generation
+- Enhanced dashboard with dual chart layout showing financial comparisons and progress trends
+- Integrated Chart.js with responsive bar and line charts for comprehensive project analysis
 - Enhanced project cards with role-based editing capabilities for admin users
 - Added inline editing for project names and deposit amounts with save/cancel functionality
-- Integrated AI profit analysis feature with contextual project data
+- Integrated AI profit analysis feature with contextual project data and auto-loading insights
 - Implemented clickable Google Maps links for all project addresses
 - Added user deposit tracking with updated net equity calculations
 - Created visual AI tip display with green highlighting and lightbulb icons
@@ -121,8 +125,6 @@ Preferred communication style: Simple, everyday language.
 - Integrated AI assistant for project management tasks (uploads, claims, summaries)
 - Upgraded to premium billionaire-grade dashboard with comprehensive financial overview
 - Added 6 key financial metrics including Total Deposits ($230K)
-- Integrated dual chart system: project stage progress bar chart and cost breakdown pie chart
-- Implemented action reminders system with upcoming tasks and due dates
 - Created modern sidebar navigation with role-based access control
 - Added Settings page with role-specific tools (admin, broker, solicitor)
 - Implemented comprehensive authentication system with mock Firebase

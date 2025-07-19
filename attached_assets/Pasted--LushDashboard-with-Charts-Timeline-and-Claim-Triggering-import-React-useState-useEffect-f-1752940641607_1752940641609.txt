@@ -1,0 +1,117 @@
+// LushDashboard with Charts, Timeline, and Claim Triggering
+import React, { useState, useEffect } from "react";
+import ProjectCard from "./ProjectCard";
+import { Bar, Line } from "react-chartjs-2";
+import "chart.js/auto";
+import axios from "axios";
+
+const LushDashboard = () => {
+  const [projects, setProjects] = useState([]);
+  const [globalSummary, setGlobalSummary] = useState({});
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    const res = await axios.get("/api/projects");
+    const data = res.data;
+    setProjects(data);
+    const totals = calculateGlobalSummary(data);
+    setGlobalSummary(totals);
+  };
+
+  const calculateGlobalSummary = (projects) => {
+    let loan = 0,
+      sales = 0,
+      cost = 0,
+      equity = 0;
+    projects.forEach((p) => {
+      loan += p.loan;
+      sales += p.saleEstimate;
+      cost += p.landCost + p.buildCost;
+      equity += p.saleEstimate - (p.loan + (p.deposit || 0));
+    });
+    return { loan, sales, cost, equity };
+  };
+
+  const chartData = {
+    labels: projects.map((p) => p.name),
+    datasets: [
+      {
+        label: "Loan",
+        data: projects.map((p) => p.loan),
+        backgroundColor: "#a3e635"
+      },
+      {
+        label: "Total Spend (Land+Build+Deposit)",
+        data: projects.map((p) => p.landCost + p.buildCost + (p.deposit || 0)),
+        backgroundColor: "#facc15"
+      },
+      {
+        label: "Projected Sale",
+        data: projects.map((p) => p.saleEstimate),
+        backgroundColor: "#38bdf8"
+      }
+    ]
+  };
+
+  const timelineData = {
+    labels: projects.map((p) => p.name),
+    datasets: [
+      {
+        label: "Progress %",
+        data: projects.map((p) => p.progress),
+        borderColor: "#10b981",
+        tension: 0.4
+      }
+    ]
+  };
+
+  return (
+    <div className="p-6">
+      <h2 className="text-xl font-bold mb-4">🏢 Lush Properties Dashboard</h2>
+
+      {/* Global Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <SummaryCard label="Loan Approved" value={globalSummary.loan} color="bg-green-100" />
+        <SummaryCard label="Total Spend" value={globalSummary.cost} color="bg-yellow-100" />
+        <SummaryCard label="Projected Sales" value={globalSummary.sales} color="bg-blue-100" />
+        <SummaryCard label="Net Equity" value={globalSummary.equity} color="bg-gray-100" />
+      </div>
+
+      {/* Equity & Claims Chart */}
+      <div className="bg-white rounded shadow p-4 mb-6">
+        <h4 className="text-md font-semibold mb-2">📊 Project Equity & Claims Overview</h4>
+        <Bar data={chartData} />
+      </div>
+
+      {/* Timeline */}
+      <div className="bg-white rounded shadow p-4 mb-6">
+        <h4 className="text-md font-semibold mb-2">📈 Project Progress Timeline</h4>
+        <Line data={timelineData} />
+      </div>
+
+      {/* Projects */}
+      <div className="grid md:grid-cols-2 gap-4">
+        {projects.map((proj) => (
+          <ProjectCard key={proj.id} project={proj} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const SummaryCard = ({ label, value, color }) => (
+  <div className={`rounded p-4 ${color}`}>
+    <h4 className="text-sm text-gray-600">{label}</h4>
+    <p className="text-lg font-bold">${value.toLocaleString()}</p>
+  </div>
+);
+
+export default LushDashboard;
+
+// 🧾 To implement progress claim logic:
+// Inside ProjectCard.jsx → add button: "Raise Claim"
+// Trigger backend to create lender-specific template with project ID
+// Save claim summary or download PDF version
