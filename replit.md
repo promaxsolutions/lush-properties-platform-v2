@@ -2,7 +2,7 @@
 
 ## Overview
 
-ProjectFlow is a modern full-stack web application for project management and tracking. It features a React frontend with TypeScript, an Express.js backend, PostgreSQL database with Drizzle ORM, and a comprehensive UI built with shadcn/ui components. The application allows users to manage projects with financial tracking, file uploads, and real-time dashboard analytics.
+ProjectFlow is a modern full-stack web application for project management and tracking. It features a React frontend with JavaScript and Tailwind CSS, a Node.js/Express backend, MongoDB database with Mongoose ODM. The application allows users to manage projects with financial tracking and real-time dashboard analytics. The project has been restructured to use a traditional frontend/backend folder architecture with MongoDB for data persistence.
 
 ## User Preferences
 
@@ -11,35 +11,37 @@ Preferred communication style: Simple, everyday language.
 ## System Architecture
 
 ### Frontend Architecture
-- **Framework**: React 18 with TypeScript
-- **Build Tool**: Vite for fast development and optimized builds
-- **Routing**: Wouter for lightweight client-side routing
-- **State Management**: TanStack React Query for server state management
-- **UI Framework**: shadcn/ui components built on Radix UI primitives
-- **Styling**: Tailwind CSS with CSS variables for theming
-- **Form Handling**: React Hook Form with Zod validation
+- **Framework**: React 18 with JavaScript
+- **Build Tool**: Create React App (react-scripts)
+- **Routing**: Single page dashboard application
+- **State Management**: React useState and useEffect hooks
+- **UI Framework**: Custom components with Tailwind CSS
+- **Styling**: Tailwind CSS utility classes
+- **Form Handling**: Standard React form handling
 
 ### Backend Architecture
 - **Runtime**: Node.js with Express.js framework
-- **Language**: TypeScript with ES modules
-- **API Design**: RESTful API endpoints under `/api/*`
-- **File Handling**: Multer for multipart file uploads
-- **Error Handling**: Centralized error middleware with proper HTTP status codes
+- **Language**: JavaScript with CommonJS modules
+- **API Design**: RESTful API endpoints (to be implemented)
+- **File Handling**: Multer for file uploads (to be configured)
+- **Error Handling**: Basic Express error handling
 
 ### Data Storage
-- **Database**: PostgreSQL (configured for Neon Database)
-- **ORM**: Drizzle ORM with type-safe queries
-- **Schema Management**: Drizzle Kit for migrations
-- **Connection**: @neondatabase/serverless for serverless PostgreSQL connections
-- **Fallback Storage**: In-memory storage implementation for development
+- **Database**: MongoDB (connection to be configured)
+- **ODM**: Mongoose for object document mapping
+- **Schema Management**: Mongoose schemas for data validation
+- **Connection**: Standard MongoDB connection via mongoose
+- **Models**: Company, Project, and Transaction schemas defined
 
 ## Key Components
 
 ### Database Schema
-- **Users Table**: Authentication and user management
-  - Fields: id, username, password
-- **Projects Table**: Core project data with financial tracking
-  - Fields: id, name, stage, loanApproved, drawn, cashSpent, outstanding, entityId, files
+- **Company Model**: Company information and details
+  - Fields: name, abn, email, bankAccount, parentCompany
+- **Project Model**: Core project data with financial tracking
+  - Fields: projectId, stage, amount, lenderTemplate, status
+- **Transaction Model**: Financial transaction records
+  - Fields: projectId, type, amount, paidVia, reference, receipt
 
 ### API Endpoints
 - `GET /api/projects` - Retrieve all projects
