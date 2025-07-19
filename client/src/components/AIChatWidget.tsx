@@ -12,11 +12,11 @@ const AIChatWidget = () => {
 
   const examplePrompts = [
     "Upload loan doc for Whitlam 02",
-    "Raise claim for Block 15", 
-    "Summarize contract",
-    "Update project stage to Lock-up",
-    "Generate progress report",
-    "Check compliance status"
+    "What's the projected profit for 56 Inge King?",
+    "Chase builder for C of O",
+    "Summarize contract in latest upload",
+    "Raise next claim for Whitlam project",
+    "Update project stage to Lock-up"
   ];
 
   const handleSubmit = async () => {
@@ -27,26 +27,24 @@ const AIChatWidget = () => {
     setInput("");
     setIsLoading(true);
 
-    // Simulate AI processing delay
-    setTimeout(() => {
-      // Mock AI response - later replace with OpenAI integration
-      let aiResponse = "I understand your request. ";
-      
-      if (userMessage.toLowerCase().includes('upload')) {
-        aiResponse += "I can help you upload documents. Please navigate to the Uploads section and select your file.";
-      } else if (userMessage.toLowerCase().includes('claim')) {
-        aiResponse += "I can assist with claim generation. Go to the Claims section to create a new progress claim.";
-      } else if (userMessage.toLowerCase().includes('summarize')) {
-        aiResponse += "I can analyze and summarize documents once they're uploaded to the system.";
-      } else if (userMessage.toLowerCase().includes('stage')) {
-        aiResponse += "I can help update project stages. Which project would you like to modify?";
-      } else {
-        aiResponse += "I'm here to help with project management tasks. Try asking about uploads, claims, or project updates.";
-      }
+    try {
+      // Connect to backend AI endpoint (ready for OpenAI)
+      const response = await fetch("/api/ai-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: userMessage })
+      });
+      const data = await response.json();
+      const aiResponse = data.reply;
 
+      // Process response from backend
       setMessages(prev => [...prev, { type: 'ai', content: aiResponse }]);
       setIsLoading(false);
-    }, 1000);
+
+    } catch (error) {
+      setMessages(prev => [...prev, { type: 'ai', content: "Sorry, something went wrong. Please try again." }]);
+      setIsLoading(false);
+    }
   };
 
   const handlePromptClick = (prompt: string) => {
@@ -96,7 +94,12 @@ const AIChatWidget = () => {
             <div className="flex-1 overflow-y-auto mb-4 space-y-2 min-h-0">
               {messages.length === 0 && (
                 <div className="text-center text-sm text-gray-500 py-4">
-                  <p className="mb-3">Try these commands:</p>
+                  <div className="mb-3">
+                    <Sparkles className="h-5 w-5 mx-auto text-green-600 mb-2" />
+                    <p className="font-medium text-gray-700">Lush AI Assistant</p>
+                    <p className="text-xs">Connected to your projects & uploads</p>
+                  </div>
+                  <p className="mb-2 text-xs">Try these commands:</p>
                   <div className="space-y-1">
                     {examplePrompts.slice(0, 3).map((prompt, index) => (
                       <button

@@ -1,0 +1,76 @@
+// Updated AIChatWidget.jsx — now connected to uploads + OpenAI
+import React, { useState } from "react";
+import axios from "axios"; // For API calls
+
+const examplePrompts = [
+  "Upload loan doc for Whitlam 02",
+  "What’s the projected profit for 56 Inge King?",
+  "Chase builder for C of O",
+  "Summarize contract in latest upload",
+  "Raise next claim for Whitlam project"
+];
+
+const AIChatWidget = () => {
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [response, setResponse] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const sendToAI = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.post("/api/ai-chat", { prompt: message });
+      setResponse(res.data.reply);
+    } catch (err) {
+      setResponse("Sorry, something went wrong. Try again.");
+    }
+    setLoading(false);
+    setMessage("");
+  };
+
+  return (
+    <div className="fixed bottom-6 right-6 z-50">
+      {open ? (
+        <div className="bg-white w-80 shadow-lg rounded-xl p-4">
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-md font-bold">🤖 Lush AI Assistant</h3>
+            <button onClick={() => setOpen(false)}>✖️</button>
+          </div>
+          <div className="text-sm text-gray-500 mb-2">Try: "{examplePrompts[Math.floor(Math.random() * examplePrompts.length)]}"</div>
+          <textarea
+            className="w-full border rounded p-2 text-sm"
+            rows={2}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Ask me anything about projects, files, tasks..."
+          />
+          <button
+            onClick={sendToAI}
+            disabled={loading}
+            className="bg-green-700 w-full text-white py-2 mt-2 rounded"
+          >
+            {loading ? "Thinking..." : "Ask AI"}
+          </button>
+          {response && <p className="text-sm mt-3 text-gray-700 whitespace-pre-wrap">{response}</p>}
+        </div>
+      ) : (
+        <button
+          onClick={() => setOpen(true)}
+          className="bg-green-700 text-white px-4 py-3 rounded-full shadow-lg text-sm"
+        >
+          🤖 Chat with Lush AI
+        </button>
+      )}
+    </div>
+  );
+};
+
+export default AIChatWidget;
+
+// 🧠 To complete backend:
+// In /api/ai-chat.js or /routes/ai-chat.js
+// Connect to OpenAI API and access project file database for search + response
+// Use: prompt + uploaded docs → send to OpenAI → return summary or command result
+
+// Required: Install axios and set up Express backend + OpenAI SDK if not done
+// npm install axios openai

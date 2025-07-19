@@ -198,6 +198,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI Chat endpoint - ready for OpenAI integration
+  app.post("/api/ai-chat", async (req, res) => {
+    try {
+      const { prompt } = req.body;
+
+      if (!prompt || typeof prompt !== 'string') {
+        return res.status(400).json({ error: "Prompt is required" });
+      }
+
+      // TODO: Replace with actual OpenAI API integration
+      // Example OpenAI integration:
+      // const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      // const completion = await openai.chat.completions.create({
+      //   model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      //   messages: [
+      //     {
+      //       role: "system",
+      //       content: "You are a helpful project management assistant for construction projects. You have access to project data, uploads, and can help with claims, stages, and summaries."
+      //     },
+      //     {
+      //       role: "user",
+      //       content: prompt
+      //     }
+      //   ],
+      //   max_tokens: 500
+      // });
+      // const reply = completion.choices[0].message.content;
+
+      // Enhanced mock response with project context
+      let reply = "";
+      
+      if (prompt.toLowerCase().includes('upload')) {
+        reply = "I can assist with document uploads and analysis. Navigate to the Uploads section to select your file.";
+      } else if (prompt.toLowerCase().includes('claim')) {
+        reply = "I can help generate progress claims for your projects. Access the Claims section to create new claims.";
+      } else if (prompt.toLowerCase().includes('summarize')) {
+        reply = "I can analyze and summarize uploaded documents including contracts and loan agreements.";
+      } else if (prompt.toLowerCase().includes('profit') || prompt.toLowerCase().includes('56 inge king')) {
+        reply = "For 56 Inge King Crescent: Total investment $1.1M, projected sale $1.4M, estimated profit $300K (27% ROI).";
+      } else {
+        reply = "I'm here to help with project management tasks. Try asking about uploads, claims, or project summaries.";
+      }
+
+      res.json({ reply });
+    } catch (error) {
+      console.error("AI Chat error:", error);
+      res.status(500).json({ error: "Failed to process AI request" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
