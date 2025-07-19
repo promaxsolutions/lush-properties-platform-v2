@@ -442,6 +442,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Calendar events API endpoint
+  app.get("/api/calendar-events", (req, res) => {
+    try {
+      // Mock calendar events - in real app this would fetch from calendar system
+      const mockEvents = [
+        {
+          id: "EVENT-001",
+          title: "Final Building Inspection",
+          project: "56 Inge King Crescent",
+          date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days from now
+          time: "10:00 AM",
+          type: "inspection",
+          inspector: "ACT Building Authority"
+        },
+        {
+          id: "EVENT-002", 
+          title: "Slab Inspection",
+          project: "Block 15 Section 87, Whitlam",
+          date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days from now
+          time: "2:00 PM",
+          type: "inspection",
+          inspector: "Independent Building Inspector"
+        },
+        {
+          id: "EVENT-003",
+          title: "Handover Meeting",
+          project: "56 Inge King Crescent", 
+          date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+          time: "11:00 AM",
+          type: "meeting",
+          attendees: ["Client", "Builder", "Project Manager"]
+        },
+        {
+          id: "EVENT-004",
+          title: "Frame Inspection",
+          project: "Block 15 Section 87, Whitlam",
+          date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(), // 14 days from now
+          time: "9:00 AM", 
+          type: "inspection",
+          inspector: "Structural Engineer"
+        }
+      ];
+      
+      console.log(`[CALENDAR-EVENTS] Fetching calendar events:`, {
+        count: mockEvents.length,
+        fetchedAt: new Date().toISOString()
+      });
+      
+      res.json(mockEvents);
+    } catch (error) {
+      console.error("[CALENDAR-EVENTS] Error fetching calendar events:", error);
+      res.status(500).json({ error: "Failed to fetch calendar events" });
+    }
+  });
+
   // AI Chat endpoint - ready for OpenAI integration
   app.post("/api/ai-chat", async (req, res) => {
     try {

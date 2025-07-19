@@ -110,6 +110,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- Added scheduling and forecasting capabilities with interactive calendar
+- Implemented inspection tracker with milestone management
+- Created builder spend breakdown visualization with pie charts
+- Enhanced calendar integration with event scheduling and notifications
+- Added upcoming events display with project-specific scheduling
 - Enhanced mobile camera support for receipt uploads with environment capture
 - Fixed Chart.js filler plugin registration for timeline charts
 - Added mobile-optimized receipt scanning with confidence metrics

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Upload, FileText, DollarSign, Building, TrendingUp, PiggyBank, Target, Edit2, ExternalLink, Lightbulb, Save, X, RefreshCw, BarChart3, TrendingUp as TrendIcon, Mail, Bell } from "lucide-react";
-import { Bar, Line } from "react-chartjs-2";
+import { Upload, FileText, DollarSign, Building, TrendingUp, PiggyBank, Target, Edit2, ExternalLink, Lightbulb, Save, X, RefreshCw, BarChart3, TrendingUp as TrendIcon, Mail, Bell, Calendar as CalendarIcon, Clock, AlertCircle } from "lucide-react";
+import { Bar, Line, Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -79,6 +79,8 @@ const LushDashboard = () => {
   const [loadingTips, setLoadingTips] = useState<Record<number, boolean>>({});
   const [uploading, setUploading] = useState(false);
   const [receipts, setReceipts] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   
   // Mock user context - in real app this would come from auth context
   const userRole = "admin"; // Could be "admin", "broker", "solicitor", "builder", "accountant", "client"
@@ -426,6 +428,45 @@ Give me a brief insight into potential profitability, risk factors, and recommen
     } catch (error) {
       console.error('Failed to update receipt:', error);
     }
+  };
+
+  // Fetch calendar events
+  const fetchEvents = async () => {
+    try {
+      const response = await fetch("/api/calendar-events");
+      const data = await response.json();
+      setEvents(data);
+    } catch (error) {
+      console.error('Failed to fetch events:', error);
+    }
+  };
+
+  // Handle calendar day click
+  const handleCalendarClick = (date: Date) => {
+    setSelectedDate(date);
+    const event = events.find((e: any) => 
+      new Date(e.date).toDateString() === date.toDateString()
+    );
+    if (event) {
+      alert(`🔔 ${event.title} at ${event.time}\nProject: ${event.project}`);
+    }
+  };
+
+  // Builder breakdown for pie chart
+  const builderBreakdown = () => {
+    const byBuilder: Record<string, number> = {};
+    receipts.forEach((r: any) => {
+      const key = r.builder || "Unknown";
+      byBuilder[key] = (byBuilder[key] || 0) + parseFloat(r.amount || 0);
+    });
+    return {
+      labels: Object.keys(byBuilder),
+      datasets: [{
+        label: "Spend per Builder",
+        data: Object.values(byBuilder),
+        backgroundColor: ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"]
+      }]
+    };
   };
 
   // Get current time for display
@@ -975,6 +1016,94 @@ Give me a brief insight into potential profitability, risk factors, and recommen
                   ))}
                 </tbody>
               </table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Scheduling & Calendar Section */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CalendarIcon className="h-5 w-5" />
+            📅 Scheduled Milestones & Inspections
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <div className="border rounded-lg p-4 bg-gray-50">
+                <h4 className="font-semibold mb-3 text-center">
+                  {selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                </h4>
+                <div className="grid grid-cols-7 gap-1 text-center text-sm">
+                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                    <div key={day} className="p-2 font-medium text-gray-600">{day}</div>
+                  ))}
+                  {Array.from({ length: 35 }, (_, i) => {
+                    const date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), i - 6);
+                    const isCurrentMonth = date.getMonth() === selectedDate.getMonth();
+                    const hasEvent = events.some((e: any) => 
+                      new Date(e.date).toDateString() === date.toDateString()
+                    );
+                    return (
+                      <button
+                        key={i}
+                        onClick={() => handleCalendarClick(date)}
+                        className={`p-2 rounded ${
+                          isCurrentMonth 
+                            ? hasEvent 
+                              ? 'bg-blue-100 text-blue-800 font-bold' 
+                              : 'bg-white hover:bg-gray-100'
+                            : 'text-gray-300'
+                        }`}
+                      >
+                        {date.getDate()}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <p className="mt-2 text-sm text-gray-600">
+                Tap on any date to view scheduled events and inspections.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-3">Upcoming Events</h4>
+              <div className="space-y-3">
+                {events.slice(0, 5).map((event: any) => (
+                  <div key={event.id} className="p-3 border rounded-lg">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Clock className="h-4 w-4 text-blue-600" />
+                      <span className="font-medium">{event.title}</span>
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      <p>{event.project}</p>
+                      <p>{new Date(event.date).toLocaleDateString()} at {event.time}</p>
+                    </div>
+                  </div>
+                ))}
+                {events.length === 0 && (
+                  <p className="text-gray-500 text-sm">No upcoming events scheduled.</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Builder Breakdown Chart */}
+      {receipts.length > 0 && (
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Building className="h-5 w-5" />
+              📊 Spend Breakdown Per Builder
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="w-full max-w-md mx-auto">
+              <Pie data={builderBreakdown()} />
             </div>
           </CardContent>
         </Card>
