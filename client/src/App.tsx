@@ -5,11 +5,13 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/dashboard";
+import LushDashboard from "@/components/lush-dashboard";
 
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Dashboard} />
+      <Route path="/" component={LushDashboard} />
+      <Route path="/old" component={Dashboard} />
       <Route component={NotFound} />
     </Switch>
   );

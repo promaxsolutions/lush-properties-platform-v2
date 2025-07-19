@@ -2,7 +2,7 @@
 
 ## Overview
 
-ProjectFlow is a modern full-stack web application for project management and tracking. It features a React frontend with JavaScript and Tailwind CSS, a Node.js/Express backend, MongoDB database with Mongoose ODM. The application allows users to manage projects with financial tracking and real-time dashboard analytics. The project has been restructured to use a traditional frontend/backend folder architecture with MongoDB for data persistence.
+ProjectFlow is a modern full-stack web application for project management and tracking. It features a React frontend with TypeScript, an Express.js backend, and comprehensive project tracking capabilities. The application includes an enhanced dashboard with progress tracking, charts, and real-time project stage management. The current implementation uses the existing TypeScript/Vite architecture with an upgraded dashboard component featuring progress bars, charts, and improved project management workflows.
 
 ## User Preferences
 
@@ -11,13 +11,14 @@ Preferred communication style: Simple, everyday language.
 ## System Architecture
 
 ### Frontend Architecture
-- **Framework**: React 18 with JavaScript
-- **Build Tool**: Create React App (react-scripts)
-- **Routing**: Single page dashboard application
-- **State Management**: React useState and useEffect hooks
-- **UI Framework**: Custom components with Tailwind CSS
-- **Styling**: Tailwind CSS utility classes
-- **Form Handling**: Standard React form handling
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite for fast development and optimized builds
+- **Routing**: Wouter for lightweight client-side routing
+- **State Management**: React useState hooks for local state management
+- **UI Framework**: shadcn/ui components built on Radix UI primitives
+- **Styling**: Tailwind CSS with CSS variables for theming
+- **Charts**: Recharts for data visualization and progress tracking
+- **Form Handling**: Controlled components with React state
 
 ### Backend Architecture
 - **Runtime**: Node.js with Express.js framework
