@@ -59,6 +59,7 @@ import InvestorDashboard from "./components/InvestorDashboard";
 import RoleFlowTester from "./components/RoleFlowTester";
 import ManualRoleTester from "./components/ManualRoleTester";
 import LoginTester from "./components/LoginTester";
+import BuilderDebugTest from "./components/BuilderDebugTest";
 
 interface AuthProtectedRouteProps {
   children: React.ReactNode;
@@ -377,6 +378,7 @@ function App() {
                                 <LoginTester />
                               </RouteGuard>
                             } />
+                            <Route path="builder-debug" element={<BuilderDebugTest />} />
                             <Route path="*" element={<Navigate to="/dashboard" />} />
                           </Routes>
                           <AIChatWidget />

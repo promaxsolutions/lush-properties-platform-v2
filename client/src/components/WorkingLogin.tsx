@@ -52,6 +52,9 @@ const WorkingLogin = () => {
         loginTime: new Date().toISOString()
       }));
 
+      // Trigger event for AuthContext to pick up the change
+      window.dispatchEvent(new CustomEvent('userLogin'));
+
       setSuccess(`Welcome ${user.name}! Redirecting to dashboard...`);
       
       // Redirect based on role

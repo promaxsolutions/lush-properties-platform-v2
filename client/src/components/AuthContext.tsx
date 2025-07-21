@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { getAuth, onAuthStateChanged } from "./firebase";
 
 interface User {
-  email: string | null;
-  uid: string;
+  email: string;
+  name: string;
+  role: string;
+  loginTime: string;
 }
 
 interface AuthContextType {
@@ -24,15 +25,48 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      // Simulate role lookup, replace with DB call later
-      if (firebaseUser?.email === "david@example.com") setRole("broker");
-      else if (firebaseUser?.email === "nowa@example.com") setRole("solicitor");
-      else setRole("admin");
-    });
-    return () => unsubscribe();
+    // Check localStorage for user data instead of Firebase
+    const checkLocalStorageUser = () => {
+      try {
+        const userStr = localStorage.getItem("lush_user");
+        if (userStr) {
+          const userData = JSON.parse(userStr);
+          setUser(userData);
+          setRole(userData.role);
+        } else {
+          setUser(null);
+          setRole(null);
+        }
+      } catch (error) {
+        console.error("Failed to parse stored user:", error);
+        setUser(null);
+        setRole(null);
+      }
+    };
+
+    // Initial check
+    checkLocalStorageUser();
+
+    // Listen for storage changes (when user logs in/out in another tab)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "lush_user") {
+        checkLocalStorageUser();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also listen for custom events when login happens in same tab
+    const handleLoginEvent = () => {
+      checkLocalStorageUser();
+    };
+    
+    window.addEventListener('userLogin', handleLoginEvent);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('userLogin', handleLoginEvent);
+    };
   }, []);
 
   return <AuthContext.Provider value={{ user, role }}>{children}</AuthContext.Provider>;
