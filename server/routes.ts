@@ -1672,44 +1672,529 @@ Lush Properties Project Management`;
     }
   });
 
-  // Get pending claims for lender review
-  app.get("/api/claims/pending", async (req, res) => {
+
+
+  // Security API endpoints
+  
+  // Token verification
+  app.post("/api/auth/verify", async (req, res) => {
     try {
-      // Sample pending claims for lender review
-      const pendingClaims = [
+      const { token } = req.body;
+      
+      // In production, verify JWT token
+      const isValid = token && token.length > 10;
+      
+      console.log(`🔐 Token verification: ${isValid ? 'VALID' : 'INVALID'}`);
+      
+      res.json({ valid: isValid });
+    } catch (error) {
+      console.error("Token verification error:", error);
+      res.status(500).json({ valid: false });
+    }
+  });
+
+  // Permission checking
+  app.post("/api/auth/permissions", async (req, res) => {
+    try {
+      const { userId, action, resource } = req.body;
+      
+      // In production, check user permissions from database
+      const hasPermission = userId && action && resource;
+      
+      console.log(`🛡️ Permission check: ${userId} - ${action} on ${resource}: ${hasPermission ? 'GRANTED' : 'DENIED'}`);
+      
+      res.json({ hasPermission });
+    } catch (error) {
+      console.error("Permission check error:", error);
+      res.status(500).json({ hasPermission: false });
+    }
+  });
+
+  // Audit logging
+  app.post("/api/audit/log", async (req, res) => {
+    try {
+      const { userId, email, action, resource, details, timestamp, ipAddress, userAgent } = req.body;
+      
+      const auditEntry = {
+        id: Date.now().toString(),
+        userId,
+        email,
+        action,
+        resource,
+        details,
+        timestamp,
+        ipAddress,
+        userAgent
+      };
+      
+      console.log(`📋 AUDIT LOG: ${email} - ${action} - ${resource} at ${timestamp}`);
+      console.log(`   IP: ${ipAddress}, Details:`, details);
+      
+      // In production, save to secure audit database
+      
+      res.json({ success: true, auditId: auditEntry.id });
+    } catch (error) {
+      console.error("Audit logging error:", error);
+      res.status(500).json({ success: false });
+    }
+  });
+
+  // Get audit logs
+  app.get("/api/audit/logs", async (req, res) => {
+    try {
+      const { userId, limit = 100 } = req.query;
+      
+      // Sample audit logs
+      const sampleLogs = [
         {
-          id: '2',
-          milestone: 'Frame Complete',
-          amount: 120000,
-          project: 'Luxury Townhouse Development',
-          submittedAt: '2024-02-10',
-          builderEmail: 'builder@lush.com',
-          attachments: ['frame_template.pdf', 'frame_photo.jpg', 'timber_invoice.pdf'],
-          daysPending: 5
+          id: "1",
+          userId: userId || "user123",
+          email: "user@example.com",
+          action: "SECURE_UPLOAD",
+          resource: "Project: proj-001",
+          timestamp: new Date(Date.now() - 3600000).toISOString(),
+          ipAddress: "192.168.1.100",
+          details: { filename: "progress_photo.jpg", fileSize: 2048576 }
         },
         {
-          id: '3',
-          milestone: 'Lockup Complete', 
-          amount: 95000,
-          project: 'Modern Apartment Complex',
-          submittedAt: '2024-02-20',
-          builderEmail: 'builder@lush.com',
-          attachments: ['lockup_template.pdf', 'lockup_photo.jpg'],
-          daysPending: 2
+          id: "2", 
+          userId: userId || "user123",
+          email: "user@example.com",
+          action: "ACCESS_PROJECT",
+          resource: "proj-001",
+          timestamp: new Date(Date.now() - 7200000).toISOString(),
+          ipAddress: "192.168.1.100",
+          details: { projectName: "Luxury Townhouse", userRole: "builder" }
+        },
+        {
+          id: "3",
+          userId: userId || "user123", 
+          email: "user@example.com",
+          action: "ESIGNATURE_REQUEST",
+          resource: "claim-456",
+          timestamp: new Date(Date.now() - 10800000).toISOString(),
+          ipAddress: "192.168.1.100",
+          details: { documentType: "progress_claim", expiresAt: new Date(Date.now() + 86400000).toISOString() }
         }
       ];
       
       res.json({
         success: true,
-        claims: pendingClaims
+        logs: sampleLogs.slice(0, parseInt(limit as string))
       });
-
     } catch (error) {
-      console.error("Get pending claims error:", error);
-      res.status(500).json({ 
-        success: false, 
-        message: "Failed to get pending claims" 
+      console.error("Get audit logs error:", error);
+      res.status(500).json({ success: false, logs: [] });
+    }
+  });
+
+  // Secure file upload with hash and fraud detection
+  app.post("/api/upload/secure", upload.single('file'), async (req, res) => {
+    try {
+      const { projectId, userEmail } = req.body;
+      const file = req.file;
+      
+      if (!file) {
+        return res.status(400).json({ success: false, message: "No file provided" });
+      }
+      
+      // Generate secure hash
+      const hash = require('crypto').createHash('sha256').update(file.buffer || file.filename).digest('hex');
+      
+      // AI fraud detection simulation
+      const fraudScore = Math.random() * 0.5; // Random score 0-0.5
+      const fraudFlags = fraudScore > 0.3 ? ['suspicious_metadata'] : [];
+      
+      const result = {
+        success: true,
+        fileId: `file_${Date.now()}`,
+        hash: hash,
+        uploadedBy: userEmail,
+        timestamp: new Date().toISOString(),
+        fraud_score: fraudScore,
+        fraud_flags: fraudFlags
+      };
+      
+      console.log(`📁 SECURE UPLOAD: ${file.originalname}`);
+      console.log(`   Hash: ${hash}`);
+      console.log(`   Uploader: ${userEmail}`);
+      console.log(`   Fraud Score: ${(fraudScore * 100).toFixed(1)}%`);
+      
+      res.json(result);
+    } catch (error) {
+      console.error("Secure upload error:", error);
+      res.status(500).json({ success: false, message: "Upload failed" });
+    }
+  });
+
+  // E-signature request with OTP
+  app.post("/api/esignature/request", async (req, res) => {
+    try {
+      const { documentId, recipientEmail, documentType, expiresIn } = req.body;
+      
+      const requestId = `esign_${Date.now()}`;
+      const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+      const expiresAt = new Date(Date.now() + expiresIn).toISOString();
+      
+      console.log(`🖊️ E-SIGNATURE REQUEST: ${documentId}`);
+      console.log(`   Recipient: ${recipientEmail}`);
+      console.log(`   OTP Code: ${otpCode}`);
+      console.log(`   Expires: ${expiresAt}`);
+      
+      // In production: Send email with OTP code
+      
+      res.json({
+        success: true,
+        requestId,
+        expiresAt,
+        message: "E-signature request sent with OTP"
       });
+    } catch (error) {
+      console.error("E-signature request error:", error);
+      res.status(500).json({ success: false });
+    }
+  });
+
+  // OTP verification for e-signature
+  app.post("/api/esignature/verify-otp", async (req, res) => {
+    try {
+      const { requestId, otpCode, userEmail } = req.body;
+      
+      // In production: verify OTP against database
+      const isValidOTP = otpCode && otpCode.length === 6;
+      
+      if (isValidOTP) {
+        const signatureId = `sig_${Date.now()}`;
+        
+        console.log(`✅ E-SIGNATURE COMPLETED: ${requestId}`);
+        console.log(`   Signature ID: ${signatureId}`);
+        console.log(`   Signer: ${userEmail}`);
+        
+        res.json({
+          success: true,
+          signatureId,
+          signedAt: new Date().toISOString()
+        });
+      } else {
+        res.status(400).json({
+          success: false,
+          message: "Invalid OTP code"
+        });
+      }
+    } catch (error) {
+      console.error("OTP verification error:", error);
+      res.status(500).json({ success: false });
+    }
+  });
+
+  // Fraud detection for receipts
+  app.post("/api/fraud/scan-receipt", upload.single('receipt'), async (req, res) => {
+    try {
+      const file = req.file;
+      
+      if (!file) {
+        return res.status(400).json({ success: false, message: "No receipt provided" });
+      }
+      
+      // AI fraud detection simulation
+      const fraudScore = Math.random();
+      const confidence = 0.85 + Math.random() * 0.15;
+      
+      const flags = [];
+      if (fraudScore > 0.7) flags.push('high_risk_vendor');
+      if (fraudScore > 0.5) flags.push('unusual_amount');
+      if (fraudScore > 0.3) flags.push('suspicious_timing');
+      
+      const result = {
+        success: true,
+        fraudScore,
+        flags,
+        confidence,
+        details: {
+          fileName: file.originalname,
+          fileSize: file.size,
+          scanTimestamp: new Date().toISOString()
+        }
+      };
+      
+      console.log(`🔍 FRAUD SCAN: ${file.originalname}`);
+      console.log(`   Fraud Score: ${(fraudScore * 100).toFixed(1)}%`);
+      console.log(`   Flags: ${flags.join(', ') || 'None'}`);
+      
+      res.json(result);
+    } catch (error) {
+      console.error("Fraud scan error:", error);
+      res.status(500).json({ success: false });
+    }
+  });
+
+  // Secure invite creation
+  app.post("/api/invites/create", async (req, res) => {
+    try {
+      const { email, role, projectId, expiresIn } = req.body;
+      
+      const inviteId = `invite_${Date.now()}`;
+      const expiresAt = new Date(Date.now() + expiresIn).toISOString();
+      
+      console.log(`📨 INVITE CREATED: ${email}`);
+      console.log(`   Role: ${role}`);
+      console.log(`   Expires: ${expiresAt}`);
+      
+      // In production: Save to database with expiry
+      
+      res.json({
+        success: true,
+        inviteId,
+        expiresAt,
+        inviteUrl: `${req.protocol}://${req.hostname}/invite/${inviteId}`
+      });
+    } catch (error) {
+      console.error("Invite creation error:", error);
+      res.status(500).json({ success: false });
+    }
+  });
+
+  // Validate invite
+  app.get("/api/invites/validate/:inviteId", async (req, res) => {
+    try {
+      const { inviteId } = req.params;
+      
+      // In production: Check database for invite and expiry
+      const isExpired = Math.random() > 0.8; // 20% chance expired for demo
+      
+      if (isExpired) {
+        res.json({
+          valid: false,
+          expired: true,
+          message: "Invite link has expired"
+        });
+      } else {
+        res.json({
+          valid: true,
+          email: "user@example.com",
+          role: "builder",
+          projectId: "proj-001"
+        });
+      }
+    } catch (error) {
+      console.error("Invite validation error:", error);
+      res.status(500).json({ valid: false });
+    }
+  });
+
+  // Get client IP
+  app.get("/api/client-ip", (req, res) => {
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 'unknown';
+    res.json({ ip });
+  });
+
+  // Trigger e-signature for claims
+  app.post("/api/claims/trigger-esignature", async (req, res) => {
+    try {
+      const { claimId, projectId, milestone, amount, lenderEmail, builderEmail } = req.body;
+      
+      const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24 hours
+      
+      console.log(`🖊️ CLAIM E-SIGNATURE TRIGGERED: ${claimId}`);
+      console.log(`   Milestone: ${milestone}`);
+      console.log(`   Amount: $${amount}`);
+      console.log(`   OTP: ${otpCode}`);
+      console.log(`   Expires: ${expiresAt}`);
+      
+      // In production: Send email to lender with OTP
+      
+      res.json({
+        success: true,
+        requestId: `esign_claim_${claimId}_${Date.now()}`,
+        expiresAt,
+        message: "E-signature request sent to lender"
+      });
+    } catch (error) {
+      console.error("Claim e-signature trigger error:", error);
+      res.status(500).json({ success: false });
+    }
+  });
+
+  // Project AI endpoints
+
+  // Get project timeline
+  app.get("/api/projects/timeline/:projectId", async (req, res) => {
+    try {
+      const { projectId } = req.params;
+      
+      // Sample timeline data
+      const timeline = [
+        {
+          id: '1',
+          title: 'Project Initiation',
+          description: 'Project planning, permits, and site preparation completed',
+          date: '2024-01-15',
+          status: 'completed',
+          stage: 'Planning',
+          confidence: 1.0
+        },
+        {
+          id: '2',
+          title: 'Site Preparation',
+          description: 'Excavation and site leveling completed',
+          date: '2024-01-22',
+          status: 'completed',
+          stage: 'Site Prep',
+          confidence: 0.95
+        },
+        {
+          id: '3',
+          title: 'Foundation Complete',
+          description: 'Concrete foundation poured and cured successfully',
+          date: '2024-02-05',
+          status: 'completed',
+          stage: 'Foundation',
+          confidence: 0.98
+        },
+        {
+          id: '4',
+          title: 'Frame Construction',
+          description: 'Timber frame installation in progress',
+          date: '2024-02-20',
+          status: 'in-progress',
+          stage: 'Framing',
+          confidence: 0.87
+        },
+        {
+          id: '5',
+          title: 'Roofing Installation',
+          description: 'Roof structure and weatherproofing to begin',
+          date: '2024-03-10',
+          status: 'upcoming',
+          stage: 'Roofing',
+          confidence: 0.75
+        }
+      ];
+      
+      console.log(`📊 Timeline requested for project: ${projectId}`);
+      
+      res.json({
+        success: true,
+        timeline
+      });
+    } catch (error) {
+      console.error("Get timeline error:", error);
+      res.status(500).json({ success: false, timeline: [] });
+    }
+  });
+
+  // AI stage detection
+  app.post("/api/ai/detect-stage/:projectId", async (req, res) => {
+    try {
+      const { projectId } = req.params;
+      
+      // AI stage detection simulation
+      const stages = [
+        'Planning & Design',
+        'Site Preparation',
+        'Foundation Complete',
+        'Frame Construction (In Progress)',
+        'Lockup Complete',
+        'Roofing Complete'
+      ];
+      
+      const currentStage = stages[3]; // Frame Construction
+      const confidence = 0.87 + Math.random() * 0.1;
+      
+      const stageData = {
+        label: currentStage,
+        confidence: Math.min(confidence, 0.99),
+        nextMilestone: 'Lockup Complete',
+        daysRemaining: 18,
+        aiRecommendations: [
+          'Continue timber frame installation as per schedule',
+          'Schedule building inspection for frame completion',
+          'Prepare materials for lockup phase',
+          'Monitor weather conditions for optimal work days'
+        ]
+      };
+      
+      console.log(`🧠 AI STAGE DETECTION: ${projectId}`);
+      console.log(`   Detected Stage: ${currentStage}`);
+      console.log(`   Confidence: ${(confidence * 100).toFixed(1)}%`);
+      
+      res.json({
+        success: true,
+        stage: stageData
+      });
+    } catch (error) {
+      console.error("Stage detection error:", error);
+      res.status(500).json({ success: false });
+    }
+  });
+
+  // AI photo analysis
+  app.post("/api/ai/analyze-photos/:projectId", async (req, res) => {
+    try {
+      const { projectId } = req.params;
+      
+      // AI photo analysis simulation
+      const analysisData = {
+        stageConfidence: 0.85 + Math.random() * 0.1,
+        detectedElements: ['foundation', 'concrete_work', 'timber_frame', 'structural_beams'],
+        progressPercentage: 65 + Math.floor(Math.random() * 20),
+        qualityScore: 7.8 + Math.random() * 1.5,
+        recommendations: [
+          'Continue with current quality standards',
+          'Schedule next milestone inspection',
+          'Monitor structural alignment',
+          'Document progress for compliance'
+        ]
+      };
+      
+      console.log(`📸 AI PHOTO ANALYSIS: ${projectId}`);
+      console.log(`   Progress: ${analysisData.progressPercentage}%`);
+      console.log(`   Quality Score: ${analysisData.qualityScore.toFixed(1)}/10`);
+      
+      res.json({
+        success: true,
+        ...analysisData
+      });
+    } catch (error) {
+      console.error("Photo analysis error:", error);
+      res.status(500).json({ success: false });
+    }
+  });
+
+  // AI milestone prediction
+  app.post("/api/ai/predict-milestone/:projectId", async (req, res) => {
+    try {
+      const { projectId } = req.params;
+      
+      // AI milestone prediction simulation
+      const predictionData = {
+        milestone: 'Lockup Complete',
+        estimatedDate: new Date(Date.now() + 18 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        requirements: [
+          'Complete frame inspection',
+          'Install exterior wall sheathing',
+          'Install windows and doors',
+          'Weather protection measures'
+        ],
+        riskFactors: [
+          'Weather dependency for exterior work',
+          'Material delivery scheduling',
+          'Building inspection availability'
+        ]
+      };
+      
+      console.log(`🎯 AI MILESTONE PREDICTION: ${projectId}`);
+      console.log(`   Next Milestone: ${predictionData.milestone}`);
+      console.log(`   Estimated Date: ${predictionData.estimatedDate}`);
+      
+      res.json({
+        success: true,
+        ...predictionData
+      });
+    } catch (error) {
+      console.error("Milestone prediction error:", error);
+      res.status(500).json({ success: false });
     }
   });
 

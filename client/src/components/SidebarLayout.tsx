@@ -15,7 +15,10 @@ import {
   Brain,
   TestTube,
   History,
-  Building
+  Building,
+  Shield,
+  Construction,
+  PenTool
 } from "lucide-react";
 
 interface SidebarLayoutProps {
@@ -84,6 +87,21 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
       label: "Lender Simulator", 
       path: "/lender-simulator", 
       icon: <Building className="h-5 w-5" /> 
+    },
+    { 
+      label: "Secure Panel", 
+      path: "/secure-panel", 
+      icon: <Shield className="h-5 w-5" /> 
+    },
+    { 
+      label: "Builder Timeline", 
+      path: "/builder-timeline", 
+      icon: <Construction className="h-5 w-5" /> 
+    },
+    { 
+      label: "Claim Dashboard", 
+      path: "/claim-dashboard", 
+      icon: <PenTool className="h-5 w-5" /> 
     },
     { 
       label: "Claims", 

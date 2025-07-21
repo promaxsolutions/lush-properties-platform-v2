@@ -35,6 +35,9 @@ import ClaimEngine from "./components/ClaimEngine";
 import ClaimTestDemo from "./components/ClaimTestDemo";
 import ClaimHistory from "./components/ClaimHistory";
 import LenderResponseSimulator from "./components/LenderResponseSimulator";
+import SecureProjectPanel from "./components/SecureProjectPanel";
+import BuilderTimeline from "./components/BuilderTimeline";
+import ClaimDashboard from "./components/ClaimDashboard";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -79,6 +82,34 @@ function App() {
                             <Route path="claim-test" element={<ClaimTestDemo />} />
                             <Route path="claim-history" element={<ClaimHistory />} />
                             <Route path="lender-simulator" element={<LenderResponseSimulator />} />
+                            <Route path="secure-panel" element={<SecureProjectPanel 
+                              user={{
+                                id: "user123",
+                                email: "builder@lush.com",
+                                role: "builder",
+                                token: "jwt_token_sample_123456789",
+                                permissions: ["UPLOAD", "VIEW_PROJECT", "SUBMIT_CLAIMS"],
+                                lastActivity: new Date().toISOString()
+                              }}
+                              project={{
+                                id: "proj-001",
+                                name: "Luxury Townhouse Development",
+                                status: "In Progress"
+                              }}
+                            />} />
+                            <Route path="builder-timeline" element={<BuilderTimeline 
+                              project={{
+                                id: "proj-001",
+                                name: "Luxury Townhouse Development",
+                                status: "In Progress"
+                              }}
+                              user={{
+                                id: "user123",
+                                email: "builder@lush.com",
+                                role: "builder"
+                              }}
+                            />} />
+                            <Route path="claim-dashboard" element={<ClaimDashboard />} />
                             <Route path="claims" element={<Claims />} />
                             <Route path="xero" element={<Xero />} />
                             <Route path="settings" element={<Settings />} />
