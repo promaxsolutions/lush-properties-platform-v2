@@ -65,7 +65,7 @@ const ProtectedRoute = ({
           case 'builder': return '/builder';
           case 'client': return '/client';
           case 'accountant': return '/finance';
-          case 'investor': return '/investor-portal';
+          case 'investor': return '/investor';
           default: return '/login';
         }
       };
