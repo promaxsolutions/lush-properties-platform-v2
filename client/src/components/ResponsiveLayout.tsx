@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import RoleBasedNavigation from "./RoleBasedNavigation";
+import SecureLogout from "./SecureLogout";
 import { 
   LogOut,
   User,
@@ -47,10 +48,7 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
   const user = getCurrentUser();
   const userRole = user?.role || 'client';
 
-  const logout = () => {
-    localStorage.removeItem("lush_user");
-    navigate("/login");
-  };
+  // Logout is now handled by SecureLogout component
 
   const NavContent = ({ mobile = false }: { mobile?: boolean }) => (
     <div className={`flex flex-col h-full ${mobile ? 'p-4' : 'p-6'}`}>
@@ -86,14 +84,10 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
           </div>
         </div>
         
-        <Button
-          onClick={logout}
-          variant="ghost"
-          className={`w-full justify-start gap-3 text-gray-600 hover:text-red-600 hover:bg-red-50 ${mobile ? 'h-12 text-base' : 'h-10'}`}
-        >
-          <LogOut className="h-5 w-5" />
-          <span className={mobile ? 'block' : 'hidden lg:block'}>Logout</span>
-        </Button>
+        <SecureLogout 
+          variant="text" 
+          className={`w-full justify-start gap-3 ${mobile ? 'h-12 text-base' : 'h-10'}`}
+        />
       </div>
     </div>
   );

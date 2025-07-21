@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { performSecureLogin } from "@/utils/sessionManager";
 
 const testUsers = {
   "admin@lush.com": { password: "admin123", role: "admin", name: "Sarah Chen" },
@@ -44,18 +45,17 @@ const WorkingLogin = () => {
         throw new Error("Invalid password");
       }
 
-      // Store user in localStorage with double-check for role accuracy
+      // Use secure login process with full session management
       const userData = {
         email: email.toLowerCase(),
         role: user.role,
-        name: user.name,
-        loginTime: new Date().toISOString()
+        name: user.name
       };
       
-      localStorage.setItem("lush_user", JSON.stringify(userData));
-
-      // Trigger event for AuthContext to pick up the change
-      window.dispatchEvent(new CustomEvent('userLogin'));
+      setSuccess("Login successful! Redirecting...");
+      
+      // Use secure login which handles storage, events, and routing
+      await performSecureLogin(userData);
 
       setSuccess(`Welcome ${user.name}! Redirecting to dashboard...`);
       

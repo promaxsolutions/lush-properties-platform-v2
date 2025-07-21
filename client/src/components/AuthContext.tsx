@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { getCurrentUserSession, validateUserSession } from "@/utils/sessionManager";
 
 interface User {
   email: string;
@@ -25,53 +26,62 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check localStorage for user data instead of Firebase
-    const checkLocalStorageUser = () => {
+    // Enhanced user validation with session management
+    const checkUserSession = () => {
       try {
-        const userStr = localStorage.getItem("lush_user");
-        if (userStr) {
-          const userData = JSON.parse(userStr);
+        // First validate if session is still valid
+        if (!validateUserSession()) {
+          setUser(null);
+          setRole(null);
+          return;
+        }
+        
+        // Get current user session
+        const userData = getCurrentUserSession();
+        if (userData) {
+          console.log('[AUTH-CONTEXT] User session loaded:', userData.role);
           setUser(userData);
           setRole(userData.role);
         } else {
+          console.log('[AUTH-CONTEXT] No valid user session');
           setUser(null);
           setRole(null);
         }
       } catch (error) {
-        console.error("Failed to parse stored user:", error);
+        console.error("[AUTH-CONTEXT] Session check failed:", error);
         setUser(null);
         setRole(null);
       }
     };
 
-    // Initial check
-    checkLocalStorageUser();
+    // Initial session check
+    checkUserSession();
 
     // Listen for storage changes (when user logs in/out in another tab)
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "lush_user") {
-        checkLocalStorageUser();
+      if (e.key === "lush_user" || e.key === null) {
+        console.log('[AUTH-CONTEXT] Storage change detected, rechecking session');
+        checkUserSession();
       }
     };
 
-    window.addEventListener('storage', handleStorageChange);
-    
-    // Also listen for custom events when login happens in same tab
-    const handleLoginEvent = () => {
-      checkLocalStorageUser();
+    // Listen for various auth-related events
+    const handleAuthEvents = () => {
+      console.log('[AUTH-CONTEXT] Auth event triggered, rechecking session');
+      checkUserSession();
     };
     
-    const handleAuthChange = () => {
-      checkLocalStorageUser();
-    };
-    
-    window.addEventListener('userLogin', handleLoginEvent);
-    window.addEventListener('authChange', handleAuthChange);
+    // Add listeners for multiple auth events
+    const authEvents = ['userLogin', 'authChange', 'roleChange', 'sessionUpdate'];
+    authEvents.forEach(event => {
+      window.addEventListener(event, handleAuthEvents);
+    });
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('userLogin', handleLoginEvent);
-      window.removeEventListener('authChange', handleAuthChange);
+      authEvents.forEach(event => {
+        window.removeEventListener(event, handleAuthEvents);
+      });
     };
   }, []);
 

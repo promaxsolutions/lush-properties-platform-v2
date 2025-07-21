@@ -14,63 +14,31 @@ import {
   LogOut,
   RefreshCw
 } from 'lucide-react';
+import { performSecureLogin, performSecureLogout, getCurrentUserSession } from '@/utils/sessionManager';
 
 const SmoothRoleSwitcher = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const getCurrentUser = () => {
-    try {
-      const userStr = localStorage.getItem("lush_user");
-      return userStr ? JSON.parse(userStr) : null;
-    } catch {
-      return null;
-    }
-  };
+  const getCurrentUser = getCurrentUserSession;
 
   const switchToRole = async (email: string, role: string, name: string, dashboardPath: string) => {
     setIsTransitioning(true);
     
-    // Clear all existing data
-    localStorage.clear();
-    sessionStorage.clear();
-    
-    // Clear any cached auth data
-    const keysToRemove = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && (key.includes('auth') || key.includes('user') || key.includes('token'))) {
-        keysToRemove.push(key);
-      }
+    try {
+      const userData = {
+        email,
+        role,
+        name,
+        id: `${role}_${Date.now()}`
+      };
+      
+      // Use secure login process
+      await performSecureLogin(userData);
+    } catch (error) {
+      console.error('Role switch failed:', error);
+      setIsTransitioning(false);
     }
-    keysToRemove.forEach(key => localStorage.removeItem(key));
-
-    // Wait a moment for cleanup
-    await new Promise(resolve => setTimeout(resolve, 200));
-    
-    // Set new user data
-    const newUser = {
-      email,
-      role,
-      name,
-      id: `${role}_${Date.now()}`,
-      loginTime: new Date().toISOString(),
-      sessionId: `session_${Math.random().toString(36).substr(2, 9)}`
-    };
-    
-    localStorage.setItem("lush_user", JSON.stringify(newUser));
-    
-    // Trigger auth update events with delay to ensure localStorage is written
-    setTimeout(() => {
-      window.dispatchEvent(new CustomEvent('userLogin'));
-      window.dispatchEvent(new CustomEvent('storage'));
-      window.dispatchEvent(new CustomEvent('authChange'));
-    }, 100);
-    
-    // Force page reload and redirect
-    setTimeout(() => {
-      window.location.href = dashboardPath;
-    }, 300);
   };
 
   const roles = [
@@ -130,9 +98,7 @@ const SmoothRoleSwitcher = () => {
   const currentRole = roles.find(role => role.id === currentUser?.role);
 
   const clearAllSessions = () => {
-    localStorage.clear();
-    sessionStorage.clear();
-    window.location.href = '/login';
+    performSecureLogout();
   };
 
   return (
