@@ -109,32 +109,15 @@ const MobileEnhancer: React.FC<MobileEnhancerProps> = ({ children }) => {
         🌍 Lush Properties Control Center • Swipe cards horizontally
       </div>
 
-      {/* Swipeable Project Cards */}
-      <section id="swipe-cards" className="p-4 md:hidden">
-        <div className="min-w-[280px] bg-white rounded-lg shadow-md p-4 border">
-          <h3 className="font-bold text-gray-900 mb-2">📋 Quick Actions</h3>
-          <div className="space-y-2">
-            <button className="w-full bg-blue-100 text-blue-800 p-2 rounded text-sm">Upload Receipt</button>
-            <button className="w-full bg-green-100 text-green-800 p-2 rounded text-sm">View Progress</button>
-          </div>
-        </div>
-        
-        <div className="min-w-[280px] bg-white rounded-lg shadow-md p-4 border">
-          <h3 className="font-bold text-gray-900 mb-2">💰 Financial Summary</h3>
-          <div className="text-sm text-gray-600">
-            <p>Budget: $850,000</p>
-            <p>Spent: $642,000</p>
-            <p>Remaining: $208,000</p>
-          </div>
-        </div>
-        
-        <div className="min-w-[280px] bg-white rounded-lg shadow-md p-4 border">
-          <h3 className="font-bold text-gray-900 mb-2">🏗️ Project Status</h3>
-          <div className="text-sm text-gray-600">
-            <p>Stage: Construction</p>
-            <p>Progress: 75%</p>
-            <p>Next: Inspection</p>
-          </div>
+      {/* Clean Mobile Interface */}
+      <section id="mobile-interface" className="p-4 md:hidden">
+        <div className="text-center py-8">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">
+            Lush Properties Control Center
+          </h2>
+          <p className="text-gray-600 text-sm">
+            Mobile optimized for your convenience
+          </p>
         </div>
       </section>
 
