@@ -1,55 +1,52 @@
-# Vercel Dashboard Fix - Step by Step
+# Direct Vercel Dashboard Configuration
 
-## Problem
-Your site shows raw JavaScript code instead of the React app because Vercel is misconfigured.
+## Manual Dashboard Fix (Most Reliable)
 
-## Solution: Vercel Dashboard Settings
+Since the vercel.json file changes aren't resolving the issue, configure directly in the Vercel dashboard:
 
-### Step 1: Access Project Settings
-1. Go to [vercel.com](https://vercel.com)
-2. Find your project: **lush-properties-platform-v2**
-3. Click on the project name
-4. Click **Settings** tab
+### Step 1: Go to Project Settings
+1. Visit: https://vercel.com/dashboard
+2. Click on your `lush-properties-platform-v2` project
+3. Go to **Settings** → **General**
 
-### Step 2: Configure Build Settings
-Look for these sections (may be in different tabs):
+### Step 2: Build & Output Settings
+Set these exact values:
 
-**In "General" or "Build & Output Settings":**
-- **Build Command**: Change to `vite build`
-- **Output Directory**: Change to `dist`
-- **Install Command**: Should be `npm install`
+**Framework Preset:** Other
+**Build Command:** `npm run build`
+**Output Directory:** `dist/public`
+**Install Command:** `npm install`
 
-**If you see "Framework Preset":**
-- Set to **Other** or **Vite** (if available)
+### Step 3: Functions Settings
+Go to **Settings** → **Functions**
+- Disable serverless functions (we want static only)
 
-### Step 3: Environment Variables (Optional)
-In "Environment Variables" tab, you might need:
-- `NODE_ENV` = `production`
+### Step 4: Domains & Redirects
+Go to **Settings** → **Domains**
+- Add redirect rules:
+  - Source: `/*` 
+  - Destination: `/index.html`
+  - Permanent: No (302)
 
-### Step 4: Force Redeploy
+### Step 5: Force Redeploy
 1. Go to **Deployments** tab
-2. Find the latest deployment
-3. Click the **3 dots menu** → **Redeploy**
-4. Check **"Use existing Build Cache"** = OFF
-5. Click **Redeploy**
+2. Click **...** on latest deployment
+3. Select **Redeploy**
 
-## Alternative: Delete and Reimport
-If settings don't work:
-1. Delete the Vercel project
-2. Re-import from GitHub
-3. During import, manually set:
-   - Build Command: `vite build`
-   - Output Directory: `dist`
+## Alternative: Delete vercel.json Entirely
+Sometimes Vercel works better with dashboard settings only:
 
-## Expected Result
-Your URL should show the Lush Properties login page instead of raw code.
-
-## If Still Not Working
-The issue might be in your package.json build script. Check that it has:
-```json
-{
-  "scripts": {
-    "build": "vite build"
-  }
-}
+```bash
+git rm vercel.json
+git commit -m "Remove vercel.json - using dashboard config"
+git push origin main
 ```
+
+Then use only dashboard settings above.
+
+## Expected Files in Build:
+✅ dist/public/index.html
+✅ dist/public/assets/index-*.css  
+✅ dist/public/assets/index-*.js
+
+Your build is working correctly - this is purely a Vercel routing configuration issue.
