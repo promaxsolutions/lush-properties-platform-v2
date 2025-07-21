@@ -73,6 +73,8 @@ import RoleFlowTester from "./components/RoleFlowTester";
 import ManualRoleTester from "./components/ManualRoleTester";
 import LoginTester from "./components/LoginTester";
 import ComprehensiveRoleTester from "./components/ComprehensiveRoleTester";
+import EnhancedRouteHandler from "./components/EnhancedRouteHandler";
+import RouteTestingUtility from "./components/RouteTestingUtility";
 import BuilderDebugTest from "./components/BuilderDebugTest";
 import RoleSystemTester from "./components/RoleSystemTester";
 import ErrorDiagnostics from "./components/ErrorDiagnostics";
@@ -438,6 +440,11 @@ function App() {
                                 <ComprehensiveRoleTester />
                               </RouteGuard>
                             } />
+                            <Route path="route-test" element={
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
+                                <RouteTestingUtility />
+                              </RouteGuard>
+                            } />
                             <Route path="builder-debug" element={<BuilderDebugTest />} />
                             <Route path="role-system-test" element={<RoleSystemTester />} />
                             <Route path="error-diagnostics" element={<ErrorDiagnostics />} />
@@ -522,6 +529,7 @@ function App() {
                             } />
                           </Routes>
                           <AuthSyncHandler />
+                          <EnhancedRouteHandler userRole={currentUser?.role} />
                           <SmoothRoleSwitcher />
                           <AIChatWidget />
                           <FloatingAIChat />
