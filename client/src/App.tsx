@@ -60,6 +60,7 @@ import SmoothScrollWrapper from "./components/SmoothScrollWrapper";
 import AdminUserList from "./components/AdminUserList";
 import UserDetailView from "./components/UserDetailView";
 import ImpersonationBanner from "./components/ImpersonationBanner";
+import PortalPreview from "./components/PortalPreview";
 import ClientDashboard from "./components/ClientDashboard";
 import FinanceDashboard from "./components/FinanceDashboard";
 import InvestorDashboard from "./components/InvestorDashboard";
@@ -477,6 +478,19 @@ function App() {
                             <Route path="users/:userId" element={
                               <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
                                 <UserDetailView />
+                              </RouteGuard>
+                            } />
+                            <Route path="portal/:role/:userId" element={
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
+                                <PortalPreview />
+                              </RouteGuard>
+                            } />
+                            <Route path="impersonate/:userId" element={
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
+                                <div className="p-8 text-center">
+                                  <h2 className="text-2xl font-bold mb-4">Impersonation Mode</h2>
+                                  <p>Impersonation functionality activated...</p>
+                                </div>
                               </RouteGuard>
                             } />
                             {/* Fallback routing based on user role */}

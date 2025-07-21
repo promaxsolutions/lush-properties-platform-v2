@@ -204,6 +204,14 @@ const RoleBasedNavigation = ({ userRole, isCollapsed = false }: RoleBasedNavigat
             data-nav-role={userRole}
             data-nav-active={isActive}
             onClick={(e) => {
+              console.log(`[NAV-CLICK] Navigation triggered:`, {
+                path: item.path,
+                label: item.label,
+                userRole: userRole,
+                timestamp: new Date().toISOString(),
+                isHashLink: item.path.includes('#')
+              });
+              
               // Check if this is a hash link
               if (item.path.includes('#')) {
                 e.preventDefault();
@@ -230,7 +238,7 @@ const RoleBasedNavigation = ({ userRole, isCollapsed = false }: RoleBasedNavigat
                 navigator.vibrate(50);
               }
               
-              console.log(`[NAV-CLICK] Navigating to ${item.path} with smooth scroll`);
+              console.log(`[NAV-CLICK] Completed navigation to ${item.path} with smooth scroll`);
             }}
           >
             <div className={`flex-shrink-0 transition-transform duration-200 ${isActive ? 'text-white' : 'text-gray-400'}`}>

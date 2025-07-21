@@ -22,6 +22,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import UserSideDrawer from './UserSideDrawer';
 
 interface UserData {
   id: string;
@@ -38,6 +39,8 @@ const AdminUserList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Mock user data - in real app, this would come from API
   const mockUsers: UserData[] = [
@@ -278,12 +281,37 @@ const AdminUserList = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleViewUser(user)}
+                      onClick={(e) => {
+                        console.log('[ADMIN-NAV] View user clicked:', {
+                          userId: user.id,
+                          userName: user.name,
+                          targetPath: `/users/${user.id}`,
+                          timestamp: new Date().toISOString()
+                        });
+                        handleViewUser(user);
+                      }}
                     >
                       <Eye className="h-4 w-4 mr-1" />
                       View
                     </Button>
                   </Link>
+                  
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      console.log('[ADMIN-NAV] Quick preview clicked:', {
+                        userId: user.id,
+                        userName: user.name,
+                        timestamp: new Date().toISOString()
+                      });
+                      setSelectedUser(user);
+                      setDrawerOpen(true);
+                    }}
+                  >
+                    <Eye className="h-4 w-4 mr-1" />
+                    Quick Preview
+                  </Button>
                   
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -293,12 +321,35 @@ const AdminUserList = () => {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem
-                        onClick={() => handleImpersonateUser(user)}
+                        onClick={() => {
+                          console.log('[ADMIN-NAV] Impersonate user clicked:', {
+                            userId: user.id,
+                            userName: user.name,
+                            userRole: user.role,
+                            timestamp: new Date().toISOString()
+                          });
+                          handleImpersonateUser(user);
+                        }}
                         className="text-blue-600"
                       >
                         <Shield className="h-4 w-4 mr-2" />
                         Impersonate User
                       </DropdownMenuItem>
+                      <Link href={`/portal/${user.role}/${user.id}`}>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            console.log('[ADMIN-NAV] Portal preview clicked:', {
+                              userId: user.id,
+                              userRole: user.role,
+                              targetPath: `/portal/${user.role}/${user.id}`,
+                              timestamp: new Date().toISOString()
+                            });
+                          }}
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          Preview Portal
+                        </DropdownMenuItem>
+                      </Link>
                       <DropdownMenuItem>
                         <UserCheck className="h-4 w-4 mr-2" />
                         Edit Permissions
@@ -326,6 +377,17 @@ const AdminUserList = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* User Side Drawer */}
+      <UserSideDrawer
+        user={selectedUser}
+        isOpen={drawerOpen}
+        onClose={() => {
+          setDrawerOpen(false);
+          setSelectedUser(null);
+        }}
+        onImpersonate={handleImpersonateUser}
+      />
     </div>
   );
 };

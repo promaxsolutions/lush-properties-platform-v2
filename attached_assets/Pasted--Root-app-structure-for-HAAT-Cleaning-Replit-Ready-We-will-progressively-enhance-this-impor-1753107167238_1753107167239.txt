@@ -1,0 +1,77 @@
+// Root app structure for HAAT Cleaning (Replit Ready)
+// We will progressively enhance this.
+
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Booking from "./pages/Booking";
+import Admin from "./pages/Admin";
+import NotFound from "./pages/NotFound";
+
+export default function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/booking" element={<Booking />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
+  );
+}
+
+/*
+PROJECT SPEC FOR: HAAT CLEANING PLATFORM (REPLIT VERSION)
+
+ABOUT:
+HAAT Cleaning is a fast, mobile-optimized platform for premium residential and commercial cleaning services. It aims to drive sales through smart UI/UX, automate team assignments, and streamline client and staff experience.
+
+FEATURE SET:
+
+1. CLIENT BOOKING INTERFACE (/booking)
+- Service Selection (standard, deep, office, move-out)
+- Customer info: name, email, phone, address
+- Preferred date/time picker with availability check
+- Auto-price estimate (per hour/flat rate)
+- Payment gateway (Stripe)
+- Confirmation via email + WhatsApp
+- Booking tracking and summary
+
+2. ADMIN DASHBOARD (/admin)
+- View/manage all bookings
+- Customer details & job notes
+- Assign staff manually (v1) or automatically (v2)
+- Override scheduling conflicts
+- Export reports (CSV)
+
+3. STAFF DASHBOARD (/staff)
+- Login via secure auth (Supabase)
+- View upcoming assigned jobs
+- Mark job as complete
+- See earnings per job and monthly total
+- Leave feedback on job/customers
+
+4. BACKEND INTEGRATIONS
+- Supabase (PostgreSQL) for database and auth
+- Stripe for payments
+- Twilio for SMS + WhatsApp
+- Nodemailer for transactional emails
+
+5. BOOKING ENGINE RULES
+- Auto-block time slots when fully booked
+- Buffer time between jobs
+- Global admin can override blocked periods
+- Check double-booking conflicts before confirming
+
+6. BRANDING STYLE
+- Clean, professional, friendly
+- White + green/blue palette
+- Trust-building UI (testimonials, guarantees, images)
+- Mobile-first responsiveness
+
+NEXT STEPS:
+- Build out Home, Booking, and Admin UI components
+- Add Supabase backend (or mock DB for first run)
+- Confirm brand colors, services list, logo, and pricing
+*/
