@@ -38,6 +38,8 @@ import LenderResponseSimulator from "./components/LenderResponseSimulator";
 import SecureProjectPanel from "./components/SecureProjectPanel";
 import BuilderTimeline from "./components/BuilderTimeline";
 import ClaimDashboard from "./components/ClaimDashboard";
+import PolishedDashboard from "./components/PolishedDashboard";
+import EnhancedReceiptUpload from "./components/EnhancedReceiptUpload";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -110,6 +112,59 @@ function App() {
                               }}
                             />} />
                             <Route path="claim-dashboard" element={<ClaimDashboard />} />
+                            <Route path="polished-dashboard" element={<PolishedDashboard 
+                              user={{
+                                id: "user123",
+                                firstName: "John",
+                                lastName: "Builder", 
+                                email: "john@lush.com",
+                                role: "admin"
+                              }}
+                              projects={[
+                                {
+                                  id: "proj-001",
+                                  name: "Luxury Townhouse Development",
+                                  address: "123 Oak Street, Melbourne VIC",
+                                  status: "in-progress",
+                                  stage: "Framing",
+                                  amount: 2450000,
+                                  progress: 73,
+                                  nextMilestone: "Lockup Complete",
+                                  daysUntilMilestone: 12
+                                },
+                                {
+                                  id: "proj-002", 
+                                  name: "Modern Villa Project",
+                                  address: "456 Pine Avenue, Sydney NSW",
+                                  status: "in-progress",
+                                  stage: "Foundation",
+                                  amount: 3200000,
+                                  progress: 45,
+                                  nextMilestone: "Frame Start",
+                                  daysUntilMilestone: 8
+                                },
+                                {
+                                  id: "proj-003",
+                                  name: "Garden Apartments",
+                                  address: "789 Elm Drive, Brisbane QLD", 
+                                  status: "completed",
+                                  stage: "Handover",
+                                  amount: 1800000,
+                                  progress: 100,
+                                  nextMilestone: "Final Inspection",
+                                  daysUntilMilestone: 3
+                                }
+                              ]}
+                            />} />
+                            <Route path="enhanced-receipts" element={<EnhancedReceiptUpload 
+                              projectId="proj-001"
+                              onUploadComplete={(uploads) => {
+                                console.log('Upload completed:', uploads);
+                                window.dispatchEvent(new CustomEvent('uploadComplete', {
+                                  detail: { message: `${uploads.length} receipt(s) processed successfully` }
+                                }));
+                              }}
+                            />} />
                             <Route path="claims" element={<Claims />} />
                             <Route path="xero" element={<Xero />} />
                             <Route path="settings" element={<Settings />} />

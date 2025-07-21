@@ -61,6 +61,15 @@ export default {
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)",
         },
+        lush: {
+          primary: "#007144",
+          accent: "#FFD700",
+          light: "#E6F7F0",
+          dark: "#004D2E",
+          success: "#10B981",
+          warning: "#F59E0B",
+          error: "#EF4444"
+        },
       },
       keyframes: {
         "accordion-down": {

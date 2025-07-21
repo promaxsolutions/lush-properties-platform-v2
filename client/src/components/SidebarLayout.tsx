@@ -104,6 +104,16 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
       icon: <PenTool className="h-5 w-5" /> 
     },
     { 
+      label: "Polished Dashboard", 
+      path: "/polished-dashboard", 
+      icon: <LayoutDashboard className="h-5 w-5" /> 
+    },
+    { 
+      label: "Enhanced Receipts", 
+      path: "/enhanced-receipts", 
+      icon: <Upload className="h-5 w-5" /> 
+    },
+    { 
       label: "Claims", 
       path: "/claims", 
       icon: <FileText className="h-5 w-5" /> 
