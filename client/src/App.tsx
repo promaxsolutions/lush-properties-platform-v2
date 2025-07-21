@@ -56,6 +56,7 @@ import RouteGuard from "./components/RouteGuard";
 import EnhancedRouteGuard from "./components/EnhancedRouteGuard";
 import AccessDeniedPage from "./components/AccessDeniedPage";
 import ComprehensiveLoginAudit from "./components/ComprehensiveLoginAudit";
+import SmoothScrollWrapper from "./components/SmoothScrollWrapper";
 import ClientDashboard from "./components/ClientDashboard";
 import FinanceDashboard from "./components/FinanceDashboard";
 import InvestorDashboard from "./components/InvestorDashboard";
@@ -136,10 +137,11 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <AuthProvider>
-          <MobileEnhancer>
-            <CompactWrapper>
-              <Router>
-                <Routes>
+          <SmoothScrollWrapper>
+            <MobileEnhancer>
+              <CompactWrapper>
+                <Router>
+                  <Routes>
                   <Route path="/login" element={<WorkingLogin />} />
                   <Route path="/register" element={<Register />} />
                   <Route path="/magic/:token" element={<MagicLogin />} />
@@ -487,10 +489,11 @@ function App() {
                       </AuthProtectedRoute>
                     }
                   />
-                </Routes>
-              </Router>
-            </CompactWrapper>
-          </MobileEnhancer>
+                  </Routes>
+                </Router>
+              </CompactWrapper>
+            </MobileEnhancer>
+          </SmoothScrollWrapper>
         </AuthProvider>
         <Toaster />
       </TooltipProvider>

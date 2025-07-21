@@ -4,6 +4,43 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global smooth scrolling */
+html,
+body {
+  scroll-behavior: smooth;
+}
+
+/* Enhanced mobile scrolling */
+@media (max-width: 768px) {
+  html,
+  body {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  
+  /* Mobile navigation animations */
+  .mobile-nav-item {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(0);
+  }
+  
+  .mobile-nav-item:active {
+    transform: translateX(4px) scale(0.98);
+    background-color: rgba(0, 113, 68, 0.1);
+  }
+  
+  /* Smooth mobile overlay transitions */
+  .mobile-overlay {
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  /* Enhanced mobile sidebar slide animation */
+  .mobile-sidebar {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
 :root {
   --background: hsl(0, 0%, 100%);
   --foreground: hsl(220, 14%, 4%);

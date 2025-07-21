@@ -195,7 +195,7 @@ const RoleBasedNavigation = ({ userRole, isCollapsed = false }: RoleBasedNavigat
           <Link 
             key={item.path} 
             href={item.path}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer ${
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 cursor-pointer transform hover:scale-[1.02] active:scale-[0.98] mobile-nav-item ${
               isActive
                 ? 'bg-lush-primary text-white shadow-sm'
                 : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
@@ -203,8 +203,23 @@ const RoleBasedNavigation = ({ userRole, isCollapsed = false }: RoleBasedNavigat
             data-nav-item={item.path}
             data-nav-role={userRole}
             data-nav-active={isActive}
+            onClick={(e) => {
+              // Smooth scroll for internal navigation
+              const targetElement = document.querySelector('main') || document.body;
+              targetElement.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+              });
+              
+              // Add mobile haptic feedback if available
+              if ('vibrate' in navigator) {
+                navigator.vibrate(50);
+              }
+              
+              console.log(`[NAV-CLICK] Navigating to ${item.path} with smooth scroll`);
+            }}
           >
-            <div className={`flex-shrink-0 ${isActive ? 'text-white' : 'text-gray-400'}`}>
+            <div className={`flex-shrink-0 transition-transform duration-200 ${isActive ? 'text-white' : 'text-gray-400'}`}>
               {item.icon}
             </div>
             {!isCollapsed && (
