@@ -27,6 +27,8 @@ import InviteAcceptance from "./components/InviteAcceptance";
 import MagicLogin from "./components/MagicLogin";
 import MobileEnhancer from "./components/MobileEnhancer";
 import CompactWrapper from "./components/CompactWrapper";
+import SmartReceiptUpload from "./components/SmartReceiptUpload";
+import MobileNotifications from "./components/MobileNotifications";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -64,6 +66,7 @@ function App() {
                             } />
                             <Route path="mobile" element={<MobileDashboard />} />
                             <Route path="uploads" element={<Upload />} />
+                            <Route path="smart-upload" element={<SmartReceiptUpload />} />
                             <Route path="claims" element={<Claims />} />
                             <Route path="xero" element={<Xero />} />
                             <Route path="settings" element={<Settings />} />
@@ -81,6 +84,7 @@ function App() {
                             <Route path="*" element={<Navigate to="/dashboard" />} />
                           </Routes>
                           <AIChatWidget />
+                          <MobileNotifications />
                         </SidebarLayout>
                       </ProtectedRoute>
                     }

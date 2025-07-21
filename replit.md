@@ -135,6 +135,13 @@ Preferred communication style: Simple, everyday language.
 - Created role-based auto-routing (client→project-view, builder→builder portal, investor→heatmap)
 - Enhanced mobile-first PWA architecture with installation prompts and swipeable card interfaces
 - Added camera integration for mobile receipt capture and file uploads with environment camera access
+- Implemented smart receipt OCR system with Tesseract.js for automatic data extraction
+- Created construction milestone detection system with confidence scoring
+- Added WhatsApp reminder integration for missing receipt notifications
+- Built comprehensive mobile notification system with push notifications and real-time alerts
+- Enhanced receipt processing with vendor, amount, date, and category extraction
+- Added milestone validation for construction phases (foundation, frame, lockup, roofing, etc.)
+- Integrated smart nudges and reminder system for project milestone tracking
 - Enhanced mobile optimization with comprehensive data sync capabilities and offline functionality
 - Added real-time sync status indicators with online/offline detection and queue management
 - Implemented offline-first architecture with automatic sync when connection returns

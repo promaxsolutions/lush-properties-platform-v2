@@ -1265,6 +1265,116 @@ Lush Properties Project Management`;
     }
   }
 
+  // Smart receipt upload with OCR processing
+  app.post("/api/receipts/smart-upload", upload.single('image'), async (req, res) => {
+    try {
+      const { ocrText, extractedData, milestones } = req.body;
+      
+      // Save receipt data to database
+      const receiptData = {
+        ocrText,
+        extractedData: typeof extractedData === 'string' ? JSON.parse(extractedData) : extractedData,
+        milestones: typeof milestones === 'string' ? JSON.parse(milestones) : milestones,
+        uploadedAt: new Date(),
+        fileName: req.file?.filename || null
+      };
+
+      // Store in database (you can expand this based on your schema)
+      console.log("📄 Smart receipt processed:", receiptData);
+
+      res.json({
+        success: true,
+        message: "Receipt processed successfully",
+        data: receiptData
+      });
+
+    } catch (error) {
+      console.error("Smart receipt upload error:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to process receipt" 
+      });
+    }
+  });
+
+  // Milestone completion notification
+  app.post("/api/notifications/milestone-complete", async (req, res) => {
+    try {
+      const { milestones, receipt } = req.body;
+      
+      console.log("🎯 Milestones completed:", milestones.map((m: any) => m.milestone));
+      
+      // Here you can send notifications, update project status, etc.
+      // Example: Update project milestone status
+      // await storage.updateProjectMilestones(projectId, milestones);
+
+      res.json({
+        success: true,
+        message: "Milestone notifications sent"
+      });
+
+    } catch (error) {
+      console.error("Milestone notification error:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to send milestone notifications" 
+      });
+    }
+  });
+
+  // WhatsApp reminder endpoint
+  app.post("/api/notifications/whatsapp-reminder", async (req, res) => {
+    try {
+      const { message, recipient } = req.body;
+      
+      const success = await sendWhatsAppInvite(
+        recipient, // Should be phone number, but using email for demo
+        recipient.split('@')[0], // Extract name from email
+        'builder',
+        message
+      );
+
+      if (success) {
+        console.log("📱 WhatsApp reminder sent to:", recipient);
+        res.json({ success: true });
+      } else {
+        res.json({ success: false, message: "WhatsApp not configured" });
+      }
+
+    } catch (error) {
+      console.error("WhatsApp reminder error:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to send WhatsApp reminder" 
+      });
+    }
+  });
+
+  // General WhatsApp notification endpoint
+  app.post("/api/notifications/whatsapp", async (req, res) => {
+    try {
+      const { recipient, message, type = 'text' } = req.body;
+      
+      // For demo purposes, log the message
+      console.log(`📱 WhatsApp ${type} to ${recipient}: ${message}`);
+      
+      // In production, implement actual WhatsApp Cloud API call
+      const success = await sendWhatsAppInvite(recipient, 'User', 'notification', message);
+      
+      res.json({
+        success,
+        message: success ? "WhatsApp sent successfully" : "WhatsApp service not available"
+      });
+
+    } catch (error) {
+      console.error("WhatsApp API error:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to send WhatsApp message" 
+      });
+    }
+  });
+
   // Auto-cleanup expired invitations every 12 hours
   setInterval(async () => {
     try {

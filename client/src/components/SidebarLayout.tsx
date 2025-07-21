@@ -48,6 +48,11 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
       icon: <Upload className="h-5 w-5" /> 
     },
     { 
+      label: "Smart Upload", 
+      path: "/smart-upload", 
+      icon: <Brain className="h-5 w-5" /> 
+    },
+    { 
       label: "Claims", 
       path: "/claims", 
       icon: <FileText className="h-5 w-5" /> 

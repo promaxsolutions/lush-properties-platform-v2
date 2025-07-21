@@ -1,0 +1,49 @@
+// 🧠 AI Budget Matching + Claim Drafting + Reminders
+import React, { useState } from "react";
+import Tesseract from "tesseract.js";
+import { getBudgetLines, saveDraftClaim, sendWeeklyReminder } from "../utils/api";
+
+export default function ReceiptAnalyzer() {
+  const [ocrText, setOcrText] = useState("");
+  const [suggestedLine, setSuggestedLine] = useState(null);
+  const [draftSaved, setDraftSaved] = useState(false);
+
+  const handleFile = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const { data: { text } } = await Tesseract.recognize(file, "eng");
+    setOcrText(text);
+
+    const budgetLines = await getBudgetLines();
+    const matched = budgetLines.find(line => text.toLowerCase().includes(line.keyword.toLowerCase()));
+    if (matched) setSuggestedLine(matched);
+  };
+
+  const handleSaveDraft = async () => {
+    if (suggestedLine) {
+      await saveDraftClaim({ lineItem: suggestedLine.name, amount: suggestedLine.amount });
+      setDraftSaved(true);
+    }
+  };
+
+  const handleWeeklyReminder = () => {
+    sendWeeklyReminder("builder@lush.com", "🔔 Weekly reminder: Don’t forget to upload site receipts and claim photos for current stage.");
+    alert("📆 Reminder sent");
+  };
+
+  return (
+    <div className="p-4">
+      <h2 className="text-sm font-bold mb-2">📎 Upload Receipt for Budget Match</h2>
+      <input type="file" onChange={handleFile} className="mb-3" />
+      {ocrText && <pre className="bg-gray-100 p-2 text-xs mb-2">{ocrText}</pre>}
+      {suggestedLine && (
+        <div className="bg-green-50 text-green-700 p-2 rounded">
+          ✅ Matched to budget: <strong>{suggestedLine.name}</strong> — ${suggestedLine.amount}
+          <button onClick={handleSaveDraft} className="ml-4 bg-green-600 text-white text-xs px-2 py-1 rounded">💾 Save Claim Draft</button>
+        </div>
+      )}
+      {draftSaved && <p className="text-green-600 text-sm mt-2">✅ Draft claim saved</p>}
+      <button onClick={handleWeeklyReminder} className="mt-4 text-blue-600 underline text-sm">📆 Send Weekly Reminder</button>
+    </div>
+  );
+}
