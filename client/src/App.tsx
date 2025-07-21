@@ -56,6 +56,8 @@ import RouteGuard from "./components/RouteGuard";
 import ClientDashboard from "./components/ClientDashboard";
 import FinanceDashboard from "./components/FinanceDashboard";
 import InvestorDashboard from "./components/InvestorDashboard";
+import RoleFlowTester from "./components/RoleFlowTester";
+import ManualRoleTester from "./components/ManualRoleTester";
 
 interface AuthProtectedRouteProps {
   children: React.ReactNode;
@@ -357,6 +359,16 @@ function App() {
                             <Route path="investor-portal" element={
                               <RouteGuard allowedRoles={['investor', 'admin']} userRole={user?.role}>
                                 <HeatmapVisualizer />
+                              </RouteGuard>
+                            } />
+                            <Route path="role-flow-tester" element={
+                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                                <RoleFlowTester />
+                              </RouteGuard>
+                            } />
+                            <Route path="manual-role-tester" element={
+                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                                <ManualRoleTester />
                               </RouteGuard>
                             } />
                             <Route path="*" element={<Navigate to="/dashboard" />} />
