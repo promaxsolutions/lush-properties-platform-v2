@@ -41,6 +41,7 @@ import ClaimDashboard from "./components/ClaimDashboard";
 import PolishedDashboard from "./components/PolishedDashboard";
 import EnhancedReceiptUpload from "./components/EnhancedReceiptUpload";
 import RoleLoginTester from "./components/RoleLoginTester";
+import WorkingLogin from "./components/WorkingLogin";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -63,7 +64,7 @@ function App() {
             <CompactWrapper>
               <Router>
                 <Routes>
-                  <Route path="/login" element={<Login />} />
+                  <Route path="/login" element={<WorkingLogin />} />
                   <Route path="/register" element={<Register />} />
                   <Route path="/magic/:token" element={<MagicLogin />} />
                   <Route path="/unauthorized" element={<div className="p-8 text-center">Unauthorized Access</div>} />
@@ -168,6 +169,7 @@ function App() {
                                 <RoleLoginTester />
                               </div>
                             } />
+                            <Route path="working-login" element={<WorkingLogin />} />
                             <Route path="enhanced-receipts" element={<EnhancedReceiptUpload 
                               projectId="proj-001"
                               onUploadComplete={(uploads) => {

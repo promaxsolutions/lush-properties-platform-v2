@@ -119,6 +119,11 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
       icon: <User className="h-5 w-5" /> 
     },
     { 
+      label: "Working Login", 
+      path: "/working-login", 
+      icon: <User className="h-5 w-5" /> 
+    },
+    { 
       label: "Enhanced Receipts", 
       path: "/enhanced-receipts", 
       icon: <Upload className="h-5 w-5" /> 
