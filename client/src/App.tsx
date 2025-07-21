@@ -40,6 +40,7 @@ import BuilderTimeline from "./components/BuilderTimeline";
 import ClaimDashboard from "./components/ClaimDashboard";
 import PolishedDashboard from "./components/PolishedDashboard";
 import EnhancedReceiptUpload from "./components/EnhancedReceiptUpload";
+import RoleLoginTester from "./components/RoleLoginTester";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -162,6 +163,11 @@ function App() {
                               await new Promise(resolve => setTimeout(resolve, 1000));
                               alert('Login successful! Clean interface demo.');
                             }} />} />
+                            <Route path="role-login-tester" element={
+                              <div className="p-8">
+                                <RoleLoginTester />
+                              </div>
+                            } />
                             <Route path="enhanced-receipts" element={<EnhancedReceiptUpload 
                               projectId="proj-001"
                               onUploadComplete={(uploads) => {
