@@ -72,6 +72,7 @@ import InvestorDashboard from "./components/InvestorDashboard";
 import RoleFlowTester from "./components/RoleFlowTester";
 import ManualRoleTester from "./components/ManualRoleTester";
 import LoginTester from "./components/LoginTester";
+import ComprehensiveRoleTester from "./components/ComprehensiveRoleTester";
 import BuilderDebugTest from "./components/BuilderDebugTest";
 import RoleSystemTester from "./components/RoleSystemTester";
 import ErrorDiagnostics from "./components/ErrorDiagnostics";
@@ -430,6 +431,11 @@ function App() {
                             <Route path="login-tester" element={
                               <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
                                 <LoginTester />
+                              </RouteGuard>
+                            } />
+                            <Route path="comprehensive-test" element={
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
+                                <ComprehensiveRoleTester />
                               </RouteGuard>
                             } />
                             <Route path="builder-debug" element={<BuilderDebugTest />} />
