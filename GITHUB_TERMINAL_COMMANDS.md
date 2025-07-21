@@ -1,43 +1,51 @@
-# GitHub Terminal Commands
+# GitHub Terminal Commands for Local Project
 
-Run these commands in your terminal to push the Vercel fix:
+## Current Status
+You're in: `~/Downloads/lush-properties-platform`
+Latest commit: `1178caf` (just pushed)
 
-## Step 1: Remove Git lock files (if needed)
+## Issue: Vercel Still Building Old Commit
+Even though we pushed fixes, Vercel might be cached or using wrong branch.
+
+## Complete Fix Strategy
+
+### 1. Check Current Branch and Status
 ```bash
-rm -f .git/index.lock
-rm -f .git/refs/heads/main.lock
+cd ~/Downloads/lush-properties-platform
+git branch
+git status
+git log --oneline -5
 ```
 
-## Step 2: Stage all changes
+### 2. Force Complete Sync
 ```bash
-git add .
+git fetch origin
+git reset --hard origin/main
+git push origin main --force
 ```
 
-## Step 3: Commit the Vercel fix
+### 3. Alternative: Create New Deployment Branch
 ```bash
-git commit -m "Fix: Update Vercel config for static site deployment
-
-- Updated vercel.json to use @vercel/static-build
-- Removed serverless function configuration
-- Fixed deployment to show React app instead of raw code"
+git checkout -b vercel-deploy
+git push origin vercel-deploy
 ```
 
-## Step 4: Push to GitHub
+Then in Vercel dashboard:
+- Settings → Git → Change branch to `vercel-deploy`
+- Redeploy
+
+### 4. Nuclear Option: Fresh Repository
 ```bash
-git push origin main
+cd ~/Downloads
+rm -rf lush-properties-platform
+git clone https://github.com/promaxsolutions/lush-properties-platform-v2.git
+cd lush-properties-platform-v2
 ```
 
-## Alternative if remote not set:
-If you get an error about remote, first run:
-```bash
-git remote add origin https://github.com/YOUR_USERNAME/lush-properties-platform.git
-git push -u origin main
-```
+Then make the import fixes again and push.
 
-## After pushing:
-- Vercel will auto-deploy the fix
-- Your site should show the actual Lush Properties app
-- No more raw JavaScript code display
+## Expected Files After Fix
+- `client/src/App.tsx` should have: `import { Toaster } from "./components/ui/toaster";`
+- `client/src/components/ui/toaster.tsx` should have: `import { useToast } from "../../hooks/use-toast"`
 
-## Expected result:
-Your Vercel URL will display the proper React login interface instead of code.
+Run these commands to verify the fix is applied locally before pushing.
