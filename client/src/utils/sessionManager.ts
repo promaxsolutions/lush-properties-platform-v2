@@ -141,14 +141,11 @@ export const performSecureLogin = async (userData: any) => {
   localStorage.setItem('current_role', userData.role);
   localStorage.setItem('login_timestamp', Date.now().toString());
   
-  // Small delay to ensure data is set, then reload page
+  // Small delay to ensure data is set, then force complete reload
   setTimeout(() => {
     // Force full page reload to reinitialize app with fresh session
-    window.location.reload();
-    // After reload, navigate to correct dashboard
-    setTimeout(() => {
-      window.location.href = targetDashboard;
-    }, 100);
+    console.log(`🔄 Forcing page reload to refresh navigation for ${userData.role} role`);
+    window.location.href = targetDashboard;
   }, 300);
   
   return sessionData;

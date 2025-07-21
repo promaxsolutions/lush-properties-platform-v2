@@ -175,6 +175,8 @@ const RoleBasedNavigation = ({ userRole, isCollapsed = false }: RoleBasedNavigat
 
   // Get navigation items based on user role
   const allowedItems = getNavigationItems(userRole);
+  
+  console.log('[NAV] Rendering navigation for role:', userRole, 'Items:', allowedItems.length, 'Current location:', location);
 
   if (allowedItems.length === 0) {
     return (
@@ -192,6 +194,9 @@ const RoleBasedNavigation = ({ userRole, isCollapsed = false }: RoleBasedNavigat
         return (
           <Link key={item.path} href={item.path}>
             <div
+              data-nav-item={item.path}
+              data-nav-role={userRole}
+              data-nav-active={isActive}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer ${
                 isActive
                   ? 'bg-lush-primary text-white shadow-sm'

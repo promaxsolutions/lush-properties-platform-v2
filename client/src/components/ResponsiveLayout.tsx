@@ -34,19 +34,41 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
-  // Get current user role
+  // Get current user role with fresh data on every render
   const getCurrentUser = () => {
     const userStr = localStorage.getItem("lush_user");
     if (!userStr) return null;
     try {
-      return JSON.parse(userStr);
+      const userData = JSON.parse(userStr);
+      console.log('[LAYOUT] Fresh user data loaded:', userData.role);
+      return userData;
     } catch {
+      console.log('[LAYOUT] Failed to parse user data');
       return null;
     }
   };
 
-  const user = getCurrentUser();
+  const [user, setUser] = useState(getCurrentUser());
   const userRole = user?.role || 'client';
+
+  // Listen for user changes to refresh layout
+  useEffect(() => {
+    const handleUserChange = () => {
+      const freshUser = getCurrentUser();
+      setUser(freshUser);
+      console.log('[LAYOUT] User changed, refreshing layout for role:', freshUser?.role);
+    };
+
+    window.addEventListener('userLogin', handleUserChange);
+    window.addEventListener('roleChange', handleUserChange);
+    window.addEventListener('storage', handleUserChange);
+    
+    return () => {
+      window.removeEventListener('userLogin', handleUserChange);
+      window.removeEventListener('roleChange', handleUserChange);
+      window.removeEventListener('storage', handleUserChange);
+    };
+  }, []);
 
   // Logout is now handled by SecureLogout component
 
