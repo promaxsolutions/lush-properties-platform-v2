@@ -60,10 +60,12 @@ const SmoothRoleSwitcher = () => {
     
     localStorage.setItem("lush_user", JSON.stringify(newUser));
     
-    // Trigger auth update events
-    window.dispatchEvent(new CustomEvent('userLogin'));
-    window.dispatchEvent(new CustomEvent('storage'));
-    window.dispatchEvent(new CustomEvent('authChange'));
+    // Trigger auth update events with delay to ensure localStorage is written
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('userLogin'));
+      window.dispatchEvent(new CustomEvent('storage'));
+      window.dispatchEvent(new CustomEvent('authChange'));
+    }, 100);
     
     // Force page reload and redirect
     setTimeout(() => {

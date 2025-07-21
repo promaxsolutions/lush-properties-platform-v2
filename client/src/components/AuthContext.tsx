@@ -61,11 +61,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       checkLocalStorageUser();
     };
     
+    const handleAuthChange = () => {
+      checkLocalStorageUser();
+    };
+    
     window.addEventListener('userLogin', handleLoginEvent);
+    window.addEventListener('authChange', handleAuthChange);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('userLogin', handleLoginEvent);
+      window.removeEventListener('authChange', handleAuthChange);
     };
   }, []);
 

@@ -76,8 +76,22 @@ interface AuthProtectedRouteProps {
 
 const AuthProtectedRoute = ({ children, role }: AuthProtectedRouteProps) => {
   const { user, role: userRole } = useAuth();
-  if (!user) return <Navigate to="/login" />;
-  if (role && userRole !== role) return <Navigate to="/unauthorized" />;
+  
+  // Check both AuthContext and localStorage for user data
+  const getCurrentUser = () => {
+    try {
+      const storedUser = localStorage.getItem("lush_user");
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+      return null;
+    }
+  };
+  
+  const currentUser = user || getCurrentUser();
+  const currentRole = userRole || currentUser?.role;
+  
+  if (!currentUser) return <Navigate to="/login" />;
+  if (role && currentRole !== role) return <Navigate to="/unauthorized" />;
   return <>{children}</>;
 };
 
@@ -96,6 +110,10 @@ function App() {
   };
   
   const user = getCurrentUser();
+  const { user: authUser } = useAuth();
+  
+  // Use either auth context user or localStorage user
+  const currentUser = authUser || user;
   
   return (
     <QueryClientProvider client={queryClient}>
@@ -116,57 +134,57 @@ function App() {
                         <ResponsiveLayout>
                           <Routes>
                             <Route path="dashboard" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
                                 {window.innerWidth < 768 ? <MobileDashboard /> : <Dashboard />}
                               </RouteGuard>
                             } />
                             <Route path="mobile" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
                                 <MobileDashboard />
                               </RouteGuard>
                             } />
                             <Route path="uploads" element={
-                              <RouteGuard allowedRoles={['builder', 'client', 'admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['builder', 'client', 'admin']} userRole={currentUser?.role}>
                                 <Upload />
                               </RouteGuard>
                             } />
                             <Route path="smart-upload" element={
-                              <RouteGuard allowedRoles={['builder', 'admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['builder', 'admin']} userRole={currentUser?.role}>
                                 <SmartReceiptUpload />
                               </RouteGuard>
                             } />
                             <Route path="budget-analyzer" element={
-                              <RouteGuard allowedRoles={['admin', 'accountant']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin', 'accountant']} userRole={currentUser?.role}>
                                 <ReceiptAnalyzer />
                               </RouteGuard>
                             } />
                             <Route path="budget-test" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
                                 <BudgetTestDemo />
                               </RouteGuard>
                             } />
                             <Route path="claim-engine" element={
-                              <RouteGuard allowedRoles={['admin', 'accountant']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin', 'accountant']} userRole={currentUser?.role}>
                                 <ClaimEngine />
                               </RouteGuard>
                             } />
                             <Route path="claim-test" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
                                 <ClaimTestDemo />
                               </RouteGuard>
                             } />
                             <Route path="claim-history" element={
-                              <RouteGuard allowedRoles={['admin', 'accountant']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin', 'accountant']} userRole={currentUser?.role}>
                                 <ClaimHistory />
                               </RouteGuard>
                             } />
                             <Route path="lender-simulator" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
                                 <LenderResponseSimulator />
                               </RouteGuard>
                             } />
                             <Route path="secure-panel" element={
-                              <RouteGuard allowedRoles={['builder', 'admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['builder', 'admin']} userRole={currentUser?.role}>
                                 <SecureProjectPanel 
                               user={{
                                 id: "user123",
@@ -185,7 +203,7 @@ function App() {
                               </RouteGuard>
                             } />
                             <Route path="builder-timeline" element={
-                              <RouteGuard allowedRoles={['builder', 'admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['builder', 'admin']} userRole={currentUser?.role}>
                                 <BuilderTimeline 
                                   project={{
                                     id: "proj-001",
@@ -201,12 +219,12 @@ function App() {
                               </RouteGuard>
                             } />
                             <Route path="claim-dashboard" element={
-                              <RouteGuard allowedRoles={['admin', 'accountant']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin', 'accountant']} userRole={currentUser?.role}>
                                 <ClaimDashboard />
                               </RouteGuard>
                             } />
                             <Route path="polished-dashboard" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
                                 <PolishedDashboard 
                                   user={{
                                     id: "user123",
@@ -275,114 +293,114 @@ function App() {
                               }}
                             />} />
                             <Route path="claims" element={
-                              <RouteGuard allowedRoles={['admin', 'accountant']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin', 'accountant']} userRole={currentUser?.role}>
                                 <Claims />
                               </RouteGuard>
                             } />
                             <Route path="xero" element={
-                              <RouteGuard allowedRoles={['admin', 'accountant']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin', 'accountant']} userRole={currentUser?.role}>
                                 <Xero />
                               </RouteGuard>
                             } />
                             <Route path="settings" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
                                 <Settings />
                               </RouteGuard>
                             } />
                             <Route path="contracts" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
                                 <ContractUpload />
                               </RouteGuard>
                             } />
                             <Route path="profits" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
                                 <ProfitCalculator />
                               </RouteGuard>
                             } />
                             <Route path="builder" element={
-                              <RouteGuard allowedRoles={['builder', 'admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['builder', 'admin']} userRole={currentUser?.role}>
                                 <PolishedBuilderPortal />
                               </RouteGuard>
                             } />
                             <Route path="client-upgrades" element={
-                              <RouteGuard allowedRoles={['client', 'admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['client', 'admin']} userRole={currentUser?.role}>
                                 <ClientUpgradePanel />
                               </RouteGuard>
                             } />
                             <Route path="client-portal" element={
-                              <RouteGuard allowedRoles={['client', 'admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['client', 'admin']} userRole={currentUser?.role}>
                                 <PolishedClientPortal />
                               </RouteGuard>
                             } />
                             <Route path="client" element={
-                              <RouteGuard allowedRoles={['client', 'admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['client', 'admin']} userRole={currentUser?.role}>
                                 <ClientDashboard />
                               </RouteGuard>
                             } />
                             <Route path="finance" element={
-                              <RouteGuard allowedRoles={['accountant', 'admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['accountant', 'admin']} userRole={currentUser?.role}>
                                 <FinanceDashboard />
                               </RouteGuard>
                             } />
                             <Route path="client-onboarding" element={<ClientOnboarding onComplete={() => window.location.href = '/client-portal'} />} />
                             <Route path="security" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
                                 <SecurityPanel />
                               </RouteGuard>
                             } />
                             <Route path="walkthrough" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
                                 <WalkthroughGuide isActive={true} onClose={() => window.location.href = '/dashboard'} />
                               </RouteGuard>
                             } />
                             <Route path="investor" element={
-                              <RouteGuard allowedRoles={['investor', 'admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['investor', 'admin']} userRole={currentUser?.role}>
                                 <InvestorDashboard />
                               </RouteGuard>
                             } />
                             <Route path="heatmap" element={
-                              <RouteGuard allowedRoles={['investor', 'admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['investor', 'admin']} userRole={currentUser?.role}>
                                 <HeatmapVisualizer />
                               </RouteGuard>
                             } />
                             <Route path="ai-workflows" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
                                 <AIWorkflowEngine />
                               </RouteGuard>
                             } />
                             <Route path="role-dashboard" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
                                 <RoleBasedDashboard />
                               </RouteGuard>
                             } />
                             <Route path="admin/role-manager" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
                                 <AdminRoleManager />
                               </RouteGuard>
                             } />
                             <Route path="invite/:token" element={<InviteAcceptance />} />
                             <Route path="project-view" element={
-                              <RouteGuard allowedRoles={['client', 'admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['client', 'admin']} userRole={currentUser?.role}>
                                 <RoleBasedDashboard />
                               </RouteGuard>
                             } />
                             <Route path="investor-portal" element={
-                              <RouteGuard allowedRoles={['investor', 'admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['investor', 'admin']} userRole={currentUser?.role}>
                                 <HeatmapVisualizer />
                               </RouteGuard>
                             } />
                             <Route path="role-flow-tester" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
                                 <RoleFlowTester />
                               </RouteGuard>
                             } />
                             <Route path="manual-role-tester" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
                                 <ManualRoleTester />
                               </RouteGuard>
                             } />
                             <Route path="login-tester" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
                                 <LoginTester />
                               </RouteGuard>
                             } />
