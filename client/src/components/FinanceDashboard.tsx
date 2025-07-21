@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import AccountantDocumentCenter from './AccountantDocumentCenter';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -174,14 +175,14 @@ const FinanceDashboard = () => {
         </Card>
       </div>
 
-      {/* Tabs */}
+      {/* Navigation Tabs */}
       <div className="border-b border-gray-200">
         <nav className="flex space-x-8">
           {[
-            { id: 'overview', label: 'Overview', icon: <CreditCard className="h-4 w-4" /> },
-            { id: 'receipts', label: 'Receipt Management', icon: <Receipt className="h-4 w-4" /> },
+            { id: 'overview', label: 'Finance Overview', icon: <DollarSign className="h-4 w-4" /> },
+            { id: 'receipts', label: 'Receipts', icon: <Receipt className="h-4 w-4" /> },
             { id: 'claims', label: 'Payment Claims', icon: <FileText className="h-4 w-4" /> },
-            { id: 'xero', label: 'Xero Integration', icon: <RefreshCw className="h-4 w-4" /> }
+            { id: 'documents', label: '📚 Accounting Docs', icon: <FileText className="h-4 w-4" /> }
           ].map((tab) => (
             <button
               key={tab.id}
@@ -198,6 +199,8 @@ const FinanceDashboard = () => {
           ))}
         </nav>
       </div>
+
+
 
       {/* Tab Content */}
       {activeTab === 'overview' && (
@@ -369,6 +372,10 @@ const FinanceDashboard = () => {
             </Card>
           ))}
         </div>
+      )}
+
+      {activeTab === 'documents' && (
+        <AccountantDocumentCenter />
       )}
 
       {activeTab === 'xero' && (

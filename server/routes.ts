@@ -8,6 +8,7 @@ import fs from "fs";
 import nodemailer from "nodemailer";
 import { z } from "zod";
 import axios from "axios";
+import accountantDocsRouter from "./routes/accountant-docs";
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(process.cwd(), "uploads");
@@ -45,6 +46,8 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Register accountant documents router
+  app.use('/api/accountant', accountantDocsRouter);
   // Get all projects
   app.get("/api/projects", async (req, res) => {
     try {
