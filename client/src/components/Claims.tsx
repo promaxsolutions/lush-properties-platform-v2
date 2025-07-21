@@ -22,13 +22,36 @@ const Claims = () => {
     setProjectName("");
   };
 
-  const lenderTemplates = [
-    "ANZ Construction Loan",
-    "CBA Development Finance",
-    "NAB Property Finance", 
-    "Westpac Business Loan",
-    "Custom Template"
-  ];
+  const lenderTemplates = {
+    "ANZ Construction Loan": {
+      fields: ["projectName", "amount", "milestone", "certifierName", "certifierNumber"],
+      requiredDocs: ["Progress Certificate", "Site Photo", "Invoice"]
+    },
+    "CBA Development Finance": {
+      fields: ["projectName", "amount", "stage", "contractorDetails", "insuranceRef"],
+      requiredDocs: ["Stage Completion", "Insurance Certificate", "Receipts"]
+    },
+    "NAB Property Finance": {
+      fields: ["projectName", "amount", "phase", "engineerApproval"],
+      requiredDocs: ["Engineer Report", "Progress Photo", "Material Receipts"]
+    },
+    "Westpac Business Loan": {
+      fields: ["projectName", "amount", "milestone", "builderLicense"],
+      requiredDocs: ["Builder Certificate", "Site Images", "Cost Breakdown"]
+    },
+    "Custom Template": {
+      fields: ["projectName", "amount", "description"],
+      requiredDocs: ["Supporting Documents"]
+    }
+  };
+
+  const defaultTemplate = {
+    fields: ["projectName", "amount", "description"],
+    requiredDocs: ["General Documents"]
+  };
+
+  // Dynamic fields for lender templates
+  const claimFields = lenderTemplates[template] || defaultTemplate;
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
@@ -66,13 +89,25 @@ const Claims = () => {
                 <SelectValue placeholder="Select lender template" />
               </SelectTrigger>
               <SelectContent>
-                {lenderTemplates.map((tmpl) => (
+                {Object.keys(lenderTemplates).map((tmpl) => (
                   <SelectItem key={tmpl} value={tmpl}>
                     {tmpl}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+            
+            {/* Display template requirements */}
+            {template && (
+              <div className="mt-2 p-3 bg-blue-50 rounded-lg">
+                <p className="text-sm font-medium text-blue-800">Required Documents:</p>
+                <ul className="text-xs text-blue-600 mt-1">
+                  {claimFields.requiredDocs.map((doc, idx) => (
+                    <li key={idx}>• {doc}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
           
           <Button 

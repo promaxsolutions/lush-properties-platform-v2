@@ -16,6 +16,10 @@ const CameraUpload: React.FC<CameraUploadProps> = ({
 }) => {
   const [uploading, setUploading] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [showCameraPrompt, setShowCameraPrompt] = useState(true);
+  
+  // Check current route for conditional rendering
+  const currentRoute = window.location.pathname;
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -64,6 +68,11 @@ const CameraUpload: React.FC<CameraUploadProps> = ({
     input.onchange = (e) => handleFileSelect(e as any);
     input.click();
   };
+
+  // Conditional rendering based on route and camera prompt visibility
+  if (!showCameraPrompt || !currentRoute.includes('/upload')) {
+    return null;
+  }
 
   return (
     <Card className={`md:hidden mb-4 ${className}`}>

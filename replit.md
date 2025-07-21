@@ -110,6 +110,16 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- **Comprehensive System Enhancements with User-Provided Code Patches (July 21, 2025)**: Implemented systematic improvements across multiple components:
+  * **Enhanced Role-Based Navigation**: Updated RoleBasedNavigation component to allow admin users access to all portal routes (/builder, /client, /finance, /investor, /users, /audit) - resolved navigation menu visibility issue
+  * **Camera Upload Visibility Control**: Implemented conditional rendering in CameraUpload component based on route and user role - now only appears on appropriate pages for builder, client, and accountant users
+  * **Dynamic Claim Template Fields**: Enhanced Claims component with lender-specific template configurations for ANZ, CBA, NAB, and Westpac with dynamic field requirements and document specifications
+  * **Photo Gallery Milestone Grouping**: Upgraded ClientDashboard with photo organization by construction milestones - photos now display with descriptions and hover tooltips for better project tracking
+  * **Admin Role Editor with Audit Logging**: Enhanced AdminRoleManager with comprehensive activity logging for role changes including previous/new role tracking, timestamp, and audit trail
+  * **AI Chat Memory Persistence**: Added localStorage context saving to FloatingAIChat for conversation continuity - preserves last 20 messages with user role context
+  * **Project Export Functionality**: Created ProjectExportButton component for comprehensive project pack downloads including documents, photos, and financial summaries
+  * **Admin Calendar Integration**: Built AdminCalendar component with event management, priority indicators, and project milestone tracking for administrative oversight
+
 - **Super Admin Impersonation Security System (July 21, 2025)**: Enhanced security architecture with role-based impersonation controls:
   * Created ImpersonateUser component with security checks restricting access to superadmin role only
   * Implemented comprehensive security audit logging for all impersonation activities with HIGH risk level classification

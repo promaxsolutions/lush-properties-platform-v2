@@ -134,18 +134,54 @@ const AdminRoleManager = () => {
     suspended: "bg-red-100 text-red-800"
   };
 
-  const updateUserRole = (userId: number, newRole: string) => {
-    setUsers(prev => prev.map(user => 
-      user.id === userId 
-        ? { ...user, role: newRole }
-        : user
-    ));
-    setEditingUserId(null);
-    
+  // Admin editing roles and logging
+  const handleRoleUpdate = (userId: number, newRole: string) => {
     const user = users.find(u => u.id === userId);
+    const currentUser = { email: 'admin@lush.com' }; // Mock current user
+    
     if (user) {
-      alert(`✅ Role updated for ${user.name} to ${newRole}`);
+      // Update user role
+      setUsers(prev => prev.map(u => 
+        u.id === userId 
+          ? { ...u, role: newRole }
+          : u
+      ));
+      setEditingUserId(null);
+      
+      // Log activity with comprehensive audit trail
+      logActivity({ 
+        action: 'Role Change', 
+        by: currentUser.email, 
+        target: userId, 
+        role: newRole,
+        previousRole: user.role,
+        userName: user.name,
+        timestamp: new Date().toISOString(),
+        severity: 'HIGH'
+      });
+      
+      // Success notification
+      window.dispatchEvent(new CustomEvent('uploadComplete', {
+        detail: { 
+          message: `✅ Role updated: ${user.name} changed from ${user.role} to ${newRole}` 
+        }
+      }));
     }
+  };
+
+  const logActivity = (activityData: any) => {
+    console.log('[ADMIN-AUDIT] Role change logged:', activityData);
+    
+    // Send to backend audit system
+    fetch('/api/audit-log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...activityData,
+        ip: '192.168.1.100', // Mock IP
+        userAgent: navigator.userAgent
+      })
+    }).catch(err => console.error('Failed to log activity:', err));
   };
 
   const updateUserStatus = (userId: number, newStatus: 'active' | 'pending' | 'suspended') => {

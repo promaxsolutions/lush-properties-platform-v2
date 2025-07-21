@@ -35,11 +35,30 @@ const ClientDashboard = () => {
     nextMilestoneDate: "February 15, 2025"
   };
 
-  const progressPhotos = [
-    { id: 1, stage: "Foundation", date: "Dec 15, 2024", count: 8 },
-    { id: 2, stage: "Framing", date: "Jan 20, 2025", count: 12 },
-    { id: 3, stage: "Roofing", date: "Expected Feb 15", count: 0 }
+  // Mock photo data with milestone grouping
+  const allPhotos = [
+    { id: 1, milestone: "Foundation", url: "/api/photos/foundation1.jpg", uploadedAt: "2024-12-15", description: "Foundation pour complete" },
+    { id: 2, milestone: "Foundation", url: "/api/photos/foundation2.jpg", uploadedAt: "2024-12-15", description: "Reinforcement inspection" },
+    { id: 3, milestone: "Foundation", url: "/api/photos/foundation3.jpg", uploadedAt: "2024-12-16", description: "Curing progress" },
+    { id: 4, milestone: "Framing", url: "/api/photos/framing1.jpg", uploadedAt: "2025-01-20", description: "Frame structure erected" },
+    { id: 5, milestone: "Framing", url: "/api/photos/framing2.jpg", uploadedAt: "2025-01-22", description: "Roof frame installation" },
+    { id: 6, milestone: "Uncategorized", url: "/api/photos/misc1.jpg", uploadedAt: "2025-01-25", description: "Site preparation" }
   ];
+
+  // Group photos by milestone
+  const groupedPhotos = allPhotos.reduce((acc, photo) => {
+    const stage = photo.milestone || 'Uncategorized';
+    acc[stage] = [...(acc[stage] || []), photo];
+    return acc;
+  }, {});
+
+  const progressPhotos = Object.keys(groupedPhotos).map((stage, index) => ({
+    id: index + 1,
+    stage: stage,
+    date: groupedPhotos[stage][0]?.uploadedAt || "No photos yet",
+    count: groupedPhotos[stage].length,
+    photos: groupedPhotos[stage]
+  }));
 
   const upgradeRequests = [
     {
@@ -257,12 +276,22 @@ const ClientDashboard = () => {
                 </div>
                 
                 {photoSet.count > 0 ? (
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {Array.from({ length: Math.min(photoSet.count, 4) }).map((_, index) => (
-                      <div key={index} className="aspect-square bg-gray-200 rounded-lg flex items-center justify-center">
-                        <Camera className="h-8 w-8 text-gray-400" />
-                      </div>
-                    ))}
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {photoSet.photos.slice(0, 4).map((photo, index) => (
+                        <div key={photo.id} className="aspect-square bg-gray-200 rounded-lg flex items-center justify-center relative overflow-hidden group cursor-pointer">
+                          <Camera className="h-8 w-8 text-gray-400" />
+                          <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <span className="text-white text-xs text-center px-2">{photo.description}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    {photoSet.count > 4 && (
+                      <p className="text-sm text-gray-500 text-center">
+                        +{photoSet.count - 4} more photos
+                      </p>
+                    )}
                   </div>
                 ) : (
                   <div className="text-center py-8 text-gray-500">

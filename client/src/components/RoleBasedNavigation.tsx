@@ -191,8 +191,9 @@ const getNavigationItems = (userRole: string): NavigationItem[] => {
 const RoleBasedNavigation = ({ userRole, isCollapsed = false }: RoleBasedNavigationProps) => {
   const [location] = useLocation();
 
-  // Get navigation items based on user role
-  const allowedItems = getNavigationItems(userRole);
+  // Get navigation items based on user role with proper filtering
+  const navigationItems = getNavigationItems(userRole);
+  const allowedItems = navigationItems.filter(item => item.roles.includes(userRole));
   
   console.log('[NAV] Rendering navigation for role:', userRole, 'Items:', allowedItems.length, 'Current location:', location);
 

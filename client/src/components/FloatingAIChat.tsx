@@ -32,7 +32,37 @@ const FloatingAIChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [chatContext, setChatContext] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Persist chat state locally
+  useEffect(() => {
+    const lastChat = localStorage.getItem('aiChatContext');
+    if (lastChat) {
+      try {
+        const parsedContext = JSON.parse(lastChat);
+        setChatContext(parsedContext);
+        if (parsedContext.messages) {
+          setMessages(parsedContext.messages);
+        }
+      } catch (error) {
+        console.error('Failed to parse chat context:', error);
+      }
+    }
+  }, []);
+
+  // Save chat context when messages change
+  useEffect(() => {
+    if (messages.length > 0) {
+      const contextData = {
+        messages: messages.slice(-20), // Keep last 20 messages
+        lastUpdated: new Date().toISOString(),
+        userRole: getUserRole()
+      };
+      localStorage.setItem('aiChatContext', JSON.stringify(contextData));
+      setChatContext(contextData);
+    }
+  }, [messages]);
 
   // Get user role for context-aware responses
   const getUserRole = () => {
