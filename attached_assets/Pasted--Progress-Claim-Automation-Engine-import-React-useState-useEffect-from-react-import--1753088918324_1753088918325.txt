@@ -1,0 +1,61 @@
+// 📤 Progress Claim Automation Engine
+import React, { useState, useEffect } from "react";
+import { sendClaimEmail, checkClaimFollowup } from "../utils/claimsAPI";
+
+export default function ClaimEngine({ project }) {
+  const [milestone, setMilestone] = useState("");
+  const [amount, setAmount] = useState("");
+  const [receipt, setReceipt] = useState(null);
+  const [photo, setPhoto] = useState(null);
+  const [template, setTemplate] = useState(null);
+  const [claimStatus, setClaimStatus] = useState("pending");
+
+  const handleUpload = (e, setter) => setter(e.target.files[0]);
+
+  const handleSubmitClaim = async () => {
+    const claimData = {
+      project: project.name,
+      milestone,
+      amount,
+      lenderEmail: project.lenderEmail,
+      builderEmail: project.builderEmail,
+      template,
+      receipt,
+      photo,
+      status: "sent",
+    };
+    await sendClaimEmail(claimData);
+    setClaimStatus("sent");
+    alert("📤 Claim submitted to lender!");
+  };
+
+  useEffect(() => {
+    if (claimStatus === "sent") {
+      const interval = setInterval(() => checkClaimFollowup(project.id), 86400000); // check every 24 hrs
+      return () => clearInterval(interval);
+    }
+  }, [claimStatus]);
+
+  return (
+    <div className="bg-white p-4 rounded shadow">
+      <h2 className="text-lg font-bold mb-4">🧾 Submit Progress Claim</h2>
+
+      <label className="block mb-1">🏗️ Milestone</label>
+      <input className="w-full border p-2 mb-3" value={milestone} onChange={(e) => setMilestone(e.target.value)} />
+
+      <label className="block mb-1">💰 Amount</label>
+      <input type="number" className="w-full border p-2 mb-3" value={amount} onChange={(e) => setAmount(e.target.value)} />
+
+      <label className="block mb-1">📄 Upload Claim Template</label>
+      <input type="file" className="mb-3" onChange={(e) => handleUpload(e, setTemplate)} />
+
+      <label className="block mb-1">📷 Site Photo</label>
+      <input type="file" accept="image/*" className="mb-3" onChange={(e) => handleUpload(e, setPhoto)} />
+
+      <label className="block mb-1">🧾 Receipt</label>
+      <input type="file" accept="application/pdf,image/*" className="mb-3" onChange={(e) => handleUpload(e, setReceipt)} />
+
+      <button onClick={handleSubmitClaim} className="bg-blue-600 text-white px-4 py-2 rounded">📤 Submit to Lender</button>
+    </div>
+  );
+}

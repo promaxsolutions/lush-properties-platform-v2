@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="600" height="800" viewBox="0 0 600 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Receipt Background -->
+  <rect width="600" height="800" fill="white" stroke="#e5e5e5" stroke-width="2"/>
+  
+  <!-- Header -->
+  <text x="300" y="50" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="black">TIMBER SUPPLIES CO</text>
+  <text x="300" y="80" font-family="Arial" font-size="14" text-anchor="middle" fill="gray">123 Builder Street</text>
+  <text x="300" y="100" font-family="Arial" font-size="14" text-anchor="middle" fill="gray">Construction Materials Invoice</text>
+  
+  <!-- Date and Invoice -->
+  <text x="50" y="150" font-family="Arial" font-size="16" fill="black">Date: 2024-01-15</text>
+  <text x="50" y="170" font-family="Arial" font-size="16" fill="black">Invoice #: TS-2024-0115</text>
+  
+  <!-- Items -->
+  <text x="50" y="220" font-family="Arial" font-size="18" font-weight="bold" fill="black">ITEMS PURCHASED:</text>
+  
+  <text x="50" y="260" font-family="Arial" font-size="14" fill="black">Pine Timber 90x45mm H3</text>
+  <text x="500" y="260" font-family="Arial" font-size="14" text-anchor="end" fill="black">$2,850.00</text>
+  
+  <text x="50" y="290" font-family="Arial" font-size="14" fill="black">Treated Pine Posts</text>
+  <text x="500" y="290" font-family="Arial" font-size="14" text-anchor="end" fill="black">$1,200.00</text>
+  
+  <text x="50" y="320" font-family="Arial" font-size="14" fill="black">Structural Grade Timber</text>
+  <text x="500" y="320" font-family="Arial" font-size="14" text-anchor="end" fill="black">$1,950.00</text>
+  
+  <text x="50" y="350" font-family="Arial" font-size="14" fill="black">Hardware & Fixings</text>
+  <text x="500" y="350" font-family="Arial" font-size="14" text-anchor="end" fill="black">$450.00</text>
+  
+  <!-- Line separator -->
+  <line x1="50" y1="380" x2="550" y2="380" stroke="black" stroke-width="1"/>
+  
+  <!-- Totals -->
+  <text x="50" y="420" font-family="Arial" font-size="16" fill="black">SUBTOTAL:</text>
+  <text x="500" y="420" font-family="Arial" font-size="16" text-anchor="end" fill="black">$6,450.00</text>
+  
+  <text x="50" y="450" font-family="Arial" font-size="16" fill="black">GST:</text>
+  <text x="500" y="450" font-family="Arial" font-size="16" text-anchor="end" fill="black">$645.00</text>
+  
+  <text x="50" y="490" font-family="Arial" font-size="18" font-weight="bold" fill="black">TOTAL:</text>
+  <text x="500" y="490" font-family="Arial" font-size="18" font-weight="bold" text-anchor="end" fill="black">$7,095.00</text>
+  
+  <!-- Footer -->
+  <text x="50" y="550" font-family="Arial" font-size="14" fill="gray">Payment Method: Credit Card</text>
+  <text x="300" y="600" font-family="Arial" font-size="14" text-anchor="middle" fill="gray">Thank you for your business!</text>
+  
+  <!-- Highlight boxes for key terms -->
+  <rect x="45" y="240" width="510" height="120" fill="yellow" fill-opacity="0.1" stroke="orange" stroke-width="1" stroke-dasharray="3,3"/>
+  <text x="300" y="730" font-family="Arial" font-size="12" text-anchor="middle" fill="orange">Sample Receipt - Timber Supplies (Budget Line: Framing Timber)</text>
+</svg>

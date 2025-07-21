@@ -58,6 +58,11 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
       icon: <DollarSign className="h-5 w-5" /> 
     },
     { 
+      label: "Budget Test", 
+      path: "/budget-test", 
+      icon: <Brain className="h-5 w-5" /> 
+    },
+    { 
       label: "Claims", 
       path: "/claims", 
       icon: <FileText className="h-5 w-5" /> 

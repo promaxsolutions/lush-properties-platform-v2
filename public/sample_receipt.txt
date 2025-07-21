@@ -1,0 +1,19 @@
+TIMBER SUPPLIES CO
+123 Builder Street
+Construction Materials Invoice
+
+Date: 2024-01-15
+Invoice #: TS-2024-0115
+
+ITEMS PURCHASED:
+Pine Timber 90x45mm H3    $2,850.00
+Treated Pine Posts        $1,200.00
+Structural Grade Timber   $1,950.00
+Hardware & Fixings        $450.00
+
+SUBTOTAL:                 $6,450.00
+GST:                      $645.00
+TOTAL:                    $7,095.00
+
+Payment Method: Credit Card
+Thank you for your business!
