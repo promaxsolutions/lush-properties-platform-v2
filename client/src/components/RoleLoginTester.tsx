@@ -256,7 +256,7 @@ const RoleLoginTester = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-3">
-            Lush Properties Control Center
+            Lush Properties Pty Ltd
           </h1>
           <p className="text-xl text-gray-600 mb-2">Role-Based Login Testing</p>
           <p className="text-sm text-gray-500">

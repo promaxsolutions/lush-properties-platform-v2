@@ -319,7 +319,7 @@ const RoleBasedDashboard = () => {
       <footer className="bg-white border-t mt-12 py-6">
         <div className="text-center">
           <p className="text-xs text-gray-400">
-            Lush OS — Dashboard view optimized for {role} role
+            Lush Properties Pty Ltd — Dashboard view optimized for {role} role
           </p>
           <div className="flex justify-center items-center gap-2 mt-2">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>

@@ -42,6 +42,7 @@ import PolishedDashboard from "./components/PolishedDashboard";
 import EnhancedReceiptUpload from "./components/EnhancedReceiptUpload";
 import RoleLoginTester from "./components/RoleLoginTester";
 import WorkingLogin from "./components/WorkingLogin";
+import ResponsiveLayout from "./components/ResponsiveLayout";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -72,7 +73,7 @@ function App() {
                     path="/*"
                     element={
                       <ProtectedRoute>
-                        <SidebarLayout>
+                        <ResponsiveLayout>
                           <Routes>
                             <Route path="dashboard" element={
                               window.innerWidth < 768 ? <MobileDashboard /> : <Dashboard />
@@ -197,7 +198,7 @@ function App() {
                           </Routes>
                           <AIChatWidget />
                           <MobileNotifications />
-                        </SidebarLayout>
+                        </ResponsiveLayout>
                       </ProtectedRoute>
                     }
                   />

@@ -1,0 +1,260 @@
+import React, { useState, useEffect, ReactNode } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { 
+  LayoutDashboard, 
+  Upload, 
+  FileText, 
+  DollarSign, 
+  Settings, 
+  LogOut,
+  User,
+  Brain,
+  Menu,
+  X,
+  Home,
+  Building,
+  Calculator,
+  Crown,
+  Hammer,
+  Briefcase
+} from "lucide-react";
+
+interface ResponsiveLayoutProps {
+  children: ReactNode;
+}
+
+interface NavItem {
+  label: string;
+  path: string;
+  icon: React.ReactNode;
+  adminOnly?: boolean;
+  mobileLabel?: string;
+}
+
+const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
+  const navItems: NavItem[] = [
+    { 
+      label: "Dashboard", 
+      path: "/dashboard", 
+      icon: <LayoutDashboard className="h-5 w-5" />,
+      mobileLabel: "Home"
+    },
+    { 
+      label: "AI Workflows", 
+      path: "/ai-workflows", 
+      icon: <Brain className="h-5 w-5" />,
+      mobileLabel: "AI"
+    },
+    { 
+      label: "Contracts", 
+      path: "/contracts", 
+      icon: <FileText className="h-5 w-5" /> 
+    },
+    { 
+      label: "Profit Calculator", 
+      path: "/profits", 
+      icon: <Calculator className="h-5 w-5" />,
+      mobileLabel: "Profits"
+    },
+    { 
+      label: "Builder Portal", 
+      path: "/builder", 
+      icon: <Hammer className="h-5 w-5" />,
+      mobileLabel: "Builder"
+    },
+    { 
+      label: "Client Upgrades", 
+      path: "/client-upgrades", 
+      icon: <Home className="h-5 w-5" />,
+      mobileLabel: "Upgrades"
+    },
+    { 
+      label: "Investor Portal", 
+      path: "/investor-portal", 
+      icon: <Briefcase className="h-5 w-5" />,
+      mobileLabel: "Investor"
+    },
+    { 
+      label: "Heatmap", 
+      path: "/heatmap", 
+      icon: <DollarSign className="h-5 w-5" /> 
+    },
+    { 
+      label: "Role Manager", 
+      path: "/admin/role-manager", 
+      icon: <Crown className="h-5 w-5" />,
+      adminOnly: true,
+      mobileLabel: "Admin"
+    },
+    { 
+      label: "Settings", 
+      path: "/settings", 
+      icon: <Settings className="h-5 w-5" /> 
+    }
+  ];
+
+  const logout = () => {
+    localStorage.removeItem("lush_user");
+    navigate("/login");
+  };
+
+  const NavContent = ({ mobile = false }: { mobile?: boolean }) => (
+    <div className={`flex flex-col h-full ${mobile ? 'p-4' : 'p-6'}`}>
+      {/* Logo */}
+      <div className={`flex items-center gap-3 mb-8 ${mobile ? 'pb-4 border-b' : ''}`}>
+        <div className={`bg-gradient-to-br from-lush-primary to-lush-accent rounded-xl flex items-center justify-center shadow-lg ${mobile ? 'w-10 h-10' : 'w-12 h-12'}`}>
+          <span className={`font-bold text-white ${mobile ? 'text-lg' : 'text-xl'}`}>L</span>
+        </div>
+        <div className={mobile ? 'block' : 'hidden lg:block'}>
+          <h1 className={`font-bold text-gray-900 leading-tight ${mobile ? 'text-base' : 'text-lg'}`}>
+            Lush Properties
+          </h1>
+          <p className={`text-lush-primary font-medium ${mobile ? 'text-xs' : 'text-sm'}`}>
+            Pty Ltd
+          </p>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 space-y-2">
+        {navItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          const displayLabel = mobile && item.mobileLabel ? item.mobileLabel : item.label;
+          
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              onClick={() => mobile && setSidebarOpen(false)}
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+                isActive
+                  ? "bg-lush-primary text-white shadow-lg"
+                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+              } ${mobile ? 'text-base' : 'text-sm'}`}
+            >
+              <span className={`flex-shrink-0 ${isActive ? 'text-white' : 'text-gray-500'}`}>
+                {item.icon}
+              </span>
+              <span className={`font-medium ${mobile ? 'block' : 'hidden lg:block'}`}>
+                {displayLabel}
+              </span>
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* User Profile & Logout */}
+      <div className={`border-t pt-4 mt-4 ${mobile ? 'space-y-3' : 'space-y-2'}`}>
+        <div className={`flex items-center gap-3 px-4 py-2 ${mobile ? '' : 'hidden lg:flex'}`}>
+          <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+            <User className="h-4 w-4 text-gray-600" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-gray-900 truncate">User</p>
+            <p className="text-xs text-gray-500 truncate">admin@lush.com</p>
+          </div>
+        </div>
+        
+        <Button
+          onClick={logout}
+          variant="ghost"
+          className={`w-full justify-start gap-3 text-gray-600 hover:text-red-600 hover:bg-red-50 ${mobile ? 'h-12 text-base' : 'h-10'}`}
+        >
+          <LogOut className="h-5 w-5" />
+          <span className={mobile ? 'block' : 'hidden lg:block'}>Logout</span>
+        </Button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Mobile Header */}
+      <div className="lg:hidden bg-white border-b sticky top-0 z-40">
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-gradient-to-br from-lush-primary to-lush-accent rounded-lg flex items-center justify-center">
+              <span className="text-sm font-bold text-white">L</span>
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-gray-900">Lush Properties</h1>
+              <p className="text-xs text-lush-primary font-medium">Pty Ltd</p>
+            </div>
+          </div>
+          
+          <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="sm" className="p-2">
+                <Menu className="h-6 w-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-80 p-0">
+              <NavContent mobile={true} />
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
+
+      <div className="flex">
+        {/* Desktop Sidebar */}
+        <div className="hidden lg:block w-64 xl:w-72 bg-white border-r min-h-screen sticky top-0">
+          <NavContent />
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 min-w-0">
+          <div className="p-4 lg:p-6 xl:p-8 max-w-7xl mx-auto">
+            {children}
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Bottom Navigation - Alternative Option */}
+      {isMobile && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t z-30 lg:hidden">
+          <div className="flex items-center justify-around py-2">
+            {navItems.slice(0, 5).map((item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`flex flex-col items-center gap-1 p-2 min-w-0 flex-1 ${
+                    isActive ? 'text-lush-primary' : 'text-gray-500'
+                  }`}
+                >
+                  <span className="flex-shrink-0">
+                    {item.icon}
+                  </span>
+                  <span className="text-xs font-medium truncate">
+                    {item.mobileLabel || item.label}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ResponsiveLayout;

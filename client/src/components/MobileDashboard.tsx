@@ -361,7 +361,7 @@ const MobileDashboard = () => {
         <footer className="bg-white rounded-lg p-3 text-center text-xs text-gray-500 space-y-1">
           <p>📱 Add to Home Screen for best experience</p>
           <div className="flex justify-center items-center gap-2">
-            <span>Built for Lush Group • 2024</span>
+            <span>Built by Lush Properties Pty Ltd • 2025</span>
             <span>•</span>
             <span className="text-blue-600">Mobile Ready</span>
           </div>

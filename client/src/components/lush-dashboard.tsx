@@ -859,7 +859,7 @@ Give me a brief insight into potential profitability, risk factors, and recommen
         </ul>
         <div className="mt-3 flex justify-between items-center">
           <div className="text-xs text-purple-600 font-medium">
-            All AI systems running ⚙️ — Lush OS powered by OpenAI
+            All AI systems running ⚙️ — Lush Properties Pty Ltd powered by OpenAI
           </div>
           <Button 
             size="sm" 
