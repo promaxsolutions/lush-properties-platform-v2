@@ -110,6 +110,18 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- **Investor Project Opportunity Alerts Implementation (July 21, 2025)**: Automated notification system for new funding opportunities:
+  * Enhanced project schema with funding status fields (open_to_funding, investor_funded, no_funding) and investor tracking tables
+  * AdminProjectModal with funding configuration allowing admins to mark projects as "Open to Investor Funding"
+  * Investor opportunity alerts triggered when admin creates projects open to funding with automatic email/WhatsApp notifications
+  * "New Opportunities" tab in InvestorDashboard showing live funding opportunities with detailed project information
+  * Investment opportunity cards displaying budget, ROI, start date, funding progress, and investment ranges
+  * Alert tracking system monitoring email delivery, open rates, and click-through rates for admin analytics
+  * Project pack download functionality and "Pledge Interest" / "Request Info" actions for investor engagement
+  * Funding progress bars showing current vs target funding with percentage completion and remaining amount
+  * Admin-controlled investor alert system with toggle to notify eligible investors on project creation
+  * Investment range specifications with minimum/maximum amounts and funding targets clearly displayed
+
 - **Investor Project Progress Sync Implementation (July 21, 2025)**: Live project tracking with real-time builder progress synchronization:
   * Enhanced InvestorDashboard with live project monitoring showing construction timeline progress from Planning → Foundation → Framing → Roofing → Lockup → Handover
   * Real-time progress photos uploaded by builders displayed in investor view (read-only access)

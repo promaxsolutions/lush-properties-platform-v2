@@ -25,7 +25,12 @@ import {
   AlertCircle,
   PlayCircle,
   Activity,
-  Zap
+  Zap,
+  Star,
+  Heart,
+  Info,
+  Target,
+  Bell
 } from 'lucide-react';
 
 const InvestorDashboard = () => {
@@ -38,6 +43,44 @@ const InvestorDashboard = () => {
     avgROI: 18.5,
     totalReturns: 445000
   };
+
+  // New funding opportunities available to investors
+  const newOpportunities = [
+    {
+      id: 4,
+      name: "Waterfront Luxury Villas",
+      address: "123 Harbour View Drive, Sydney NSW 2000",
+      totalBudget: "3,200,000",
+      estimatedROI: 28.5,
+      expectedStartDate: "March 2025",
+      projectPackUrl: "/documents/waterfront-villas-pack.pdf",
+      status: "Awaiting Docs",
+      fundingStatus: "open_to_funding",
+      description: "Premium waterfront development with 4 luxury villas featuring panoramic harbour views",
+      riskLevel: "Medium",
+      minInvestment: 500000,
+      maxInvestment: 1200000,
+      fundingTarget: 2000000,
+      currentFunding: 400000
+    },
+    {
+      id: 5,
+      name: "Green Tech Office Complex",
+      address: "89 Innovation Boulevard, Melbourne VIC 3000",
+      totalBudget: "5,800,000",
+      estimatedROI: 22.8,
+      expectedStartDate: "April 2025",
+      projectPackUrl: "/documents/green-tech-complex-pack.pdf",
+      status: "Funding Confirmed",
+      fundingStatus: "open_to_funding",
+      description: "Sustainable office complex with solar panels and smart building technology",
+      riskLevel: "Low",
+      minInvestment: 750000,
+      maxInvestment: 2000000,
+      fundingTarget: 3500000,
+      currentFunding: 2100000
+    }
+  ];
 
   const assignedProjects = [
     {
@@ -239,6 +282,7 @@ const InvestorDashboard = () => {
           {[
             { id: 'overview', label: 'Portfolio Overview', icon: <BarChart className="h-4 w-4" /> },
             { id: 'projects', label: 'Live Projects', icon: <Zap className="h-4 w-4" /> },
+            { id: 'opportunities', label: 'New Opportunities', icon: <TrendingUp className="h-4 w-4" /> },
             { id: 'documents', label: 'Documents', icon: <FileText className="h-4 w-4" /> },
             { id: 'analytics', label: 'Analytics', icon: <PieChart className="h-4 w-4" /> }
           ].map((tab) => (
@@ -538,6 +582,146 @@ const InvestorDashboard = () => {
               </CardContent>
             </Card>
           ))}
+        </div>
+      )}
+
+      {activeTab === 'opportunities' && (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">New Investment Opportunities</h3>
+              <p className="text-gray-600">Discover exclusive funding opportunities from Lush Properties Pty Ltd</p>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm">
+                <Bell className="h-4 w-4 mr-2" />
+                Alert Settings
+              </Button>
+            </div>
+          </div>
+
+          {newOpportunities.map((opportunity) => (
+            <Card key={opportunity.id} className="overflow-hidden border-l-4 border-l-orange-500">
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="text-xl font-bold text-gray-900">{opportunity.name}</h3>
+                      <Badge className="bg-orange-100 text-orange-800">
+                        New Opportunity
+                      </Badge>
+                      <Badge className={getRiskColor(opportunity.riskLevel)}>
+                        {opportunity.riskLevel} Risk
+                      </Badge>
+                    </div>
+                    <p className="text-gray-600 flex items-center gap-2 mb-2">
+                      <MapPin className="h-4 w-4" />
+                      {opportunity.address}
+                    </p>
+                    <p className="text-sm text-gray-700 mb-3">{opportunity.description}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm">
+                      <Info className="h-4 w-4 mr-2" />
+                      Request Info
+                    </Button>
+                    <Button className="bg-lush-primary hover:bg-lush-primary/90" size="sm">
+                      <Heart className="h-4 w-4 mr-2" />
+                      Pledge Interest
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Key Metrics */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                  <div className="bg-blue-50 p-4 rounded-lg text-center">
+                    <div className="text-sm font-medium text-blue-700">Total Budget</div>
+                    <div className="text-lg font-bold text-blue-900">${opportunity.totalBudget}</div>
+                  </div>
+                  <div className="bg-green-50 p-4 rounded-lg text-center">
+                    <div className="text-sm font-medium text-green-700">Expected ROI</div>
+                    <div className="text-lg font-bold text-green-900">{opportunity.estimatedROI}%</div>
+                  </div>
+                  <div className="bg-purple-50 p-4 rounded-lg text-center">
+                    <div className="text-sm font-medium text-purple-700">Start Date</div>
+                    <div className="text-lg font-bold text-purple-900">{opportunity.expectedStartDate}</div>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-lg text-center">
+                    <div className="text-sm font-medium text-gray-700">Status</div>
+                    <div className="text-lg font-bold text-gray-900">{opportunity.status}</div>
+                  </div>
+                </div>
+
+                {/* Funding Progress */}
+                <div className="mb-6">
+                  <div className="flex items-center justify-between text-sm mb-2">
+                    <span className="font-medium text-gray-700">Funding Progress</span>
+                    <span className="font-bold text-lush-primary">
+                      ${opportunity.currentFunding.toLocaleString()} / ${opportunity.fundingTarget.toLocaleString()}
+                    </span>
+                  </div>
+                  <Progress value={(opportunity.currentFunding / opportunity.fundingTarget) * 100} className="h-3" />
+                  <div className="flex justify-between text-xs text-gray-600 mt-1">
+                    <span>{((opportunity.currentFunding / opportunity.fundingTarget) * 100).toFixed(1)}% funded</span>
+                    <span>${(opportunity.fundingTarget - opportunity.currentFunding).toLocaleString()} remaining</span>
+                  </div>
+                </div>
+
+                {/* Investment Range */}
+                <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 mb-4">
+                  <h5 className="font-medium text-yellow-900 mb-2 flex items-center gap-2">
+                    <Target className="h-4 w-4" />
+                    Investment Range
+                  </h5>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-yellow-700">Minimum Investment:</span>
+                      <div className="font-bold text-yellow-900">${opportunity.minInvestment.toLocaleString()}</div>
+                    </div>
+                    <div>
+                      <span className="text-yellow-700">Maximum Investment:</span>
+                      <div className="font-bold text-yellow-900">${opportunity.maxInvestment.toLocaleString()}</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-3">
+                  <Button variant="outline" className="flex-1">
+                    <Download className="h-4 w-4 mr-2" />
+                    Download Project Pack
+                  </Button>
+                  <Button variant="outline" className="flex-1">
+                    <Info className="h-4 w-4 mr-2" />
+                    Schedule Call
+                  </Button>
+                  <Button className="flex-1 bg-lush-primary hover:bg-lush-primary/90">
+                    <Heart className="h-4 w-4 mr-2" />
+                    Express Interest
+                  </Button>
+                </div>
+
+              </CardContent>
+            </Card>
+          ))}
+
+          {newOpportunities.length === 0 && (
+            <Card>
+              <CardContent className="p-12 text-center">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Bell className="h-8 w-8 text-gray-400" />
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No New Opportunities</h3>
+                <p className="text-gray-600 mb-4">
+                  We'll notify you when new investment opportunities become available.
+                </p>
+                <Button variant="outline">
+                  <Bell className="h-4 w-4 mr-2" />
+                  Set Up Alerts
+                </Button>
+              </CardContent>
+            </Card>
+          )}
         </div>
       )}
 
