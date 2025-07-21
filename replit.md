@@ -110,6 +110,18 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- **Investor Project Progress Sync Implementation (July 21, 2025)**: Live project tracking with real-time builder progress synchronization:
+  * Enhanced InvestorDashboard with live project monitoring showing construction timeline progress from Planning → Foundation → Framing → Roofing → Lockup → Handover
+  * Real-time progress photos uploaded by builders displayed in investor view (read-only access)
+  * Interactive construction timeline with visual stage indicators and completion percentage tracking
+  * Payment claims history with status tracking (Approved/Pending) visible to investors for transparency
+  * Auto-updating project cards showing current stage, last update timestamp, and next milestone predictions
+  * Project-specific progress sync: investors only see projects they are linked to with filtered data access
+  * Builder photo gallery with captions and timestamps for construction milestone documentation
+  * Live project status indicators with "Last updated" timestamps for real-time progress awareness
+  * Financial tracking integration showing investment amount vs current valuation with ROI calculations
+  * Read-only permissions ensuring investors cannot edit, upload, or comment on operational construction data
+
 - **Investor Role Integration Implementation (July 21, 2025)**: Complete investor portal with portfolio management and document access:
   * Added investor role with dedicated /investor route and InvestorDashboard component
   * Comprehensive investment portfolio tracking with project snapshots, ROI calculations, and performance analytics
