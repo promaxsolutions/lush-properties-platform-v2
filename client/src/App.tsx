@@ -43,6 +43,8 @@ import EnhancedReceiptUpload from "./components/EnhancedReceiptUpload";
 import RoleLoginTester from "./components/RoleLoginTester";
 import WorkingLogin from "./components/WorkingLogin";
 import ResponsiveLayout from "./components/ResponsiveLayout";
+import PolishedBuilderPortal from "./components/PolishedBuilderPortal";
+import PolishedClientPortal from "./components/PolishedClientPortal";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -185,8 +187,9 @@ function App() {
                             <Route path="settings" element={<Settings />} />
                             <Route path="contracts" element={<ContractUpload />} />
                             <Route path="profits" element={<ProfitCalculator />} />
-                            <Route path="builder" element={<BuilderPortal />} />
+                            <Route path="builder" element={<PolishedBuilderPortal />} />
                             <Route path="client-upgrades" element={<ClientUpgradePanel />} />
+                            <Route path="client-portal" element={<PolishedClientPortal />} />
                             <Route path="heatmap" element={<HeatmapVisualizer />} />
                             <Route path="ai-workflows" element={<AIWorkflowEngine />} />
                             <Route path="role-dashboard" element={<RoleBasedDashboard />} />

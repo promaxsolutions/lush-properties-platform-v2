@@ -1,0 +1,50 @@
+// 🎨 Global Portal Polish – Lush Properties Pty Ltd
+
+/* === UNIVERSAL LAYOUT CLEANUP === */
+- Apply max-width wrapper: `max-w-4xl mx-auto px-4 pt-6`
+- Use consistent vertical spacing (e.g. `space-y-6`, `gap-6` in grids)
+- Ensure all pages are mobile responsive: stack vertically, full-width inputs, no overflow
+
+/* === BUILDER PORTAL (/builder) === */
+- Wrap each feature (Photo Upload, Timeline Update, Claim Submission) in separate card
+- Add section headings with emojis:
+  - 📸 Upload Build Photos
+  - 🕒 Update Progress
+  - 🧾 Submit Claim
+- Buttons: Green (#007144), rounded-xl, full-width on mobile
+- Inputs: Rounded, shadow, clean borders
+- Show onboarding tip banner: “Tip: Upload clear stage photos for faster approvals”
+- Rename page title: “Lush Properties Pty Ltd — Builder Portal”
+
+/* === CLIENT PORTAL (/client) === */
+- Add welcome message: “👋 Hi [Client Name], here’s your project dashboard.”
+- Show project stage as a progress bar with milestone markers
+- Add image carousel for build progress photos
+- Display budget drawdown timeline
+- Add upgrade request button (modal + AI responder prompt)
+- Auto-notify client of milestones: Roofing, Lockup, Handover
+
+/* === ACCOUNTANT / ADMIN PORTAL === */
+- Tabs: Receipts | Claims | Timeline | Audit Logs
+- Role-specific access based on login
+- Charts: Show per-project equity, bank vs cash spending
+- Show overdue milestones & AI alerts
+
+/* === GENERAL DESIGN SYSTEM === */
+- Fonts: Use “Inter” or “Open Sans”
+- Theme: Deep Green (#007144), Accent Gold (#D4AF37)
+- Button Style: Rounded-lg, font-bold, shadow-md
+- Input Style: Border-gray-300, rounded-xl, px-4 py-2
+- Section cards: White bg, shadow-sm, rounded-xl, mb-6
+
+/* === MOBILE CLEANUP === */
+- Collapse sidebar on mobile (burger menu)
+- Use `min-h-screen` wrappers
+- Make dashboard PWA-ready: Add-to-home + swipe support
+
+/* === FUTURE READY === */
+- Prepare dynamic layout for new roles (Investor, Broker, Agent)
+- Use dynamic greeting with local time and first name
+- Add breadcrumbs / page subtitles for clarity
+
+// 🌿 All portals now aligned under Lush Properties Pty Ltd with consistent, clean design.

@@ -81,10 +81,10 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
       mobileLabel: "Builder"
     },
     { 
-      label: "Client Upgrades", 
-      path: "/client-upgrades", 
+      label: "Client Portal", 
+      path: "/client-portal", 
       icon: <Home className="h-5 w-5" />,
-      mobileLabel: "Upgrades"
+      mobileLabel: "Client"
     },
     { 
       label: "Investor Portal", 
@@ -253,6 +253,9 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
           </div>
         </div>
       )}
+      
+      {/* Add bottom padding for mobile navigation */}
+      {isMobile && <div className="h-20"></div>}
     </div>
   );
 };
