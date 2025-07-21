@@ -28,127 +28,153 @@ interface RoleBasedNavigationProps {
   isCollapsed?: boolean;
 }
 
-const navigationItems: NavigationItem[] = [
-  // Admin-only items
-  {
-    path: '/dashboard',
-    label: 'Dashboard',
-    icon: <LayoutDashboard className="h-5 w-5" />,
-    roles: ['admin']
-  },
-  {
-    path: '/users',
-    label: 'User Management',
-    icon: <Users className="h-5 w-5" />,
-    roles: ['admin']
-  },
-  {
-    path: '/security',
-    label: 'Security',
-    icon: <Settings className="h-5 w-5" />,
-    roles: ['admin']
-  },
-  {
-    path: '/walkthrough',
-    label: 'Walkthrough',
-    icon: <FileText className="h-5 w-5" />,
-    roles: ['admin']
-  },
-
-  // Builder items
-  {
-    path: '/builder',
-    label: 'Builder Portal',
-    icon: <Building className="h-5 w-5" />,
-    roles: ['builder', 'admin']
-  },
-  {
-    path: '/uploads',
-    label: 'Upload Progress',
-    icon: <Upload className="h-5 w-5" />,
-    roles: ['builder', 'admin']
-  },
-  {
-    path: '/timeline',
-    label: 'Project Timeline',
-    icon: <Calendar className="h-5 w-5" />,
-    roles: ['builder', 'admin']
-  },
-  {
-    path: '/claims',
-    label: 'Payment Claims',
-    icon: <DollarSign className="h-5 w-5" />,
-    roles: ['builder', 'admin']
-  },
-
-  // Client items
-  {
-    path: '/client',
-    label: 'My Project',
-    icon: <Home className="h-5 w-5" />,
-    roles: ['client', 'admin']
-  },
-  {
-    path: '/client-upgrades',
-    label: 'Upgrade Requests',
-    icon: <TrendingUp className="h-5 w-5" />,
-    roles: ['client', 'admin']
-  },
-  {
-    path: '/messages',
-    label: 'Messages',
-    icon: <MessageCircle className="h-5 w-5" />,
-    roles: ['client', 'admin']
-  },
-
-  // Accountant items
-  {
-    path: '/finance',
-    label: 'Finance Dashboard',
-    icon: <CreditCard className="h-5 w-5" />,
-    roles: ['accountant', 'admin']
-  },
-  {
-    path: '/receipts',
-    label: 'Receipt Management',
-    icon: <Receipt className="h-5 w-5" />,
-    roles: ['accountant', 'admin']
-  },
-  {
-    path: '/xero-sync',
-    label: 'Xero Integration',
-    icon: <FileText className="h-5 w-5" />,
-    roles: ['accountant', 'admin']
-  },
-
-  // Investor items
-  {
-    path: '/investor',
-    label: 'Investment Portfolio',
-    icon: <TrendingUp className="h-5 w-5" />,
-    roles: ['investor', 'admin']
-  },
-  {
-    path: '/documents',
-    label: 'Documents',
-    icon: <FileText className="h-5 w-5" />,
-    roles: ['investor', 'admin']
-  },
-  {
-    path: '/heatmap',
-    label: 'Project Analytics',
-    icon: <TrendingUp className="h-5 w-5" />,
-    roles: ['investor', 'admin']
+const getNavigationItems = (userRole: string): NavigationItem[] => {
+  // Admin gets full navigation access
+  if (userRole === 'admin') {
+    return [
+      {
+        path: '/dashboard',
+        label: 'Admin Dashboard',
+        icon: <Home className="h-5 w-5" />,
+        roles: ['admin']
+      },
+      {
+        path: '/builder',
+        label: 'Builder Portal',
+        icon: <Building className="h-5 w-5" />,
+        roles: ['admin']
+      },
+      {
+        path: '/client',
+        label: 'Client Portal',
+        icon: <Users className="h-5 w-5" />,
+        roles: ['admin']
+      },
+      {
+        path: '/finance',
+        label: 'Finance Portal',
+        icon: <CreditCard className="h-5 w-5" />,
+        roles: ['admin']
+      },
+      {
+        path: '/investor',
+        label: 'Investor Portal',
+        icon: <TrendingUp className="h-5 w-5" />,
+        roles: ['admin']
+      },
+      {
+        path: '/users',
+        label: 'Team Manager',
+        icon: <Users className="h-5 w-5" />,
+        roles: ['admin']
+      },
+      {
+        path: '/security',
+        label: 'Security',
+        icon: <Settings className="h-5 w-5" />,
+        roles: ['admin']
+      }
+    ];
   }
-];
+
+  // Builder navigation - focused on construction tasks
+  if (userRole === 'builder') {
+    return [
+      {
+        path: '/builder',
+        label: 'My Dashboard',
+        icon: <Home className="h-5 w-5" />,
+        roles: ['builder']
+      },
+      {
+        path: '/uploads',
+        label: 'Upload Progress',
+        icon: <Upload className="h-5 w-5" />,
+        roles: ['builder']
+      },
+      {
+        path: '/timeline',
+        label: 'Project Timeline',
+        icon: <Calendar className="h-5 w-5" />,
+        roles: ['builder']
+      }
+    ];
+  }
+
+  // Client navigation - project tracking focused
+  if (userRole === 'client') {
+    return [
+      {
+        path: '/client',
+        label: 'My Project',
+        icon: <Home className="h-5 w-5" />,
+        roles: ['client']
+      },
+      {
+        path: '/uploads',
+        label: 'Project Progress',
+        icon: <Upload className="h-5 w-5" />,
+        roles: ['client']
+      },
+      {
+        path: '/documents',
+        label: 'My Documents',
+        icon: <FileText className="h-5 w-5" />,
+        roles: ['client']
+      }
+    ];
+  }
+
+  // Accountant navigation - financial management
+  if (userRole === 'accountant') {
+    return [
+      {
+        path: '/finance',
+        label: 'Finance Dashboard',
+        icon: <Home className="h-5 w-5" />,
+        roles: ['accountant']
+      },
+      {
+        path: '/receipts',
+        label: 'Receipt Management',
+        icon: <Receipt className="h-5 w-5" />,
+        roles: ['accountant']
+      },
+      {
+        path: '/claims',
+        label: 'Payment Claims',
+        icon: <DollarSign className="h-5 w-5" />,
+        roles: ['accountant']
+      }
+    ];
+  }
+
+  // Investor navigation - investment tracking
+  if (userRole === 'investor') {
+    return [
+      {
+        path: '/investor',
+        label: 'My Investments',
+        icon: <Home className="h-5 w-5" />,
+        roles: ['investor']
+      },
+      {
+        path: '/documents',
+        label: 'Investment Docs',
+        icon: <FileText className="h-5 w-5" />,
+        roles: ['investor']
+      }
+    ];
+  }
+
+  return [];
+};
 
 const RoleBasedNavigation = ({ userRole, isCollapsed = false }: RoleBasedNavigationProps) => {
   const [location] = useLocation();
 
-  // Filter navigation items based on user role
-  const allowedItems = navigationItems.filter(item => 
-    item.roles.includes(userRole)
-  );
+  // Get navigation items based on user role
+  const allowedItems = getNavigationItems(userRole);
 
   if (allowedItems.length === 0) {
     return (

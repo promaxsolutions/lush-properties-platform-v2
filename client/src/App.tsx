@@ -52,6 +52,7 @@ import InviteClientModal from "./components/InviteClientModal";
 import WalkthroughGuide from "./components/WalkthroughGuide";
 import RoleBasedNavigation from "./components/RoleBasedNavigation";
 import ProtectedRoute from "./components/ProtectedRoute";
+import RouteGuard from "./components/RouteGuard";
 import ClientDashboard from "./components/ClientDashboard";
 import FinanceDashboard from "./components/FinanceDashboard";
 import InvestorDashboard from "./components/InvestorDashboard";
@@ -103,18 +104,58 @@ function App() {
                         <ResponsiveLayout>
                           <Routes>
                             <Route path="dashboard" element={
-                              window.innerWidth < 768 ? <MobileDashboard /> : <Dashboard />
+                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                                {window.innerWidth < 768 ? <MobileDashboard /> : <Dashboard />}
+                              </RouteGuard>
                             } />
-                            <Route path="mobile" element={<MobileDashboard />} />
-                            <Route path="uploads" element={<Upload />} />
-                            <Route path="smart-upload" element={<SmartReceiptUpload />} />
-                            <Route path="budget-analyzer" element={<ReceiptAnalyzer />} />
-                            <Route path="budget-test" element={<BudgetTestDemo />} />
-                            <Route path="claim-engine" element={<ClaimEngine />} />
-                            <Route path="claim-test" element={<ClaimTestDemo />} />
-                            <Route path="claim-history" element={<ClaimHistory />} />
-                            <Route path="lender-simulator" element={<LenderResponseSimulator />} />
-                            <Route path="secure-panel" element={<SecureProjectPanel 
+                            <Route path="mobile" element={
+                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                                <MobileDashboard />
+                              </RouteGuard>
+                            } />
+                            <Route path="uploads" element={
+                              <RouteGuard allowedRoles={['builder', 'client', 'admin']} userRole={user?.role}>
+                                <Upload />
+                              </RouteGuard>
+                            } />
+                            <Route path="smart-upload" element={
+                              <RouteGuard allowedRoles={['builder', 'admin']} userRole={user?.role}>
+                                <SmartReceiptUpload />
+                              </RouteGuard>
+                            } />
+                            <Route path="budget-analyzer" element={
+                              <RouteGuard allowedRoles={['admin', 'accountant']} userRole={user?.role}>
+                                <ReceiptAnalyzer />
+                              </RouteGuard>
+                            } />
+                            <Route path="budget-test" element={
+                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                                <BudgetTestDemo />
+                              </RouteGuard>
+                            } />
+                            <Route path="claim-engine" element={
+                              <RouteGuard allowedRoles={['admin', 'accountant']} userRole={user?.role}>
+                                <ClaimEngine />
+                              </RouteGuard>
+                            } />
+                            <Route path="claim-test" element={
+                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                                <ClaimTestDemo />
+                              </RouteGuard>
+                            } />
+                            <Route path="claim-history" element={
+                              <RouteGuard allowedRoles={['admin', 'accountant']} userRole={user?.role}>
+                                <ClaimHistory />
+                              </RouteGuard>
+                            } />
+                            <Route path="lender-simulator" element={
+                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                                <LenderResponseSimulator />
+                              </RouteGuard>
+                            } />
+                            <Route path="secure-panel" element={
+                              <RouteGuard allowedRoles={['builder', 'admin']} userRole={user?.role}>
+                                <SecureProjectPanel 
                               user={{
                                 id: "user123",
                                 email: "builder@lush.com",
@@ -128,64 +169,78 @@ function App() {
                                 name: "Luxury Townhouse Development",
                                 status: "In Progress"
                               }}
-                            />} />
-                            <Route path="builder-timeline" element={<BuilderTimeline 
-                              project={{
-                                id: "proj-001",
-                                name: "Luxury Townhouse Development",
-                                status: "In Progress"
-                              }}
-                              user={{
-                                id: "user123",
-                                email: "builder@lush.com",
-                                role: "builder"
-                              }}
-                            />} />
-                            <Route path="claim-dashboard" element={<ClaimDashboard />} />
-                            <Route path="polished-dashboard" element={<PolishedDashboard 
-                              user={{
-                                id: "user123",
-                                firstName: "John",
-                                lastName: "Builder", 
-                                email: "john@lush.com",
-                                role: "admin"
-                              }}
-                              projects={[
-                                {
-                                  id: "proj-001",
-                                  name: "Luxury Townhouse Development",
-                                  address: "123 Oak Street, Melbourne VIC",
-                                  status: "in-progress",
-                                  stage: "Framing",
-                                  amount: 2450000,
-                                  progress: 73,
-                                  nextMilestone: "Lockup Complete",
-                                  daysUntilMilestone: 12
-                                },
-                                {
-                                  id: "proj-002", 
-                                  name: "Modern Villa Project",
-                                  address: "456 Pine Avenue, Sydney NSW",
-                                  status: "in-progress",
-                                  stage: "Foundation",
-                                  amount: 3200000,
-                                  progress: 45,
-                                  nextMilestone: "Frame Start",
-                                  daysUntilMilestone: 8
-                                },
-                                {
-                                  id: "proj-003",
-                                  name: "Garden Apartments",
-                                  address: "789 Elm Drive, Brisbane QLD", 
-                                  status: "completed",
-                                  stage: "Handover",
-                                  amount: 1800000,
-                                  progress: 100,
-                                  nextMilestone: "Final Inspection",
-                                  daysUntilMilestone: 3
-                                }
-                              ]}
-                            />} />
+                            />
+                              </RouteGuard>
+                            } />
+                            <Route path="builder-timeline" element={
+                              <RouteGuard allowedRoles={['builder', 'admin']} userRole={user?.role}>
+                                <BuilderTimeline 
+                                  project={{
+                                    id: "proj-001",
+                                    name: "Luxury Townhouse Development",
+                                    status: "In Progress"
+                                  }}
+                                  user={{
+                                    id: "user123",
+                                    email: "builder@lush.com",
+                                    role: "builder"
+                                  }}
+                                />
+                              </RouteGuard>
+                            } />
+                            <Route path="claim-dashboard" element={
+                              <RouteGuard allowedRoles={['admin', 'accountant']} userRole={user?.role}>
+                                <ClaimDashboard />
+                              </RouteGuard>
+                            } />
+                            <Route path="polished-dashboard" element={
+                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                                <PolishedDashboard 
+                                  user={{
+                                    id: "user123",
+                                    firstName: "John",
+                                    lastName: "Builder", 
+                                    email: "john@lush.com",
+                                    role: "admin"
+                                  }}
+                                  projects={[
+                                    {
+                                      id: "proj-001",
+                                      name: "Luxury Townhouse Development",
+                                      address: "123 Oak Street, Melbourne VIC",
+                                      status: "in-progress",
+                                      stage: "Framing",
+                                      amount: 2450000,
+                                      progress: 73,
+                                      nextMilestone: "Lockup Complete",
+                                      daysUntilMilestone: 12
+                                    },
+                                    {
+                                      id: "proj-002", 
+                                      name: "Modern Villa Project",
+                                      address: "456 Pine Avenue, Sydney NSW",
+                                      status: "in-progress",
+                                      stage: "Foundation",
+                                      amount: 3200000,
+                                      progress: 45,
+                                      nextMilestone: "Frame Start",
+                                      daysUntilMilestone: 8
+                                    },
+                                    {
+                                      id: "proj-003",
+                                      name: "Garden Apartments",
+                                      address: "789 Elm Drive, Brisbane QLD", 
+                                      status: "completed",
+                                      stage: "Handover",
+                                      amount: 1800000,
+                                      progress: 100,
+                                      nextMilestone: "Final Inspection",
+                                      daysUntilMilestone: 3
+                                    }
+                                  ]}
+                                />
+                              </RouteGuard>
+                            } />
                             <Route path="login-clean" element={<Login onLogin={async (email, password) => {
                               console.log('Clean login attempt:', { email });
                               // Mock successful login
@@ -207,51 +262,103 @@ function App() {
                                 }));
                               }}
                             />} />
-                            <Route path="claims" element={<Claims />} />
-                            <Route path="xero" element={<Xero />} />
-                            <Route path="settings" element={<Settings />} />
-                            <Route path="contracts" element={<ContractUpload />} />
-                            <Route path="profits" element={<ProfitCalculator />} />
-                            <Route path="builder" element={<PolishedBuilderPortal />} />
-                            <Route path="client-upgrades" element={<ClientUpgradePanel />} />
-                            <Route path="client-portal" element={<PolishedClientPortal />} />
+                            <Route path="claims" element={
+                              <RouteGuard allowedRoles={['admin', 'accountant']} userRole={user?.role}>
+                                <Claims />
+                              </RouteGuard>
+                            } />
+                            <Route path="xero" element={
+                              <RouteGuard allowedRoles={['admin', 'accountant']} userRole={user?.role}>
+                                <Xero />
+                              </RouteGuard>
+                            } />
+                            <Route path="settings" element={
+                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                                <Settings />
+                              </RouteGuard>
+                            } />
+                            <Route path="contracts" element={
+                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                                <ContractUpload />
+                              </RouteGuard>
+                            } />
+                            <Route path="profits" element={
+                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                                <ProfitCalculator />
+                              </RouteGuard>
+                            } />
+                            <Route path="builder" element={
+                              <RouteGuard allowedRoles={['builder', 'admin']} userRole={user?.role}>
+                                <PolishedBuilderPortal />
+                              </RouteGuard>
+                            } />
+                            <Route path="client-upgrades" element={
+                              <RouteGuard allowedRoles={['client', 'admin']} userRole={user?.role}>
+                                <ClientUpgradePanel />
+                              </RouteGuard>
+                            } />
+                            <Route path="client-portal" element={
+                              <RouteGuard allowedRoles={['client', 'admin']} userRole={user?.role}>
+                                <PolishedClientPortal />
+                              </RouteGuard>
+                            } />
                             <Route path="client" element={
-                              <ProtectedRoute allowedRoles={['client', 'admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['client', 'admin']} userRole={user?.role}>
                                 <ClientDashboard />
-                              </ProtectedRoute>
+                              </RouteGuard>
                             } />
                             <Route path="finance" element={
-                              <ProtectedRoute allowedRoles={['accountant', 'admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['accountant', 'admin']} userRole={user?.role}>
                                 <FinanceDashboard />
-                              </ProtectedRoute>
+                              </RouteGuard>
                             } />
                             <Route path="client-onboarding" element={<ClientOnboarding onComplete={() => window.location.href = '/client-portal'} />} />
                             <Route path="security" element={
-                              <ProtectedRoute allowedRoles={['admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
                                 <SecurityPanel />
-                              </ProtectedRoute>
+                              </RouteGuard>
                             } />
                             <Route path="walkthrough" element={
-                              <ProtectedRoute allowedRoles={['admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
                                 <WalkthroughGuide isActive={true} onClose={() => window.location.href = '/dashboard'} />
-                              </ProtectedRoute>
+                              </RouteGuard>
                             } />
                             <Route path="investor" element={
-                              <ProtectedRoute allowedRoles={['investor', 'admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['investor', 'admin']} userRole={user?.role}>
                                 <InvestorDashboard />
-                              </ProtectedRoute>
+                              </RouteGuard>
                             } />
                             <Route path="heatmap" element={
-                              <ProtectedRoute allowedRoles={['investor', 'admin']} userRole={user?.role}>
+                              <RouteGuard allowedRoles={['investor', 'admin']} userRole={user?.role}>
                                 <HeatmapVisualizer />
-                              </ProtectedRoute>
+                              </RouteGuard>
                             } />
-                            <Route path="ai-workflows" element={<AIWorkflowEngine />} />
-                            <Route path="role-dashboard" element={<RoleBasedDashboard />} />
-                            <Route path="admin/role-manager" element={<AdminRoleManager />} />
+                            <Route path="ai-workflows" element={
+                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                                <AIWorkflowEngine />
+                              </RouteGuard>
+                            } />
+                            <Route path="role-dashboard" element={
+                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                                <RoleBasedDashboard />
+                              </RouteGuard>
+                            } />
+                            <Route path="admin/role-manager" element={
+                              <RouteGuard allowedRoles={['admin']} userRole={user?.role}>
+                                <AdminRoleManager />
+                              </RouteGuard>
+                            } />
                             <Route path="invite/:token" element={<InviteAcceptance />} />
-                            <Route path="project-view" element={<RoleBasedDashboard />} />
-                            <Route path="investor-portal" element={<HeatmapVisualizer />} />
+                            <Route path="project-view" element={
+                              <RouteGuard allowedRoles={['client', 'admin']} userRole={user?.role}>
+                                <RoleBasedDashboard />
+                              </RouteGuard>
+                            } />
+                            <Route path="investor-portal" element={
+                              <RouteGuard allowedRoles={['investor', 'admin']} userRole={user?.role}>
+                                <HeatmapVisualizer />
+                              </RouteGuard>
+                            } />
                             <Route path="*" element={<Navigate to="/dashboard" />} />
                           </Routes>
                           <AIChatWidget />
