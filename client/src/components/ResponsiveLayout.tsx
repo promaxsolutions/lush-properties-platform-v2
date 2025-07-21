@@ -178,11 +178,11 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 min-w-0">
-          <div className="p-3 sm:p-4 lg:p-6 xl:p-8 max-w-7xl mx-auto">
+        <main className="flex-1 min-w-0 main-content" role="main">
+          <div className="p-3 sm:p-4 lg:p-6 xl:p-8 max-w-7xl mx-auto content-transition entered">
             {children}
           </div>
-        </div>
+        </main>
       </div>
 
 

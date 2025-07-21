@@ -41,6 +41,37 @@ body {
   }
 }
 
+/* Smooth scroll focus styles for better UX */
+:focus {
+  scroll-margin-top: 2rem;
+  scroll-margin-bottom: 2rem;
+}
+
+/* Section anchors with smooth scroll offset */
+[id] {
+  scroll-margin-top: 4rem;
+}
+
+/* Enhanced smooth scrolling for all scroll containers */
+* {
+  scroll-behavior: smooth;
+}
+
+/* Smooth transitions for content changes */
+.content-transition {
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.content-transition.entering {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.content-transition.entered {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 :root {
   --background: hsl(0, 0%, 100%);
   --foreground: hsl(220, 14%, 4%);

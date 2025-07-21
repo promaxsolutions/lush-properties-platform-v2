@@ -204,12 +204,26 @@ const RoleBasedNavigation = ({ userRole, isCollapsed = false }: RoleBasedNavigat
             data-nav-role={userRole}
             data-nav-active={isActive}
             onClick={(e) => {
+              // Check if this is a hash link
+              if (item.path.includes('#')) {
+                e.preventDefault();
+                const [path, hash] = item.path.split('#');
+                if (hash && window.scrollToSection) {
+                  window.scrollToSection(hash);
+                  return;
+                }
+              }
+              
               // Smooth scroll for internal navigation
-              const targetElement = document.querySelector('main') || document.body;
-              targetElement.scrollIntoView({ 
-                behavior: 'smooth',
-                block: 'start'
-              });
+              setTimeout(() => {
+                const targetElement = document.querySelector('main') || 
+                                   document.querySelector('.main-content') || 
+                                   document.body;
+                targetElement.scrollIntoView({ 
+                  behavior: 'smooth',
+                  block: 'start'
+                });
+              }, 50);
               
               // Add mobile haptic feedback if available
               if ('vibrate' in navigator) {
