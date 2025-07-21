@@ -162,8 +162,8 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
       <div className="w-64 bg-white shadow-lg flex flex-col">
         {/* Header */}
         <div className="p-6 border-b">
-          <h1 className="text-xl font-bold text-green-700">Lush Properties</h1>
-          <p className="text-sm text-gray-600 mt-1">Project Management</p>
+          <h1 className="text-xl font-bold text-green-700">Lush Properties Control Center</h1>
+          <p className="text-sm text-gray-600 mt-1">Premium Projects. Powerful Returns.</p>
         </div>
 
         {/* Navigation */}

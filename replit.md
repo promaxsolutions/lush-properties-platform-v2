@@ -1,8 +1,8 @@
-# ProjectFlow - Project Management Dashboard
+# Lush Properties Control Center - Property Project Management Platform
 
 ## Overview
 
-ProjectFlow is a modern full-stack web application for project management and tracking. It features a React frontend with TypeScript, an Express.js backend, and comprehensive project tracking capabilities. The application includes an enhanced dashboard with progress tracking, charts, and real-time project stage management. The current implementation uses the existing TypeScript/Vite architecture with an upgraded dashboard component featuring progress bars, charts, and improved project management workflows.
+Lush Properties Control Center is a sophisticated full-stack web application designed for premium property development and construction project management. It features a React frontend with TypeScript, an Express.js backend, and comprehensive project tracking capabilities with AI-powered insights. The application provides automated claims processing, intelligent workflow automation, secure file management, and real-time project stage management. Built with premium design and mobile-first architecture for construction teams, builders, clients, and investors.
 
 ## User Preferences
 
@@ -110,6 +110,20 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- **Complete Application Rebranding (July 21, 2025)**: Successfully rebranded entire application from "Lush OS" to "Lush Properties Control Center" across all components, references, and branding elements:
+  * Updated login page title and logo branding with responsive design
+  * Modified sidebar header and navigation branding throughout application
+  * Updated HTML page title, meta description, and PWA manifest with new brand identity
+  * Changed theme color from blue (#007bff) to Lush brand green (#007144) in PWA configuration
+  * Updated all email notification templates and reminder system branding
+  * Modified WhatsApp notification templates with new Control Center branding
+  * Updated service worker cache naming and mobile status bar references
+  * Modified footer text and layout component branding across all views
+  * Updated replit.md documentation with new brand name and description
+  * Maintained all existing functionality, UI/UX polish, and mobile-first design while applying consistent "Lush Properties Control Center" branding
+  * Preserved premium brand theme with deep green primary (#007144) and gold accent (#FFD700) colors
+  * Enhanced PWA installable app label and favicon references for mobile deployment
+
 - Deployed complete upgrade bundle with 8 new advanced components (July 19, 2025):
   * ContractUpload.tsx - PDF contract parser with auto data extraction
   * ProfitCalculator.tsx - Real-time profit analysis with charts and ROI tracking
@@ -165,12 +179,12 @@ Preferred communication style: Simple, everyday language.
 - **Project AI Analytics**: Advanced photo analysis, progress tracking, and intelligent recommendations for construction projects
 
 ## Final UI/UX Polish Implementation (July 21, 2025)
-- **Clean Login Page**: Streamlined authentication interface with Lush brand logo, "Premium Projects. Powerful Returns." tagline, password visibility toggle, and error handling
+- **Clean Login Page**: Streamlined authentication interface with Lush Properties Control Center brand logo, "Premium Projects. Powerful Returns." tagline, password visibility toggle, and error handling
 - **Polished Dashboard**: Added personalized greeting with real-time clock, animated project cards with hover effects, mobile burger menu, and role-based audit log access
 - **Enhanced Receipt Upload**: Image preview functionality, category selection dropdown, AI-powered OCR processing, and fraud detection integration
 - **Automated Milestone Reminders**: Email and WhatsApp notifications triggered after 7 days of project inactivity with detailed project information and action links
 - **PWA Capabilities**: "Install App" button for mobile users, service worker registration, and progressive web app features
-- **Lush Brand Colors**: Deep green primary (#007144), gold accent (#FFD700), modern Inter font family with enhanced typography
+- **Lush Properties Control Center Brand Colors**: Deep green primary (#007144), gold accent (#FFD700), modern Inter font family with enhanced typography
 - **Mobile-First Design**: Responsive padding, soft shadows, rounded-xl styling, swipeable dashboard cards, and collapsible navigation
 - **Advanced Animations**: Framer Motion page transitions, staggered card animations, hover effects, and smooth role switching without page reload
 - **Role-Based Views**: Instant view updates for Admin, Builder, Client, and Investor roles with filtered content and specialized dashboards

@@ -20,7 +20,7 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <div>
       <nav className="flex justify-between items-center p-4 bg-green-700 text-white">
-        <h1 className="font-bold text-xl">Lush Properties</h1>
+        <h1 className="font-bold text-xl">Lush Properties Control Center</h1>
         <div className="flex items-center space-x-4">
           <Link to="/dashboard" className="hover:underline">Dashboard</Link>
           <Link to="/uploads" className="hover:underline">Uploads</Link>

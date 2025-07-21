@@ -37,7 +37,7 @@ const Login = ({ onLogin }: LoginProps) => {
           <div className="w-24 h-24 mx-auto bg-gradient-to-br from-lush-primary to-lush-accent rounded-2xl flex items-center justify-center mb-6 shadow-lg">
             <span className="text-3xl font-bold text-white">L</span>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-3">LushOS</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Lush Properties Control Center</h1>
           <p className="text-lush-primary font-semibold text-xl">
             Premium Projects. Powerful Returns.
           </p>

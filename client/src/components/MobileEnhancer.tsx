@@ -106,7 +106,7 @@ const MobileEnhancer: React.FC<MobileEnhancerProps> = ({ children }) => {
 
       {/* Mobile Status Bar */}
       <div className="bg-blue-600 text-white p-2 text-center text-sm md:hidden">
-        🌍 Lush OS Mobile • Swipe cards horizontally
+        🌍 Lush Properties Control Center • Swipe cards horizontally
       </div>
 
       {/* Swipeable Project Cards */}

@@ -71,7 +71,7 @@ class AutomatedReminderService implements ReminderService {
       html: `
         <div style="font-family: Inter, Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #007144, #FFD700); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
-            <h1 style="color: white; margin: 0; font-size: 28px;">LushOS Project Alert</h1>
+            <h1 style="color: white; margin: 0; font-size: 28px;">Lush Properties Control Center</h1>
             <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0;">Automated Milestone Reminder</p>
           </div>
           
@@ -100,7 +100,7 @@ class AutomatedReminderService implements ReminderService {
             </div>
             
             <p style="font-size: 14px; color: #666; margin-bottom: 0;">
-              This is an automated reminder from LushOS. If you have questions, reply to this email.
+              This is an automated reminder from Lush Properties Control Center. If you have questions, reply to this email.
             </p>
           </div>
         </div>
@@ -116,7 +116,7 @@ class AutomatedReminderService implements ReminderService {
 
   async sendWhatsAppReminder(project: Project): Promise<void> {
     const whatsappMessage = `
-🚨 *LushOS Project Alert*
+🚨 *Lush Properties Control Center Alert*
 
 Hi! Your project *${project.name}* needs an update.
 
@@ -130,7 +130,7 @@ Please upload:
 
 Update now: https://lush-app.replit.app/polished-dashboard
 
-_Automated reminder from LushOS_
+_Automated reminder from Lush Properties Control Center_
     `.trim();
 
     // Mock WhatsApp API call - in production, use Twilio or WhatsApp Business API
@@ -148,7 +148,7 @@ _Automated reminder from LushOS_
       email: 'system@lush.com',
       resource: project.id,
       ipAddress: 'internal',
-      userAgent: 'LushOS-ReminderSystem/1.0',
+      userAgent: 'LushPropertiesControlCenter-ReminderSystem/1.0',
       details: {
         projectName: project.name,
         reminderType: 'milestone_inactive',

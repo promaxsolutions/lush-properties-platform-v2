@@ -1650,7 +1650,7 @@ Give me a brief insight into potential profitability, risk factors, and recommen
               📱 Mobile PWA • 🔔 Push Notifications • 🌐 Offline Ready
             </p>
             <p className="text-xs text-gray-500">
-              Built for Lush Group • {new Date().getFullYear()}
+              Built with Lush Properties Control Center • {new Date().getFullYear()}
             </p>
             {userRole === "investor" && (
               <p className="text-xs text-purple-600 font-medium">

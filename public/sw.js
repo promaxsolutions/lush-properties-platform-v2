@@ -1,5 +1,5 @@
-// Service Worker for Lush OS PWA
-const CACHE_NAME = 'lushos-v1.0';
+// Service Worker for Lush Properties Control Center PWA
+const CACHE_NAME = 'lush-properties-control-center-v1.0';
 const urlsToCache = [
   '/',
   '/dashboard',

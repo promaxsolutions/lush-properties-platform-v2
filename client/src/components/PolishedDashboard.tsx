@@ -424,7 +424,7 @@ const PolishedDashboard = ({ user, projects = [] }: PolishedDashboardProps) => {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between text-white">
                     <div>
-                      <h3 className="font-semibold">Install LushOS App</h3>
+                      <h3 className="font-semibold">Install Lush Properties Control Center</h3>
                       <p className="text-sm opacity-90">Get the full mobile experience</p>
                     </div>
                     <Button
