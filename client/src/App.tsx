@@ -23,6 +23,10 @@ import HeatmapVisualizer from "./components/HeatmapVisualizer";
 import AIWorkflowEngine from "./components/AIWorkflowEngine";
 import RoleBasedDashboard from "./components/RoleBasedDashboard";
 import AdminRoleManager from "./components/AdminRoleManager";
+import InviteAcceptance from "./components/InviteAcceptance";
+import MagicLogin from "./components/MagicLogin";
+import MobileEnhancer from "./components/MobileEnhancer";
+import CompactWrapper from "./components/CompactWrapper";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -41,42 +45,50 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <AuthProvider>
-          <Router>
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/unauthorized" element={<div className="p-8 text-center">Unauthorized Access</div>} />
-              <Route
-                path="/*"
-                element={
-                  <ProtectedRoute>
-                    <SidebarLayout>
-                      <Routes>
-                        <Route path="dashboard" element={
-                          window.innerWidth < 768 ? <MobileDashboard /> : <Dashboard />
-                        } />
-                        <Route path="mobile" element={<MobileDashboard />} />
-                        <Route path="uploads" element={<Upload />} />
-                        <Route path="claims" element={<Claims />} />
-                        <Route path="xero" element={<Xero />} />
-                        <Route path="settings" element={<Settings />} />
-                        <Route path="contracts" element={<ContractUpload />} />
-                        <Route path="profits" element={<ProfitCalculator />} />
-                        <Route path="builder" element={<BuilderPortal />} />
-                        <Route path="client-upgrades" element={<ClientUpgradePanel />} />
-                        <Route path="heatmap" element={<HeatmapVisualizer />} />
-                        <Route path="ai-workflows" element={<AIWorkflowEngine />} />
-                        <Route path="role-dashboard" element={<RoleBasedDashboard />} />
-                        <Route path="admin/role-manager" element={<AdminRoleManager />} />
-                        <Route path="*" element={<Navigate to="/dashboard" />} />
-                      </Routes>
-                      <AIChatWidget />
-                    </SidebarLayout>
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
-          </Router>
+          <MobileEnhancer>
+            <CompactWrapper>
+              <Router>
+                <Routes>
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/magic/:token" element={<MagicLogin />} />
+                  <Route path="/unauthorized" element={<div className="p-8 text-center">Unauthorized Access</div>} />
+                  <Route
+                    path="/*"
+                    element={
+                      <ProtectedRoute>
+                        <SidebarLayout>
+                          <Routes>
+                            <Route path="dashboard" element={
+                              window.innerWidth < 768 ? <MobileDashboard /> : <Dashboard />
+                            } />
+                            <Route path="mobile" element={<MobileDashboard />} />
+                            <Route path="uploads" element={<Upload />} />
+                            <Route path="claims" element={<Claims />} />
+                            <Route path="xero" element={<Xero />} />
+                            <Route path="settings" element={<Settings />} />
+                            <Route path="contracts" element={<ContractUpload />} />
+                            <Route path="profits" element={<ProfitCalculator />} />
+                            <Route path="builder" element={<BuilderPortal />} />
+                            <Route path="client-upgrades" element={<ClientUpgradePanel />} />
+                            <Route path="heatmap" element={<HeatmapVisualizer />} />
+                            <Route path="ai-workflows" element={<AIWorkflowEngine />} />
+                            <Route path="role-dashboard" element={<RoleBasedDashboard />} />
+                            <Route path="admin/role-manager" element={<AdminRoleManager />} />
+                            <Route path="invite/:token" element={<InviteAcceptance />} />
+                            <Route path="project-view" element={<RoleBasedDashboard />} />
+                            <Route path="investor-portal" element={<HeatmapVisualizer />} />
+                            <Route path="*" element={<Navigate to="/dashboard" />} />
+                          </Routes>
+                          <AIChatWidget />
+                        </SidebarLayout>
+                      </ProtectedRoute>
+                    }
+                  />
+                </Routes>
+              </Router>
+            </CompactWrapper>
+          </MobileEnhancer>
         </AuthProvider>
         <Toaster />
       </TooltipProvider>

@@ -1,10 +1,13 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertProjectSchema } from "@shared/schema";
+import { insertProjectSchema, insertTeamInvitationSchema, insertUserSchema } from "@shared/schema";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import nodemailer from "nodemailer";
+import { z } from "zod";
+import axios from "axios";
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(process.cwd(), "uploads");
@@ -1028,6 +1031,251 @@ Lush Properties Project Management`;
       res.status(500).json({ error: "Failed to process AI request" });
     }
   });
+
+  // Configure email transporter (for Nodemailer)
+  const emailTransporter = nodemailer.createTransport({
+    // Use Gmail or your preferred email service
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    }
+  });
+
+  // Team invitation routes
+  app.post("/api/team/invite", async (req, res) => {
+    try {
+      const invitationSchema = z.object({
+        name: z.string().min(1),
+        email: z.string().email(),
+        role: z.enum(['admin', 'broker', 'builder', 'client', 'investor', 'accountant']),
+        projectId: z.number().optional(),
+        createdBy: z.number()
+      });
+
+      const validatedData = invitationSchema.parse(req.body);
+      
+      // Create invitation in database
+      const invitation = await storage.createTeamInvitation(validatedData);
+      
+      // Generate magic link
+      const magicLink = `${req.protocol}://${req.get('host')}/magic/${invitation.magicToken}`;
+      
+      // Send email notification
+      const firstName = invitation.name.split(' ')[0];
+      const emailHtml = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #333;">🌍 Welcome to Lush OS!</h2>
+          <p>Hi ${firstName},</p>
+          <p>You've been added to Lush OS as a '<strong>${invitation.role}</strong>'.</p>
+          <p>Click below to log in. Link expires in 72 hours.</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${magicLink}" style="background-color: #007bff; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 16px;">
+              🔐 One-Click Login
+            </a>
+          </div>
+          <p style="font-size: 14px; color: #666;">
+            No passwords needed! This secure link will log you in automatically.
+          </p>
+          <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
+          <p style="font-size: 12px; color: #999;">
+            Link: ${magicLink}
+          </p>
+        </div>
+      `;
+
+      try {
+        await emailTransporter.sendMail({
+          from: process.env.EMAIL_USER || 'noreply@lushos.io',
+          to: invitation.email,
+          subject: '🌍 Welcome to Lush OS - One-Click Access',
+          html: emailHtml
+        });
+        
+        console.log(`✉️  Invitation email sent to ${invitation.email}`);
+      } catch (emailError) {
+        console.error('Email sending failed:', emailError);
+        // Continue even if email fails - invitation is still created
+      }
+
+      res.json({
+        success: true,
+        invitation: {
+          id: invitation.id,
+          name: invitation.name,
+          email: invitation.email,
+          role: invitation.role,
+          magicLink,
+          expiresAt: invitation.tokenExpiry
+        },
+        message: `Invitation sent to ${invitation.email}`
+      });
+
+    } catch (error) {
+      console.error("Team invitation error:", error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid invitation data", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to send invitation" });
+      }
+    }
+  });
+
+  // Magic link login - one-click access
+  app.get("/api/magic/:token", async (req, res) => {
+    try {
+      const { token } = req.params;
+      
+      const invitation = await storage.getInvitationByToken(token);
+      
+      if (!invitation) {
+        return res.status(404).json({ 
+          message: "Invalid or expired magic link" 
+        });
+      }
+
+      // Check if token has expired
+      if (new Date() > invitation.tokenExpiry) {
+        await storage.updateInvitationStatus(token, 'expired');
+        return res.status(410).json({ 
+          message: "This magic link has expired" 
+        });
+      }
+
+      // Update last login and set as active
+      await storage.updateLastLogin(token);
+
+      // Return user context for frontend
+      res.json({
+        success: true,
+        user: {
+          email: invitation.email,
+          name: invitation.name,
+          firstName: invitation.name.split(' ')[0],
+          role: invitation.role,
+          projectId: invitation.projectId,
+          magicToken: token
+        },
+        redirectTo: getRoleBasedRoute(invitation.role)
+      });
+
+    } catch (error) {
+      console.error("Magic link validation error:", error);
+      res.status(500).json({ message: "Failed to validate magic link" });
+    }
+  });
+
+  // Helper function for role-based routing
+  function getRoleBasedRoute(role: string): string {
+    switch (role) {
+      case 'client':
+        return '/project-view';
+      case 'builder':
+        return '/builder';
+      case 'investor':
+        return '/investor-portal';
+      case 'broker':
+        return '/dashboard';
+      case 'admin':
+        return '/dashboard';
+      default:
+        return '/dashboard';
+    }
+  }
+
+  // Get current user context (for authenticated sessions)
+  app.get("/api/auth/user", async (req, res) => {
+    try {
+      const magicToken = req.headers.authorization?.replace('Bearer ', '');
+      
+      if (!magicToken) {
+        return res.status(401).json({ message: "No authentication token" });
+      }
+
+      const invitation = await storage.getInvitationByToken(magicToken);
+      
+      if (!invitation || invitation.status !== 'active') {
+        return res.status(401).json({ message: "Invalid or inactive session" });
+      }
+
+      // Check if token is still valid
+      if (new Date() > invitation.tokenExpiry) {
+        await storage.updateInvitationStatus(magicToken, 'expired');
+        return res.status(401).json({ message: "Session expired" });
+      }
+
+      res.json({
+        email: invitation.email,
+        name: invitation.name,
+        firstName: invitation.name.split(' ')[0],
+        role: invitation.role,
+        projectId: invitation.projectId,
+        lastLogin: invitation.lastLogin
+      });
+
+    } catch (error) {
+      console.error("User context error:", error);
+      res.status(500).json({ message: "Failed to get user context" });
+    }
+  });
+
+  // Cleanup expired invitations (run manually or via cron)
+  app.post("/api/admin/cleanup-invitations", async (req, res) => {
+    try {
+      const cleanedUp = await storage.cleanupExpiredInvitations();
+      res.json({
+        success: true,
+        message: `Cleaned up ${cleanedUp} expired invitations`
+      });
+    } catch (error) {
+      console.error("Cleanup error:", error);
+      res.status(500).json({ message: "Failed to cleanup invitations" });
+    }
+  });
+
+  // WhatsApp notification (optional - requires WhatsApp Cloud API)
+  async function sendWhatsAppInvite(phoneNumber: string, firstName: string, role: string, magicLink: string) {
+    try {
+      const whatsappToken = process.env.WHATSAPP_TOKEN;
+      const whatsappPhoneId = process.env.WHATSAPP_PHONE_ID;
+      
+      if (!whatsappToken || !whatsappPhoneId) {
+        console.log("WhatsApp credentials not configured, skipping WhatsApp notification");
+        return false;
+      }
+
+      const message = `Hi ${firstName}, you've been added to Lush OS as a '${role}'. Click below to log in. Link expires in 72 hours. 🌍 ${magicLink}`;
+      
+      await axios.post(`https://graph.facebook.com/v17.0/${whatsappPhoneId}/messages`, {
+        messaging_product: "whatsapp",
+        to: phoneNumber,
+        type: "text",
+        text: { body: message }
+      }, {
+        headers: {
+          'Authorization': `Bearer ${whatsappToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      return true;
+    } catch (error) {
+      console.error("WhatsApp sending failed:", error);
+      return false;
+    }
+  }
+
+  // Auto-cleanup expired invitations every 12 hours
+  setInterval(async () => {
+    try {
+      const cleanedUp = await storage.cleanupExpiredInvitations();
+      if (cleanedUp > 0) {
+        console.log(`🧹 Auto-cleanup: Removed ${cleanedUp} expired magic links`);
+      }
+    } catch (error) {
+      console.error("Auto-cleanup error:", error);
+    }
+  }, 12 * 60 * 60 * 1000); // 12 hours
 
   const httpServer = createServer(app);
   return httpServer;

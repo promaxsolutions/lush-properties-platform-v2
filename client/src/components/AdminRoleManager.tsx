@@ -169,23 +169,48 @@ const AdminRoleManager = () => {
     }
   };
 
-  const addNewUser = () => {
+  const addNewUser = async () => {
     if (newUserForm.name && newUserForm.email) {
-      const newUser: User = {
-        id: Math.max(...users.map(u => u.id)) + 1,
-        name: newUserForm.name,
-        email: newUserForm.email,
-        role: newUserForm.role,
-        status: 'pending',
-        lastActive: new Date(),
-        projects: 0,
-        joinDate: new Date()
-      };
-      
-      setUsers(prev => [...prev, newUser]);
-      setNewUserForm({ name: "", email: "", role: "client" });
-      setShowNewUserForm(false);
-      alert(`✅ New user ${newUser.name} added successfully`);
+      try {
+        const response = await fetch('/api/team/invite', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: newUserForm.name,
+            email: newUserForm.email,
+            role: newUserForm.role,
+            createdBy: 1 // Mock admin user ID - in real app, get from auth
+          })
+        });
+
+        const result = await response.json();
+        
+        if (result.success) {
+          // Add to local state with pending status
+          const newUser: User = {
+            id: Date.now(), // Temporary ID for frontend
+            name: newUserForm.name,
+            email: newUserForm.email,
+            role: newUserForm.role,
+            status: 'pending',
+            lastActive: new Date(),
+            projects: 0,
+            joinDate: new Date()
+          };
+          
+          setUsers(prev => [...prev, newUser]);
+          setNewUserForm({ name: "", email: "", role: "client" });
+          setShowNewUserForm(false);
+          alert(`✅ Invitation sent to ${newUser.name} at ${newUser.email}`);
+        } else {
+          alert(`❌ Failed to send invitation: ${result.message}`);
+        }
+      } catch (error) {
+        console.error('Invitation error:', error);
+        alert('❌ Failed to send invitation. Please check your connection.');
+      }
     }
   };
 

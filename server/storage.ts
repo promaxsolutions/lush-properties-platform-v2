@@ -1,4 +1,20 @@
-import { users, projects, type User, type InsertUser, type Project, type InsertProject } from "@shared/schema";
+import { 
+  users, 
+  projects, 
+  teamInvitations,
+  teamMembers,
+  type User, 
+  type InsertUser, 
+  type Project, 
+  type InsertProject,
+  type TeamInvitation,
+  type InsertTeamInvitation,
+  type TeamMember,
+  type InsertTeamMember
+} from "@shared/schema";
+import { db } from "./db";
+import { eq, and, lt } from "drizzle-orm";
+import crypto from "crypto";
 
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
@@ -10,75 +26,131 @@ export interface IStorage {
   createProject(project: InsertProject): Promise<Project>;
   updateProject(id: number, project: Partial<InsertProject>): Promise<Project | undefined>;
   deleteProject(id: number): Promise<boolean>;
+  
+  // Team invitation methods
+  createTeamInvitation(invitation: Omit<InsertTeamInvitation, 'magicToken' | 'tokenExpiry'>): Promise<TeamInvitation>;
+  getInvitationByToken(token: string): Promise<TeamInvitation | undefined>;
+  updateInvitationStatus(token: string, status: string): Promise<boolean>;
+  updateLastLogin(token: string): Promise<boolean>;
+  cleanupExpiredInvitations(): Promise<number>;
+  createTeamMember(member: InsertTeamMember): Promise<TeamMember>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private projects: Map<number, Project>;
-  private currentUserId: number;
-  private currentProjectId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.projects = new Map();
-    this.currentUserId = 1;
-    this.currentProjectId = 1;
+export class DatabaseStorage implements IStorage {
+  private generateSecureToken(): string {
+    return crypto.randomBytes(64).toString('hex');
   }
 
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
     return user;
   }
 
   async getProjects(): Promise<Project[]> {
-    return Array.from(this.projects.values());
+    return await db.select().from(projects);
   }
 
   async getProject(id: number): Promise<Project | undefined> {
-    return this.projects.get(id);
+    const [project] = await db.select().from(projects).where(eq(projects.id, id));
+    return project || undefined;
   }
 
   async createProject(insertProject: InsertProject): Promise<Project> {
-    const id = this.currentProjectId++;
-    const project: Project = { 
-      ...insertProject, 
-      id,
-      files: insertProject.files || [],
-      loanApproved: insertProject.loanApproved || 0,
-      drawn: insertProject.drawn || 0,
-      cashSpent: insertProject.cashSpent || 0,
-      outstanding: insertProject.outstanding || 0
-    };
-    this.projects.set(id, project);
+    const [project] = await db
+      .insert(projects)
+      .values(insertProject)
+      .returning();
     return project;
   }
 
   async updateProject(id: number, updateData: Partial<InsertProject>): Promise<Project | undefined> {
-    const existingProject = this.projects.get(id);
-    if (!existingProject) {
-      return undefined;
-    }
-    
-    const updatedProject: Project = { ...existingProject, ...updateData };
-    this.projects.set(id, updatedProject);
-    return updatedProject;
+    const [updatedProject] = await db
+      .update(projects)
+      .set(updateData)
+      .where(eq(projects.id, id))
+      .returning();
+    return updatedProject || undefined;
   }
 
   async deleteProject(id: number): Promise<boolean> {
-    return this.projects.delete(id);
+    const result = await db.delete(projects).where(eq(projects.id, id));
+    return result.rowCount > 0;
+  }
+
+  // Team invitation methods
+  async createTeamInvitation(invitationData: Omit<InsertTeamInvitation, 'magicToken' | 'tokenExpiry'>): Promise<TeamInvitation> {
+    const magicToken = this.generateSecureToken();
+    const tokenExpiry = new Date(Date.now() + 72 * 60 * 60 * 1000); // 72 hours from now
+    
+    const [invitation] = await db
+      .insert(teamInvitations)
+      .values({
+        ...invitationData,
+        magicToken,
+        tokenExpiry,
+      })
+      .returning();
+    return invitation;
+  }
+
+  async getInvitationByToken(token: string): Promise<TeamInvitation | undefined> {
+    const [invitation] = await db
+      .select()
+      .from(teamInvitations)
+      .where(eq(teamInvitations.magicToken, token));
+    return invitation || undefined;
+  }
+
+  async updateInvitationStatus(token: string, status: string): Promise<boolean> {
+    const result = await db
+      .update(teamInvitations)
+      .set({ status })
+      .where(eq(teamInvitations.magicToken, token));
+    return result.rowCount > 0;
+  }
+
+  async updateLastLogin(token: string): Promise<boolean> {
+    const result = await db
+      .update(teamInvitations)
+      .set({ 
+        lastLogin: new Date(),
+        status: 'active'
+      })
+      .where(eq(teamInvitations.magicToken, token));
+    return result.rowCount > 0;
+  }
+
+  async cleanupExpiredInvitations(): Promise<number> {
+    const result = await db
+      .update(teamInvitations)
+      .set({ status: 'expired' })
+      .where(and(
+        lt(teamInvitations.tokenExpiry, new Date()),
+        eq(teamInvitations.status, 'pending')
+      ));
+    return result.rowCount;
+  }
+
+  async createTeamMember(member: InsertTeamMember): Promise<TeamMember> {
+    const [teamMember] = await db
+      .insert(teamMembers)
+      .values(member)
+      .returning();
+    return teamMember;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="192" height="192" rx="32" fill="#007bff"/>
+  <path d="M48 96L96 48L144 96L96 144L48 96Z" fill="white"/>
+  <path d="M96 72L120 96L96 120L72 96L96 72Z" fill="#007bff"/>
+  <text x="96" y="155" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">LushOS</text>
+</svg>
