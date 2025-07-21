@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AccountantDocumentCenter from './AccountantDocumentCenter';
+import CameraUpload from './CameraUpload';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -174,6 +175,15 @@ const FinanceDashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Mobile Camera Upload for Accountant Receipt Processing */}
+      <CameraUpload 
+        uploadType="receipt" 
+        onUpload={(file) => {
+          console.log('Accountant uploaded receipt:', file.name);
+          // Handle receipt processing
+        }}
+      />
 
       {/* Navigation Tabs */}
       <div className="border-b border-gray-200">

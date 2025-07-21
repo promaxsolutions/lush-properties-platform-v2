@@ -110,6 +110,18 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- **Mobile Camera Upload System Enhancement (July 21, 2025)**: Fixed and optimized camera upload component for role-based usage:
+  * Moved CameraUpload component out of global layout to prevent it appearing everywhere
+  * Implemented role-specific rendering: only shows for builder, client, and accountant users
+  * Added CameraUpload to PolishedBuilderPortal for construction progress photos with "progress" upload type
+  * Integrated CameraUpload in ClientDashboard for upgrade request documentation with "document" upload type  
+  * Enhanced FinanceDashboard with CameraUpload for accountant receipt processing with "receipt" upload type
+  * Camera widget now appears after page headers, not before, maintaining proper layout hierarchy
+  * Built mobile-first design with environment camera access and file browser fallback
+  * Added upload type differentiation with specific messaging (receipts, progress photos, documents)
+  * Enhanced mobile UI with processing animations, success indicators, and touch-friendly 48px+ buttons
+  * Implemented proper file handling with console logging and upload callbacks for each role
+
 - **Accountant Document Access System Implementation (July 21, 2025)**: Comprehensive secure document management for accounting team:
   * Enhanced AccountantDocumentCenter with full read access to loan contracts, sales contracts, progress claims, receipts, and tax documents
   * Implemented secure document filtering by project, date range, and document type with advanced search capabilities

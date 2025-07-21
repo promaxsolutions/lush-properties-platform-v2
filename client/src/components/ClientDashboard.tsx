@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import CameraUpload from './CameraUpload';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -110,6 +111,15 @@ const ClientDashboard = () => {
           {projectData.stage} Phase
         </Badge>
       </div>
+
+      {/* Mobile Camera Upload for Client Upgrade Requests */}
+      <CameraUpload 
+        uploadType="document" 
+        onUpload={(file) => {
+          console.log('Client uploaded file:', file.name);
+          // Handle upgrade request documentation
+        }}
+      />
 
       {/* Progress Overview */}
       <Card>

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import CameraUpload from './CameraUpload';
 import { 
   Upload, 
   Camera, 
@@ -148,6 +149,15 @@ const PolishedBuilderPortal = () => {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 pt-6 space-y-6">
+        {/* Mobile Camera Upload */}
+        <CameraUpload 
+          uploadType="progress" 
+          onUpload={(file) => {
+            console.log('Builder uploaded file:', file.name);
+            // Handle file upload logic here
+          }}
+        />
+
         {/* Onboarding Tip */}
         <Alert className="border-blue-200 bg-blue-50">
           <Info className="h-4 w-4 text-blue-600" />

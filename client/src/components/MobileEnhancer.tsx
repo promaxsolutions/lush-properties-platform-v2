@@ -121,28 +121,6 @@ const MobileEnhancer: React.FC<MobileEnhancerProps> = ({ children }) => {
         </div>
       </section>
 
-      {/* Mobile Camera Upload */}
-      <div className="p-4 md:hidden">
-        <div className="bg-white rounded-lg shadow-md p-4 border">
-          <label className="text-sm font-semibold block mb-3 text-gray-900">📸 Camera Upload</label>
-          <input 
-            type="file" 
-            accept="image/*" 
-            capture="environment" 
-            className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-            onChange={(e) => {
-              if (e.target.files && e.target.files[0]) {
-                console.log('File selected:', e.target.files[0].name);
-                // Handle file upload
-              }
-            }}
-          />
-          <p className="text-xs text-gray-500 mt-2">
-            Tap to use camera for receipts, progress photos, or documents
-          </p>
-        </div>
-      </div>
-
       {/* Main Content */}
       <main className="p-4">
         {children}
