@@ -65,6 +65,7 @@ import ImpersonateUser from "./components/ImpersonateUser";
 import AdminAuditPanel from "./components/AdminAuditPanel";
 import NavigationTester from "./components/NavigationTester";
 import ComprehensiveNavigationValidator from "./components/ComprehensiveNavigationValidator";
+import CredentialValidator from "./components/CredentialValidator";
 import ClientDashboard from "./components/ClientDashboard";
 import FinanceDashboard from "./components/FinanceDashboard";
 import InvestorDashboard from "./components/InvestorDashboard";
@@ -449,6 +450,11 @@ function App() {
                             <Route path="nav-validator" element={
                               <RouteGuard allowedRoles={['admin', 'superadmin']} userRole={currentUser?.role}>
                                 <ComprehensiveNavigationValidator />
+                              </RouteGuard>
+                            } />
+                            <Route path="credential-test" element={
+                              <RouteGuard allowedRoles={['admin', 'superadmin']} userRole={currentUser?.role}>
+                                <CredentialValidator />
                               </RouteGuard>
                             } />
                             {/* Missing routes - add all navigation paths */}
