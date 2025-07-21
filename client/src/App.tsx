@@ -53,6 +53,8 @@ import WalkthroughGuide from "./components/WalkthroughGuide";
 import RoleBasedNavigation from "./components/RoleBasedNavigation";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RouteGuard from "./components/RouteGuard";
+import EnhancedRouteGuard from "./components/EnhancedRouteGuard";
+import AccessDeniedPage from "./components/AccessDeniedPage";
 import ClientDashboard from "./components/ClientDashboard";
 import FinanceDashboard from "./components/FinanceDashboard";
 import InvestorDashboard from "./components/InvestorDashboard";
@@ -126,7 +128,7 @@ function App() {
                   <Route path="/login" element={<WorkingLogin />} />
                   <Route path="/register" element={<Register />} />
                   <Route path="/magic/:token" element={<MagicLogin />} />
-                  <Route path="/unauthorized" element={<div className="p-8 text-center">Unauthorized Access</div>} />
+                  <Route path="/unauthorized" element={<AccessDeniedPage />} />
                   <Route
                     path="/*"
                     element={

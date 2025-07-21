@@ -71,14 +71,24 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       checkUserSession();
     };
     
+    // Handle logout event specifically
+    const handleLogoutEvent = () => {
+      console.log('[AUTH-CONTEXT] Logout event detected, clearing user data');
+      setUser(null);
+      setRole(null);
+    };
+    
     // Add listeners for multiple auth events
     const authEvents = ['userLogin', 'authChange', 'roleChange', 'sessionUpdate'];
     authEvents.forEach(event => {
       window.addEventListener(event, handleAuthEvents);
     });
+    
+    window.addEventListener('userLogout', handleLogoutEvent);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('userLogout', handleLogoutEvent);
       authEvents.forEach(event => {
         window.removeEventListener(event, handleAuthEvents);
       });

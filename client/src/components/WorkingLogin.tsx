@@ -5,6 +5,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { performSecureLogin } from "@/utils/sessionManager";
+import LoadingSpinner from "./LoadingSpinner";
 
 const testUsers = {
   "admin@lush.com": { password: "admin123", role: "admin", name: "Sarah Chen" },
@@ -53,42 +54,25 @@ const WorkingLogin = () => {
       };
       
       setSuccess("Login successful! Redirecting...");
+      setShowLoadingScreen(true);
       
       // Use secure login which handles storage, events, and routing
       await performSecureLogin(userData);
-
-      setSuccess(`Welcome ${user.name}! Redirecting to dashboard...`);
       
-      // Redirect based on role
-      setTimeout(() => {
-        switch (user.role) {
-          case "admin":
-            navigate("/dashboard");
-            break;
-          case "builder":
-            navigate("/builder");
-            break;
-          case "client":
-            navigate("/client");
-            break;
-          case "investor":
-            navigate("/investor");
-            break;
-          case "accountant":
-            navigate("/finance");
-            break;
-          default:
-            navigate("/dashboard");
-        }
-      }, 1500);
+      // Note: performSecureLogin handles the redirect, so no additional navigation needed
 
     } catch (err) {
       setError("Invalid email or password. Please check your credentials and try again.");
-    } finally {
       setLoading(false);
       setIsLoading(false);
+      setShowLoadingScreen(false);
     }
   };
+
+  // Show loading screen during role transition
+  if (showLoadingScreen) {
+    return <LoadingSpinner type="login" />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center px-6 py-10">

@@ -33,11 +33,19 @@ const SmoothRoleSwitcher = () => {
         id: `${role}_${Date.now()}`
       };
       
-      // Use secure login process
+      console.log(`🔄 Switching to ${role} role...`);
+      
+      // Use secure login process with loading state
       await performSecureLogin(userData);
+      
+      // Note: performSecureLogin handles the page reload, so setIsTransitioning(false) 
+      // is not needed as component will unmount
     } catch (error) {
       console.error('Role switch failed:', error);
       setIsTransitioning(false);
+      
+      // Show error to user
+      alert(`Failed to switch to ${role} role. Please try again.`);
     }
   };
 

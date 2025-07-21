@@ -98,6 +98,9 @@ export const performSecureLogout = () => {
   // Clear all data
   clearAllUserData();
   
+  // Reset user context to null
+  window.dispatchEvent(new CustomEvent('userLogout'));
+  
   // Trigger auth updates
   triggerAuthUpdate();
   
@@ -123,7 +126,7 @@ export const performSecureLogin = async (userData: any) => {
   // Trigger auth updates
   triggerAuthUpdate();
   
-  // Determine correct dashboard
+  // Determine correct dashboard based on role
   const dashboards = {
     admin: '/dashboard',
     builder: '/builder',
@@ -134,10 +137,18 @@ export const performSecureLogin = async (userData: any) => {
   
   const targetDashboard = dashboards[userData.role] || '/dashboard';
   
-  // Small delay to ensure data is set
+  // Store fresh role to prevent reuse
+  localStorage.setItem('current_role', userData.role);
+  localStorage.setItem('login_timestamp', Date.now().toString());
+  
+  // Small delay to ensure data is set, then reload page
   setTimeout(() => {
-    // Force full page reload to reinitialize app
-    window.location.href = targetDashboard;
+    // Force full page reload to reinitialize app with fresh session
+    window.location.reload();
+    // After reload, navigate to correct dashboard
+    setTimeout(() => {
+      window.location.href = targetDashboard;
+    }, 100);
   }, 300);
   
   return sessionData;
