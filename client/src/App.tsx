@@ -60,6 +60,9 @@ import RoleFlowTester from "./components/RoleFlowTester";
 import ManualRoleTester from "./components/ManualRoleTester";
 import LoginTester from "./components/LoginTester";
 import BuilderDebugTest from "./components/BuilderDebugTest";
+import RoleSystemTester from "./components/RoleSystemTester";
+import ErrorDiagnostics from "./components/ErrorDiagnostics";
+import QuickRoleFixer from "./components/QuickRoleFixer";
 
 interface AuthProtectedRouteProps {
   children: React.ReactNode;
@@ -379,6 +382,9 @@ function App() {
                               </RouteGuard>
                             } />
                             <Route path="builder-debug" element={<BuilderDebugTest />} />
+                            <Route path="role-system-test" element={<RoleSystemTester />} />
+                            <Route path="error-diagnostics" element={<ErrorDiagnostics />} />
+                            <Route path="quick-role-fix" element={<QuickRoleFixer />} />
                             <Route path="*" element={<Navigate to="/dashboard" />} />
                           </Routes>
                           <AIChatWidget />
