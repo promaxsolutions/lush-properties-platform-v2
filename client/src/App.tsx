@@ -63,6 +63,8 @@ import ImpersonationBanner from "./components/ImpersonationBanner";
 import PortalPreview from "./components/PortalPreview";
 import ImpersonateUser from "./components/ImpersonateUser";
 import AdminAuditPanel from "./components/AdminAuditPanel";
+import NavigationTester from "./components/NavigationTester";
+import ComprehensiveNavigationValidator from "./components/ComprehensiveNavigationValidator";
 import ClientDashboard from "./components/ClientDashboard";
 import FinanceDashboard from "./components/FinanceDashboard";
 import InvestorDashboard from "./components/InvestorDashboard";
@@ -437,6 +439,16 @@ function App() {
                             <Route path="audit" element={
                               <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
                                 <AdminAuditPanel />
+                              </RouteGuard>
+                            } />
+                            <Route path="nav-test" element={
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
+                                <NavigationTester />
+                              </RouteGuard>
+                            } />
+                            <Route path="nav-validator" element={
+                              <RouteGuard allowedRoles={['admin', 'superadmin']} userRole={currentUser?.role}>
+                                <ComprehensiveNavigationValidator />
                               </RouteGuard>
                             } />
                             {/* Missing routes - add all navigation paths */}

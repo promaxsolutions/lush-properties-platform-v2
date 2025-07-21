@@ -81,6 +81,14 @@ const ManualRoleTester = () => {
       password: 'investor123',
       expectedRedirect: '/investor',
       icon: <TrendingUp className="h-4 w-4" />
+    },
+    {
+      role: 'superadmin',
+      name: 'Test Super Admin',
+      email: 'superadmin@lush.com',
+      password: 'superadmin123',
+      expectedRedirect: '/dashboard',
+      icon: <Shield className="h-4 w-4" />
     }
   ];
 

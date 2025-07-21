@@ -7,6 +7,7 @@ import { User, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 
 const testUsers = {
   "admin@lush.com": { password: "admin123", role: "admin", name: "Sarah Chen", expectedRoute: "/dashboard" },
+  "superadmin@lush.com": { password: "superadmin123", role: "superadmin", name: "Alex Rivera", expectedRoute: "/dashboard" },
   "builder@lush.com": { password: "builder123", role: "builder", name: "Mike Johnson", expectedRoute: "/builder" },
   "client@lush.com": { password: "client123", role: "client", name: "Jennifer Williams", expectedRoute: "/client" },
   "investor@lush.com": { password: "investor123", role: "investor", name: "Robert Kim", expectedRoute: "/investor" },
