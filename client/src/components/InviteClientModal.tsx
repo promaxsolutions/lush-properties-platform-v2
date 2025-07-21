@@ -1,251 +1,340 @@
 import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { 
-  UserPlus, 
-  Mail, 
-  Phone, 
-  Home,
+  UserPlus,
+  Mail,
+  Users,
+  Calendar,
+  Clock,
   Send,
+  X,
   CheckCircle,
-  AlertCircle,
-  X
+  AlertCircle
 } from 'lucide-react';
 
 interface InviteClientModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onInvite?: (inviteData: any) => void;
 }
 
-interface ProjectOption {
-  id: string;
-  name: string;
-  address: string;
-  stage: string;
-}
-
-const InviteClientModal = ({ isOpen, onClose }: InviteClientModalProps) => {
-  const [clientEmail, setClientEmail] = useState('');
-  const [clientPhone, setClientPhone] = useState('');
-  const [clientName, setClientName] = useState('');
-  const [selectedProject, setSelectedProject] = useState('');
-  const [personalMessage, setPersonalMessage] = useState('');
+const InviteClientModal = ({ isOpen, onClose, onInvite }: InviteClientModalProps) => {
+  const [formData, setFormData] = useState({
+    email: '',
+    firstName: '',
+    lastName: '',
+    role: '',
+    projectId: '',
+    message: ''
+  });
   const [isLoading, setIsLoading] = useState(false);
-  const [inviteSent, setInviteSent] = useState(false);
+  const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
 
-  // Mock project data - in real app, this would come from API
-  const projects: ProjectOption[] = [
-    { id: 'proj-001', name: '56 Inge King Crescent', address: '56 Inge King Crescent, Scullin ACT 2614', stage: 'Framing' },
-    { id: 'proj-002', name: 'Block 15 Section 87', address: 'Block 15 Section 87, Gungahlin ACT 2912', stage: 'Foundation' },
-    { id: 'proj-003', name: 'Luxury Townhouse Development', address: '123 Premium Street, Barton ACT 2600', stage: 'Planning' }
+  // Mock projects for assignment
+  const availableProjects = [
+    {
+      id: 'proj-001',
+      name: 'Luxury Townhouse Development',
+      address: '56 Inge King Crescent, Scullin ACT 2614'
+    },
+    {
+      id: 'proj-002',
+      name: 'Garden Apartments Complex',
+      address: 'Block 15 Section 87, Canberra ACT'
+    },
+    {
+      id: 'proj-003',
+      name: 'Executive Residences',
+      address: '789 Elm Drive, Brisbane QLD'
+    }
   ];
 
-  const handleSendInvite = async (e: React.FormEvent) => {
+  const userRoles = [
+    { value: 'client', label: 'Client', description: 'Project tracking and updates' },
+    { value: 'builder', label: 'Builder', description: 'Construction management' },
+    { value: 'accountant', label: 'Accountant', description: 'Financial management' },
+    { value: 'investor', label: 'Investor', description: 'Investment portfolio access' },
+    { value: 'admin', label: 'Administrator', description: 'Full system access' }
+  ];
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    setSuccess('');
     setIsLoading(true);
 
     try {
+      // Validate required fields
+      if (!formData.email || !formData.firstName || !formData.lastName || !formData.role) {
+        throw new Error('Please fill in all required fields');
+      }
+
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        throw new Error('Please enter a valid email address');
+      }
+
+      // Generate invitation token (in real app, this would be done on backend)
+      const inviteToken = `inv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const expiryDate = new Date();
+      expiryDate.setHours(expiryDate.getHours() + 24);
+
+      const inviteData = {
+        ...formData,
+        token: inviteToken,
+        expiresAt: expiryDate.toISOString(),
+        invitedBy: 'admin@lush.com',
+        invitedAt: new Date().toISOString(),
+        status: 'pending'
+      };
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // Mock success response
-      setInviteSent(true);
-      
-      // Reset form after success
-      setTimeout(() => {
-        setInviteSent(false);
-        setClientEmail('');
-        setClientPhone('');
-        setClientName('');
-        setSelectedProject('');
-        setPersonalMessage('');
-        onClose();
-      }, 3000);
+      // Store invitation (in real app, this would be sent to backend)
+      const existingInvites = JSON.parse(localStorage.getItem('lush_invitations') || '[]');
+      existingInvites.push(inviteData);
+      localStorage.setItem('lush_invitations', JSON.stringify(existingInvites));
 
-    } catch (error) {
-      console.error('Failed to send invite:', error);
+      setSuccess(`Invitation sent successfully to ${formData.firstName} ${formData.lastName}! They have 24 hours to accept.`);
+      
+      // Call parent callback if provided
+      if (onInvite) {
+        onInvite(inviteData);
+      }
+
+      // Reset form
+      setFormData({
+        email: '',
+        firstName: '',
+        lastName: '',
+        role: '',
+        projectId: '',
+        message: ''
+      });
+
+    } catch (err: any) {
+      setError(err.message || 'Failed to send invitation. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
+  const getRoleIcon = (role: string) => {
+    switch (role) {
+      case 'client': return '👤';
+      case 'builder': return '🔨';
+      case 'accountant': return '💰';
+      case 'investor': return '📈';
+      case 'admin': return '⚙️';
+      default: return '👤';
+    }
+  };
+
   if (!isOpen) return null;
 
-  if (inviteSent) {
-    return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <Card className="w-full max-w-md">
-          <CardContent className="p-8 text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle className="h-8 w-8 text-green-600" />
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Invitation Sent!</h3>
-            <p className="text-gray-600 mb-4">
-              {clientName} will receive an email and SMS with their project access link.
-            </p>
-            <div className="bg-blue-50 rounded-lg p-3 text-sm text-blue-800">
-              The invite link will expire in 24 hours for security.
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-3 text-xl">
+            <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-lush-primary rounded-xl flex items-center justify-center">
                 <UserPlus className="h-5 w-5 text-white" />
               </div>
-              Invite Client to Project
-            </CardTitle>
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              <X className="h-5 w-5" />
-            </Button>
-          </div>
-          <p className="text-gray-600">
-            Send a secure invitation link to give your client access to their project dashboard
-          </p>
-        </CardHeader>
-
-        <CardContent className="space-y-6">
-          <form onSubmit={handleSendInvite} className="space-y-6">
-            {/* Client Details */}
-            <div className="space-y-4">
-              <h4 className="font-semibold text-gray-900 flex items-center gap-2">
-                <UserPlus className="h-5 w-5 text-lush-primary" />
-                Client Information
-              </h4>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Full Name *
-                  </label>
-                  <Input
-                    value={clientName}
-                    onChange={(e) => setClientName(e.target.value)}
-                    placeholder="Jennifer Williams"
-                    required
-                    className="rounded-xl border-gray-300 focus:border-lush-primary focus:ring-lush-primary"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Email Address *
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                    <Input
-                      type="email"
-                      value={clientEmail}
-                      onChange={(e) => setClientEmail(e.target.value)}
-                      placeholder="jennifer@email.com"
-                      required
-                      className="pl-10 rounded-xl border-gray-300 focus:border-lush-primary focus:ring-lush-primary"
-                    />
-                  </div>
-                </div>
-              </div>
-
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Phone Number (Optional)
-                </label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                  <Input
-                    value={clientPhone}
-                    onChange={(e) => setClientPhone(e.target.value)}
-                    placeholder="+61 4XX XXX XXX"
-                    className="pl-10 rounded-xl border-gray-300 focus:border-lush-primary focus:ring-lush-primary"
-                  />
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  SMS notifications for milestone updates (optional)
+                <CardTitle className="text-xl font-bold text-gray-900">
+                  Invite Team Member
+                </CardTitle>
+                <p className="text-sm text-gray-600">
+                  Send a secure invitation to join your project
                 </p>
               </div>
             </div>
+            <Button variant="ghost" size="sm" onClick={onClose}>
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardHeader>
 
-            {/* Project Selection */}
+        <CardContent className="space-y-6">
+          {error && (
+            <Alert className="border-red-200 bg-red-50">
+              <AlertCircle className="h-4 w-4 text-red-600" />
+              <AlertDescription className="text-red-700">
+                {error}
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {success && (
+            <Alert className="border-green-200 bg-green-50">
+              <CheckCircle className="h-4 w-4 text-green-600" />
+              <AlertDescription className="text-green-700">
+                {success}
+              </AlertDescription>
+            </Alert>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Personal Information */}
             <div className="space-y-4">
-              <h4 className="font-semibold text-gray-900 flex items-center gap-2">
-                <Home className="h-5 w-5 text-lush-primary" />
-                Project Assignment
-              </h4>
+              <h3 className="text-lg font-semibold text-gray-900">Personal Information</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    First Name *
+                  </label>
+                  <Input
+                    type="text"
+                    value={formData.firstName}
+                    onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
+                    placeholder="Enter first name"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Last Name *
+                  </label>
+                  <Input
+                    type="text"
+                    value={formData.lastName}
+                    onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
+                    placeholder="Enter last name"
+                    required
+                  />
+                </div>
+              </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Select Project *
+                  Email Address *
                 </label>
-                <select
-                  value={selectedProject}
-                  onChange={(e) => setSelectedProject(e.target.value)}
+                <Input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                  placeholder="user@example.com"
                   required
-                  className="w-full rounded-xl border-gray-300 focus:border-lush-primary focus:ring-lush-primary px-4 py-3"
+                />
+              </div>
+            </div>
+
+            {/* Role Selection */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-900">Role & Access</h3>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  User Role *
+                </label>
+                <Select 
+                  value={formData.role} 
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, role: value }))}
                 >
-                  <option value="">Choose a project...</option>
-                  {projects.map((project) => (
-                    <option key={project.id} value={project.id}>
-                      {project.name} - {project.address}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {userRoles.map((role) => (
+                      <SelectItem key={role.value} value={role.value}>
+                        <div className="flex items-center gap-3">
+                          <span className="text-lg">{getRoleIcon(role.value)}</span>
+                          <div>
+                            <div className="font-medium">{role.label}</div>
+                            <div className="text-xs text-gray-500">{role.description}</div>
+                          </div>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
-              {selectedProject && (
-                <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                  {(() => {
-                    const project = projects.find(p => p.id === selectedProject);
-                    return project ? (
-                      <div>
-                        <h5 className="font-medium text-blue-900 mb-1">{project.name}</h5>
-                        <p className="text-sm text-blue-700 mb-1">{project.address}</p>
-                        <p className="text-sm text-blue-600">Current Stage: {project.stage}</p>
-                      </div>
-                    ) : null;
-                  })()}
+              {formData.role && formData.role !== 'admin' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Assign to Project {formData.role === 'investor' ? '(Optional)' : '*'}
+                  </label>
+                  <Select 
+                    value={formData.projectId} 
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, projectId: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a project" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {formData.role === 'investor' && (
+                        <SelectItem value="all">
+                          <div>
+                            <div className="font-medium">All Active Projects</div>
+                            <div className="text-xs text-gray-500">Full portfolio access</div>
+                          </div>
+                        </SelectItem>
+                      )}
+                      {availableProjects.map((project) => (
+                        <SelectItem key={project.id} value={project.id}>
+                          <div>
+                            <div className="font-medium">{project.name}</div>
+                            <div className="text-xs text-gray-500">{project.address}</div>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               )}
             </div>
 
-            {/* Personal Message */}
+            {/* Custom Message */}
             <div className="space-y-4">
-              <h4 className="font-semibold text-gray-900 flex items-center gap-2">
-                <Mail className="h-5 w-5 text-lush-primary" />
-                Personal Message (Optional)
-              </h4>
-
+              <h3 className="text-lg font-semibold text-gray-900">Invitation Message</h3>
+              
               <div>
-                <Textarea
-                  value={personalMessage}
-                  onChange={(e) => setPersonalMessage(e.target.value)}
-                  placeholder="Hi Jennifer, welcome to your project dashboard! You can track progress, view photos, and stay updated on your build..."
-                  rows={4}
-                  className="rounded-xl border-gray-300 focus:border-lush-primary focus:ring-lush-primary"
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Personal Message (Optional)
+                </label>
+                <textarea
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-lush-primary focus:border-transparent"
+                  rows={3}
+                  value={formData.message}
+                  onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
+                  placeholder="Add a personal welcome message..."
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  This message will be included in the invitation email
-                </p>
               </div>
             </div>
 
-            {/* Security Notice */}
-            <Alert className="border-amber-200 bg-amber-50">
-              <AlertCircle className="h-4 w-4 text-amber-600" />
-              <AlertDescription className="text-amber-800">
-                <strong>Security Notice:</strong> Invitation links expire after 24 hours. 
-                The client will need to set up their password on first login.
-              </AlertDescription>
-            </Alert>
+            {/* Invitation Details */}
+            <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+              <h4 className="font-medium text-blue-900 mb-2 flex items-center gap-2">
+                <Clock className="h-4 w-4" />
+                Invitation Details
+              </h4>
+              <div className="space-y-2 text-sm text-blue-800">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-3 w-3" />
+                  <span>Expires in 24 hours</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Mail className="h-3 w-3" />
+                  <span>Secure magic link will be sent via email</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Users className="h-3 w-3" />
+                  <span>User will be prompted to set up their account</span>
+                </div>
+              </div>
+            </div>
 
             {/* Action Buttons */}
             <div className="flex gap-3 pt-4">
@@ -259,13 +348,13 @@ const InviteClientModal = ({ isOpen, onClose }: InviteClientModalProps) => {
               </Button>
               <Button
                 type="submit"
-                disabled={isLoading || !clientEmail || !clientName || !selectedProject}
-                className="flex-1 bg-lush-primary hover:bg-lush-primary/90 text-white"
+                disabled={isLoading}
+                className="flex-1 bg-lush-primary hover:bg-lush-primary/90"
               >
                 {isLoading ? (
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Sending Invite...
+                    Sending...
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">

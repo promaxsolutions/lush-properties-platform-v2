@@ -110,8 +110,22 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- **Investor Role Integration Implementation (July 21, 2025)**: Complete investor portal with portfolio management and document access:
+  * Added investor role with dedicated /investor route and InvestorDashboard component
+  * Comprehensive investment portfolio tracking with project snapshots, ROI calculations, and performance analytics
+  * Document management system for contracts, financial projections, and progress reports
+  * Investment stats dashboard showing total invested ($2.4M), active projects (5), average ROI (18.5%), and total returns
+  * Project-specific investment tracking with valuation updates, risk assessment, and completion timelines
+  * Upload capabilities for funding letters and pledge confirmations with secure document storage
+  * Portfolio analytics with ROI comparison charts and risk distribution analysis
+  * InviteClientModal updated to include investor role selection with optional project assignment or full portfolio access
+  * Role-based navigation showing Investment Portfolio, Documents, and Contact Admin for investor users
+  * Read-only access model - investors cannot upload build photos, edit claims, or access client-specific operational data
+  * PDF download functionality for comprehensive investment reports and project packs
+  * Security permissions ensure investors only see projects they are tagged in with appropriate financial data access
+
 - **Role-Based Dashboard Routing Implementation (July 21, 2025)**: Complete role-based access control system with secure navigation:
-  * Enforced routing based on user roles: Admin→/dashboard, Builder→/builder, Client→/client, Accountant→/finance, Investor→/investor-portal
+  * Enforced routing based on user roles: Admin→/dashboard, Builder→/builder, Client→/client, Accountant→/finance, Investor→/investor
   * RoleBasedNavigation component with filtered menu items based on user permissions
   * ProtectedRoute wrapper with unauthorized access blocking and role verification
   * ClientDashboard for client-specific project tracking with progress photos, upgrade requests, and milestone tracking

@@ -54,6 +54,7 @@ import RoleBasedNavigation from "./components/RoleBasedNavigation";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ClientDashboard from "./components/ClientDashboard";
 import FinanceDashboard from "./components/FinanceDashboard";
+import InvestorDashboard from "./components/InvestorDashboard";
 
 interface AuthProtectedRouteProps {
   children: React.ReactNode;
@@ -233,6 +234,11 @@ function App() {
                             <Route path="walkthrough" element={
                               <ProtectedRoute allowedRoles={['admin']} userRole={user?.role}>
                                 <WalkthroughGuide isActive={true} onClose={() => window.location.href = '/dashboard'} />
+                              </ProtectedRoute>
+                            } />
+                            <Route path="investor" element={
+                              <ProtectedRoute allowedRoles={['investor', 'admin']} userRole={user?.role}>
+                                <InvestorDashboard />
                               </ProtectedRoute>
                             } />
                             <Route path="heatmap" element={

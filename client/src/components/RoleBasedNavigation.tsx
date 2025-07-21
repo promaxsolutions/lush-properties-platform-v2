@@ -123,9 +123,15 @@ const navigationItems: NavigationItem[] = [
 
   // Investor items
   {
-    path: '/investor-portal',
-    label: 'Investment Portal',
+    path: '/investor',
+    label: 'Investment Portfolio',
     icon: <TrendingUp className="h-5 w-5" />,
+    roles: ['investor', 'admin']
+  },
+  {
+    path: '/documents',
+    label: 'Documents',
+    icon: <FileText className="h-5 w-5" />,
     roles: ['investor', 'admin']
   },
   {

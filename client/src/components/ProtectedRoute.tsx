@@ -36,7 +36,9 @@ const routePermissions: RoutePermissions = {
   '/receipts': ['accountant', 'admin'],
   '/xero-sync': ['accountant', 'admin'],
   
+  '/investor': ['investor', 'admin'],
   '/investor-portal': ['investor', 'admin'],
+  '/documents': ['investor', 'admin', 'client'],
   '/heatmap': ['investor', 'admin']
 };
 
@@ -136,7 +138,7 @@ const getRoleDashboard = (role: string): string => {
     case 'builder': return '/builder';
     case 'client': return '/client';
     case 'accountant': return '/finance';
-    case 'investor': return '/investor-portal';
+    case 'investor': return '/investor';
     default: return '/login';
   }
 };

@@ -67,7 +67,7 @@ const WorkingLogin = () => {
             navigate("/client");
             break;
           case "investor":
-            navigate("/investor-portal");
+            navigate("/investor");
             break;
           case "accountant":
             navigate("/finance");
