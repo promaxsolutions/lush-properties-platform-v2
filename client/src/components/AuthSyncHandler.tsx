@@ -25,23 +25,35 @@ const AuthSyncHandler = () => {
         
         // If role doesn't match expected role, fix it silently
         if (expectedRole && userData.role !== expectedRole) {
+          console.log(`[AUTH-SYNC] Fixing role mismatch: ${userData.role} → ${expectedRole} for ${userData.email}`);
+          
           userData.role = expectedRole;
           localStorage.setItem("lush_user", JSON.stringify(userData));
-          window.dispatchEvent(new CustomEvent('userLogin'));
           
-          // Silent redirect to correct dashboard
-          const dashboards = {
-            admin: '/dashboard',
-            builder: '/builder',
-            client: '/client',
-            accountant: '/finance',
-            investor: '/investor'
-          };
-          
-          const correctDashboard = dashboards[expectedRole];
-          if (correctDashboard && window.location.pathname !== correctDashboard) {
-            window.location.href = correctDashboard;
-          }
+          // Force page reload to ensure all components pick up the new role
+          window.location.reload();
+          return;
+        }
+
+        // Also check if we're on the wrong dashboard for our role
+        const dashboards = {
+          admin: '/dashboard',
+          builder: '/builder',
+          client: '/client',
+          accountant: '/finance',
+          investor: '/investor'
+        };
+        
+        const currentRole = userData.role;
+        const correctDashboard = dashboards[currentRole];
+        const currentPath = window.location.pathname;
+        
+        // If we're on a dashboard page but it's the wrong one for our role
+        if (correctDashboard && 
+            (currentPath === '/dashboard' || currentPath === '/builder' || currentPath === '/client' || currentPath === '/finance' || currentPath === '/investor') &&
+            currentPath !== correctDashboard) {
+          console.log(`[AUTH-SYNC] Redirecting ${currentRole} from ${currentPath} to ${correctDashboard}`);
+          window.location.href = correctDashboard;
         }
       } catch (error) {
         // Silent error handling - don't show users technical errors
@@ -49,8 +61,18 @@ const AuthSyncHandler = () => {
       }
     };
 
-    // Run sync on mount and when user/role changes
+    // Run sync immediately and on any changes
     syncRoles();
+    
+    // Also run sync when localStorage changes
+    const handleStorageChange = () => syncRoles();
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('userLogin', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('userLogin', handleStorageChange);
+    };
   }, [user, role]);
 
   // This component renders nothing - it's purely for background sync
