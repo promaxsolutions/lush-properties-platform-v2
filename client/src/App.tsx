@@ -29,6 +29,7 @@ import MobileEnhancer from "./components/MobileEnhancer";
 import CompactWrapper from "./components/CompactWrapper";
 import SmartReceiptUpload from "./components/SmartReceiptUpload";
 import MobileNotifications from "./components/MobileNotifications";
+import ReceiptAnalyzer from "./components/ReceiptAnalyzer";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -67,6 +68,7 @@ function App() {
                             <Route path="mobile" element={<MobileDashboard />} />
                             <Route path="uploads" element={<Upload />} />
                             <Route path="smart-upload" element={<SmartReceiptUpload />} />
+                            <Route path="budget-analyzer" element={<ReceiptAnalyzer />} />
                             <Route path="claims" element={<Claims />} />
                             <Route path="xero" element={<Xero />} />
                             <Route path="settings" element={<Settings />} />

@@ -1375,6 +1375,91 @@ Lush Properties Project Management`;
     }
   });
 
+  // Save draft claim endpoint
+  app.post("/api/claims/save-draft", async (req, res) => {
+    try {
+      const { lineItem, amount, description, receiptText, confidence } = req.body;
+      
+      // For demo purposes, store in memory or log
+      const draftClaim = {
+        id: Date.now().toString(),
+        lineItem,
+        amount,
+        description,
+        receiptText,
+        confidence,
+        status: 'draft',
+        createdAt: new Date()
+      };
+
+      console.log("💾 Draft claim saved:", draftClaim);
+
+      res.json({
+        success: true,
+        message: "Draft claim saved successfully",
+        data: draftClaim
+      });
+
+    } catch (error) {
+      console.error("Save draft claim error:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to save draft claim" 
+      });
+    }
+  });
+
+  // Weekly reminder endpoint
+  app.post("/api/notifications/weekly-reminder", async (req, res) => {
+    try {
+      const { recipient, message } = req.body;
+      
+      console.log("📅 Weekly reminder sent to:", recipient);
+      console.log("📝 Message:", message);
+
+      // Send via WhatsApp
+      const success = await sendWhatsAppInvite(recipient, 'Builder', 'reminder', message);
+
+      res.json({
+        success: true,
+        message: "Weekly reminder sent successfully"
+      });
+
+    } catch (error) {
+      console.error("Weekly reminder error:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to send weekly reminder" 
+      });
+    }
+  });
+
+  // Get budget lines endpoint
+  app.get("/api/budget/lines", async (req, res) => {
+    try {
+      // Sample budget data - in production, fetch from database
+      const budgetLines = [
+        { id: '1', name: 'Foundation Materials', keyword: 'concrete', amount: 15000, category: 'materials', remaining: 12000 },
+        { id: '2', name: 'Framing Timber', keyword: 'timber', amount: 25000, category: 'materials', remaining: 22000 },
+        { id: '3', name: 'Roofing Materials', keyword: 'roof', amount: 18000, category: 'materials', remaining: 18000 },
+        { id: '4', name: 'Electrical Work', keyword: 'electrical', amount: 12000, category: 'labor', remaining: 8000 },
+        { id: '5', name: 'Plumbing Work', keyword: 'plumbing', amount: 10000, category: 'labor', remaining: 7500 }
+      ];
+
+      res.json({
+        success: true,
+        data: budgetLines
+      });
+
+    } catch (error) {
+      console.error("Get budget lines error:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to fetch budget lines" 
+      });
+    }
+  });
+
   // Auto-cleanup expired invitations every 12 hours
   setInterval(async () => {
     try {

@@ -142,6 +142,11 @@ Preferred communication style: Simple, everyday language.
 - Enhanced receipt processing with vendor, amount, date, and category extraction
 - Added milestone validation for construction phases (foundation, frame, lockup, roofing, etc.)
 - Integrated smart nudges and reminder system for project milestone tracking
+- Created AI Budget Matching system with intelligent receipt-to-budget-line correlation
+- Implemented automated claim drafting with confidence scoring and budget utilization tracking  
+- Added weekly reminder system with WhatsApp integration for construction teams
+- Built comprehensive budget overview dashboard with real-time utilization metrics
+- Enhanced OCR system to extract and match financial data against project budget lines
 - Enhanced mobile optimization with comprehensive data sync capabilities and offline functionality
 - Added real-time sync status indicators with online/offline detection and queue management
 - Implemented offline-first architecture with automatic sync when connection returns
