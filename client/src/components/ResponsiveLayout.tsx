@@ -3,36 +3,19 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import RoleBasedNavigation from "./RoleBasedNavigation";
 import { 
-  LayoutDashboard, 
-  Upload, 
-  FileText, 
-  DollarSign, 
-  Settings, 
   LogOut,
   User,
-  Brain,
   Menu,
-  X,
-  Home,
-  Building,
-  Calculator,
-  Crown,
-  Hammer,
-  Briefcase
+  X
 } from "lucide-react";
 
 interface ResponsiveLayoutProps {
   children: ReactNode;
 }
 
-interface NavItem {
-  label: string;
-  path: string;
-  icon: React.ReactNode;
-  adminOnly?: boolean;
-  mobileLabel?: string;
-}
+
 
 const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
   const location = useLocation();
@@ -50,66 +33,19 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
-  const navItems: NavItem[] = [
-    { 
-      label: "Dashboard", 
-      path: "/dashboard", 
-      icon: <LayoutDashboard className="h-5 w-5" />,
-      mobileLabel: "Home"
-    },
-    { 
-      label: "AI Workflows", 
-      path: "/ai-workflows", 
-      icon: <Brain className="h-5 w-5" />,
-      mobileLabel: "AI"
-    },
-    { 
-      label: "Contracts", 
-      path: "/contracts", 
-      icon: <FileText className="h-5 w-5" /> 
-    },
-    { 
-      label: "Profit Calculator", 
-      path: "/profits", 
-      icon: <Calculator className="h-5 w-5" />,
-      mobileLabel: "Profits"
-    },
-    { 
-      label: "Builder Portal", 
-      path: "/builder", 
-      icon: <Hammer className="h-5 w-5" />,
-      mobileLabel: "Builder"
-    },
-    { 
-      label: "Client Portal", 
-      path: "/client-portal", 
-      icon: <Home className="h-5 w-5" />,
-      mobileLabel: "Client"
-    },
-    { 
-      label: "Investor Portal", 
-      path: "/investor-portal", 
-      icon: <Briefcase className="h-5 w-5" />,
-      mobileLabel: "Investor"
-    },
-    { 
-      label: "Heatmap", 
-      path: "/heatmap", 
-      icon: <DollarSign className="h-5 w-5" /> 
-    },
-    { 
-      label: "Role Manager", 
-      path: "/admin/role-manager", 
-      icon: <Crown className="h-5 w-5" />,
-      adminOnly: true,
-      mobileLabel: "Admin"
-    },
-    { 
-      label: "Settings", 
-      path: "/settings", 
-      icon: <Settings className="h-5 w-5" /> 
+  // Get current user role
+  const getCurrentUser = () => {
+    const userStr = localStorage.getItem("lush_user");
+    if (!userStr) return null;
+    try {
+      return JSON.parse(userStr);
+    } catch {
+      return null;
     }
-  ];
+  };
+
+  const user = getCurrentUser();
+  const userRole = user?.role || 'client';
 
   const logout = () => {
     localStorage.removeItem("lush_user");
@@ -133,33 +69,10 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
         </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 space-y-2">
-        {navItems.map((item) => {
-          const isActive = location.pathname === item.path;
-          const displayLabel = mobile && item.mobileLabel ? item.mobileLabel : item.label;
-          
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              onClick={() => mobile && setSidebarOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                isActive
-                  ? "bg-lush-primary text-white shadow-lg"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-              } ${mobile ? 'text-base' : 'text-sm'}`}
-            >
-              <span className={`flex-shrink-0 ${isActive ? 'text-white' : 'text-gray-500'}`}>
-                {item.icon}
-              </span>
-              <span className={`font-medium ${mobile ? 'block' : 'hidden lg:block'}`}>
-                {displayLabel}
-              </span>
-            </Link>
-          );
-        })}
-      </nav>
+      {/* Role-Based Navigation */}
+      <div className="flex-1">
+        <RoleBasedNavigation userRole={userRole} isCollapsed={false} />
+      </div>
 
       {/* User Profile & Logout */}
       <div className={`border-t pt-4 mt-4 ${mobile ? 'space-y-3' : 'space-y-2'}`}>
