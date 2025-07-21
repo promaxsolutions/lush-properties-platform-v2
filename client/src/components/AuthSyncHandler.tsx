@@ -35,7 +35,7 @@ const AuthSyncHandler = () => {
           return;
         }
 
-        // Also check if we're on the wrong dashboard for our role
+        // Check if we're on the wrong dashboard for our role, but only auto-redirect if we're on a dashboard page
         const dashboards = {
           admin: '/dashboard',
           builder: '/builder',
@@ -48,9 +48,10 @@ const AuthSyncHandler = () => {
         const correctDashboard = dashboards[currentRole];
         const currentPath = window.location.pathname;
         
-        // If we're on a dashboard page but it's the wrong one for our role
+        // Only auto-redirect if we're on a dashboard page that doesn't match our role
+        const dashboardPaths = ['/dashboard', '/builder', '/client', '/finance', '/investor'];
         if (correctDashboard && 
-            (currentPath === '/dashboard' || currentPath === '/builder' || currentPath === '/client' || currentPath === '/finance' || currentPath === '/investor') &&
+            dashboardPaths.includes(currentPath) &&
             currentPath !== correctDashboard) {
           console.log(`[AUTH-SYNC] Redirecting ${currentRole} from ${currentPath} to ${correctDashboard}`);
           window.location.href = correctDashboard;

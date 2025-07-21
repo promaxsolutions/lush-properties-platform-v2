@@ -65,6 +65,7 @@ import ErrorDiagnostics from "./components/ErrorDiagnostics";
 import QuickRoleFixer from "./components/QuickRoleFixer";
 import AuthSyncHandler from "./components/AuthSyncHandler";
 import InvestorRoleFixer from "./components/InvestorRoleFixer";
+import SmoothRoleSwitcher from "./components/SmoothRoleSwitcher";
 import MobilePWAInstaller from "./components/MobilePWAInstaller";
 import MobileTestingGuide from "./components/MobileTestingGuide";
 
@@ -393,7 +394,7 @@ function App() {
                             <Route path="*" element={<Navigate to="/dashboard" />} />
                           </Routes>
                           <AuthSyncHandler />
-                          <InvestorRoleFixer />
+                          <SmoothRoleSwitcher />
                           <AIChatWidget />
                           <FloatingAIChat />
                           <MobileNotifications />
