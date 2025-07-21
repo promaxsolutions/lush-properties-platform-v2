@@ -45,6 +45,11 @@ import WorkingLogin from "./components/WorkingLogin";
 import ResponsiveLayout from "./components/ResponsiveLayout";
 import PolishedBuilderPortal from "./components/PolishedBuilderPortal";
 import PolishedClientPortal from "./components/PolishedClientPortal";
+import FloatingAIChat from "./components/FloatingAIChat";
+import ClientOnboarding from "./components/ClientOnboarding";
+import SecurityPanel from "./components/SecurityPanel";
+import InviteClientModal from "./components/InviteClientModal";
+import WalkthroughGuide from "./components/WalkthroughGuide";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -190,6 +195,9 @@ function App() {
                             <Route path="builder" element={<PolishedBuilderPortal />} />
                             <Route path="client-upgrades" element={<ClientUpgradePanel />} />
                             <Route path="client-portal" element={<PolishedClientPortal />} />
+                            <Route path="client-onboarding" element={<ClientOnboarding onComplete={() => window.location.href = '/client-portal'} />} />
+                            <Route path="security" element={<SecurityPanel />} />
+                            <Route path="walkthrough" element={<WalkthroughGuide isActive={true} onClose={() => window.location.href = '/dashboard'} />} />
                             <Route path="heatmap" element={<HeatmapVisualizer />} />
                             <Route path="ai-workflows" element={<AIWorkflowEngine />} />
                             <Route path="role-dashboard" element={<RoleBasedDashboard />} />
@@ -200,6 +208,7 @@ function App() {
                             <Route path="*" element={<Navigate to="/dashboard" />} />
                           </Routes>
                           <AIChatWidget />
+                          <FloatingAIChat />
                           <MobileNotifications />
                         </ResponsiveLayout>
                       </ProtectedRoute>

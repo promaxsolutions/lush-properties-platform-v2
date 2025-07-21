@@ -17,6 +17,7 @@ const WorkingLogin = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ const WorkingLogin = () => {
     setError("");
     setSuccess("");
     setLoading(true);
+    setIsLoading(true);
 
     try {
       // Simulate network delay
@@ -75,6 +77,7 @@ const WorkingLogin = () => {
       setError("Invalid email or password. Please check your credentials and try again.");
     } finally {
       setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -170,10 +173,17 @@ const WorkingLogin = () => {
             {/* Login Button */}
             <Button
               type="submit"
-              disabled={loading}
-              className="w-full h-14 text-lg font-semibold rounded-xl bg-lush-primary hover:bg-lush-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 mt-8"
+              disabled={isLoading}
+              className="w-full h-14 text-lg font-semibold rounded-xl bg-lush-primary hover:bg-lush-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 mt-8 disabled:opacity-50"
             >
-              {loading ? "Signing In..." : "Login"}
+              {isLoading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Signing In...
+                </div>
+              ) : (
+                "Login"
+              )}
             </Button>
           </form>
         </div>
