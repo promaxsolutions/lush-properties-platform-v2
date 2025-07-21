@@ -127,8 +127,8 @@ const ClientDashboard = () => {
             </div>
             <Progress value={projectData.progress} className="h-3" />
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-              <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 mt-6">
+              <div className="text-center p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <Calendar className="h-6 w-6 text-blue-600 mx-auto mb-2" />
                 <div className="text-sm font-medium text-blue-900">Started</div>
                 <div className="text-xs text-blue-700">{projectData.startDate}</div>
@@ -153,7 +153,7 @@ const ClientDashboard = () => {
 
       {/* Tabs */}
       <div className="border-b border-gray-200">
-        <nav className="flex space-x-8">
+        <nav className="flex space-x-4 sm:space-x-8 overflow-x-auto">
           {[
             { id: 'overview', label: 'Overview', icon: <Home className="h-4 w-4" /> },
             { id: 'photos', label: 'Progress Photos', icon: <Camera className="h-4 w-4" /> },
@@ -163,7 +163,7 @@ const ClientDashboard = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 py-2 px-1 border-b-2 font-medium text-sm ${
+              className={`flex items-center gap-1 sm:gap-2 py-2 px-1 border-b-2 font-medium text-xs sm:text-sm whitespace-nowrap min-h-[48px] ${
                 activeTab === tab.id
                   ? 'border-lush-primary text-lush-primary'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'

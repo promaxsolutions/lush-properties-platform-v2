@@ -64,6 +64,8 @@ import RoleSystemTester from "./components/RoleSystemTester";
 import ErrorDiagnostics from "./components/ErrorDiagnostics";
 import QuickRoleFixer from "./components/QuickRoleFixer";
 import AuthSyncHandler from "./components/AuthSyncHandler";
+import MobilePWAInstaller from "./components/MobilePWAInstaller";
+import MobileTestingGuide from "./components/MobileTestingGuide";
 
 interface AuthProtectedRouteProps {
   children: React.ReactNode;
@@ -386,12 +388,14 @@ function App() {
                             <Route path="role-system-test" element={<RoleSystemTester />} />
                             <Route path="error-diagnostics" element={<ErrorDiagnostics />} />
                             <Route path="quick-role-fix" element={<QuickRoleFixer />} />
+                            <Route path="mobile-test" element={<MobileTestingGuide />} />
                             <Route path="*" element={<Navigate to="/dashboard" />} />
                           </Routes>
                           <AuthSyncHandler />
                           <AIChatWidget />
                           <FloatingAIChat />
                           <MobileNotifications />
+                          <MobilePWAInstaller />
                         </ResponsiveLayout>
                       </AuthProtectedRoute>
                     }

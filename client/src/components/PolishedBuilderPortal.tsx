@@ -157,15 +157,15 @@ const PolishedBuilderPortal = () => {
         </Alert>
 
         {/* Dashboard Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200 shadow-md">
-            <CardContent className="p-4">
+            <CardContent className="p-3 sm:p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-blue-600 font-medium">Pending Approvals</p>
-                  <p className="text-2xl font-bold text-blue-900">{pendingCount}</p>
+                  <p className="text-xs sm:text-sm text-blue-600 font-medium">Pending Approvals</p>
+                  <p className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-900">{pendingCount}</p>
                 </div>
-                <Clock className="h-8 w-8 text-blue-600" />
+                <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
               </div>
             </CardContent>
           </Card>

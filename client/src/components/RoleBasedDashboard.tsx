@@ -105,15 +105,15 @@ const RoleBasedDashboard = () => {
   const renderBuilderView = () => (
     <div className="space-y-6">
       {/* Builder Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
         <Card className="bg-blue-50 border-blue-200">
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-blue-600">Active Projects</p>
-                <p className="text-2xl font-bold text-blue-900">3</p>
+                <p className="text-xs sm:text-sm text-blue-600">Active Projects</p>
+                <p className="text-xl sm:text-2xl font-bold text-blue-900">3</p>
               </div>
-              <Building2 className="h-8 w-8 text-blue-600" />
+              <Building2 className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
             </div>
           </CardContent>
         </Card>

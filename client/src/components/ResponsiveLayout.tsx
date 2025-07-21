@@ -115,11 +115,22 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
           
           <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="sm" className="p-2">
+              <Button variant="ghost" size="sm" className="p-2 min-h-[48px] min-w-[48px]">
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-80 p-0">
+              <div className="flex justify-between items-center p-4 border-b">
+                <h2 className="text-lg font-semibold">Navigation</h2>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSidebarOpen(false)}
+                  className="p-2"
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
               <NavContent mobile={true} />
             </SheetContent>
           </Sheet>
@@ -134,41 +145,16 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
 
         {/* Main Content */}
         <div className="flex-1 min-w-0">
-          <div className="p-4 lg:p-6 xl:p-8 max-w-7xl mx-auto">
+          <div className="p-3 sm:p-4 lg:p-6 xl:p-8 max-w-7xl mx-auto">
             {children}
           </div>
         </div>
       </div>
 
-      {/* Mobile Bottom Navigation - Alternative Option */}
-      {isMobile && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t z-30 lg:hidden">
-          <div className="flex items-center justify-around py-2">
-            {navItems.slice(0, 5).map((item) => {
-              const isActive = location.pathname === item.path;
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`flex flex-col items-center gap-1 p-2 min-w-0 flex-1 ${
-                    isActive ? 'text-lush-primary' : 'text-gray-500'
-                  }`}
-                >
-                  <span className="flex-shrink-0">
-                    {item.icon}
-                  </span>
-                  <span className="text-xs font-medium truncate">
-                    {item.mobileLabel || item.label}
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      )}
+
       
-      {/* Add bottom padding for mobile navigation */}
-      {isMobile && <div className="h-20"></div>}
+      {/* Add bottom padding for PWA install button */}
+      {isMobile && <div className="h-16"></div>}
     </div>
   );
 };

@@ -143,4 +143,64 @@
     background: linear-gradient(135deg, hsl(var(--lush-primary)) 0%, hsl(var(--lush-accent)) 100%);
     box-shadow: 0 4px 15px rgba(0, 113, 68, 0.3);
   }
+
+  /* Mobile Optimizations */
+  @media (max-width: 768px) {
+    /* Touch-friendly button sizes */
+    .btn-mobile {
+      min-height: 48px;
+      min-width: 48px;
+      padding: 12px 16px;
+      font-size: 0.875rem;
+    }
+    
+    /* Mobile text sizing */
+    .text-mobile-xs { font-size: 0.75rem; }
+    .text-mobile-sm { font-size: 0.875rem; }
+    .text-mobile-base { font-size: 1rem; }
+    
+    /* Mobile padding adjustments */
+    .p-mobile { padding: 0.75rem; }
+    .px-mobile { padding-left: 0.75rem; padding-right: 0.75rem; }
+    .py-mobile { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+    
+    /* Mobile gap adjustments */
+    .gap-mobile { gap: 0.75rem; }
+    .space-y-mobile > * + * { margin-top: 0.75rem; }
+    
+    /* Mobile card adjustments */
+    .card-mobile {
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    }
+    
+    /* Mobile grid adjustments */
+    .grid-mobile-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+    .grid-mobile-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    
+    /* Mobile scrollable tables */
+    .table-mobile {
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    
+    /* Mobile navigation adjustments */
+    .nav-mobile {
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .nav-mobile::-webkit-scrollbar {
+      display: none;
+    }
+    
+    /* Mobile form adjustments */
+    .form-mobile input,
+    .form-mobile select,
+    .form-mobile textarea {
+      font-size: 16px; /* Prevents zoom on iOS */
+      min-height: 44px;
+    }
+  }
 }
