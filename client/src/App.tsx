@@ -113,7 +113,7 @@ const AuthProtectedRoute = ({ children, role }: AuthProtectedRouteProps) => {
 
 // Fallback router component to redirect users to correct dashboard
 const FallbackRouter = ({ userRole }: { userRole?: string }) => {
-  const dashboardRoutes = {
+  const dashboardRoutes: Record<string, string> = {
     admin: '/dashboard',
     builder: '/builder',
     client: '/client',
