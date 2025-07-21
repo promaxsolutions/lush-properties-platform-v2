@@ -73,6 +73,23 @@
   .bg-lush-accent { background-color: hsl(var(--lush-accent)); }
   .text-lush-accent { color: hsl(var(--lush-accent)); }
   .bg-lush-light { background-color: hsl(var(--lush-light)); }
+  
+  /* Enhanced focus states for Lush theme */
+  .focus\:border-lush-primary:focus {
+    border-color: hsl(var(--lush-primary));
+  }
+  
+  .focus\:ring-lush-primary:focus {
+    --tw-ring-color: hsl(var(--lush-primary));
+  }
+  
+  /* Responsive text utilities */
+  @media (max-width: 640px) {
+    .text-responsive-xl { font-size: 1.25rem; }
+    .text-responsive-2xl { font-size: 1.5rem; }
+    .text-responsive-3xl { font-size: 1.875rem; }
+    .text-responsive-4xl { font-size: 2.25rem; }
+  }
   .text-lush-dark { color: hsl(var(--lush-dark)); }
   
   /* Animation utilities */

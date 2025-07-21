@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Eye, EyeOff, AlertCircle } from "lucide-react";
 
@@ -31,89 +30,66 @@ const Login = ({ onLogin }: LoginProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-md">
-        {/* Logo and Tagline */}
-        <div className="text-center mb-8">
-          <div className="mb-4">
-            <div className="w-20 h-20 mx-auto bg-gradient-to-br from-lush-primary to-lush-accent rounded-xl flex items-center justify-center mb-4">
-              <span className="text-2xl font-bold text-white">L</span>
-            </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">LushOS</h1>
-            <p className="text-lush-primary font-medium text-lg">
-              Premium Projects. Powerful Returns.
-            </p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center px-6 py-10">
+      <div className="w-full max-w-md mx-auto">
+        {/* Logo */}
+        <div className="text-center mb-10">
+          <div className="w-24 h-24 mx-auto bg-gradient-to-br from-lush-primary to-lush-accent rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+            <span className="text-3xl font-bold text-white">L</span>
           </div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">LushOS</h1>
+          <p className="text-lush-primary font-semibold text-xl">
+            Premium Projects. Powerful Returns.
+          </p>
         </div>
 
-        {/* Login Card */}
-        <Card className="shadow-xl border-0 rounded-2xl">
-          <CardHeader className="text-center pb-2">
-            <CardTitle className="text-2xl font-bold text-gray-900">
-              Welcome Back
-            </CardTitle>
-            <p className="text-gray-600 mt-1">Sign in to your account</p>
-          </CardHeader>
-          <CardContent className="px-8 pb-8">
-            {error && (
-              <Alert className="mb-6 border-red-200 bg-red-50">
-                <AlertCircle className="h-4 w-4 text-red-600" />
-                <AlertDescription className="text-red-700">
-                  {error}
-                </AlertDescription>
-              </Alert>
-            )}
+        {/* Login Form */}
+        <div className="bg-white rounded-2xl shadow-lg px-6 py-10">
+          {error && (
+            <Alert className="mb-6 border-red-200 bg-red-50 rounded-xl">
+              <AlertCircle className="h-4 w-4 text-red-600" />
+              <AlertDescription className="text-red-700">
+                {error}
+              </AlertDescription>
+            </Alert>
+          )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium text-gray-700">
-                  Email Address
-                </label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="h-12 text-base rounded-xl border-gray-200 shadow-sm focus:border-lush-primary focus:ring-lush-primary"
-                />
-              </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email Input */}
+            <div>
+              <Input
+                id="email"
+                type="email"
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="h-14 text-base rounded-xl border-gray-200 shadow-sm focus:border-lush-primary focus:ring-lush-primary bg-gray-50 hover:bg-white transition-colors"
+              />
+            </div>
 
-              <div className="space-y-2">
-                <label htmlFor="password" className="text-sm font-medium text-gray-700">
-                  Password
-                </label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="h-12 text-base rounded-xl border-gray-200 shadow-sm focus:border-lush-primary focus:ring-lush-primary pr-12"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </button>
-                </div>
-              </div>
-
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full h-12 text-base font-semibold rounded-xl bg-lush-primary hover:bg-lush-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+            {/* Password Input */}
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="h-14 text-base rounded-xl border-gray-200 shadow-sm focus:border-lush-primary focus:ring-lush-primary bg-gray-50 hover:bg-white transition-colors pr-12"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
               >
-                {loading ? "Signing In..." : "Sign In"}
-              </Button>
-            </form>
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
 
-            <div className="text-center mt-6">
+            {/* Forgot Password Link */}
+            <div className="text-left">
               <a
                 href="#"
                 className="text-lush-primary hover:text-lush-primary/80 font-medium text-sm transition-colors"
@@ -121,12 +97,16 @@ const Login = ({ onLogin }: LoginProps) => {
                 Forgot your password?
               </a>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Footer */}
-        <div className="text-center mt-8 text-sm text-gray-500">
-          <p>© 2025 LushOS. All rights reserved.</p>
+            {/* Login Button */}
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full h-14 text-lg font-semibold rounded-xl bg-lush-primary hover:bg-lush-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 mt-8"
+            >
+              {loading ? "Signing In..." : "Login"}
+            </Button>
+          </form>
         </div>
       </div>
     </div>

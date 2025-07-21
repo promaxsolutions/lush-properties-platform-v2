@@ -156,6 +156,12 @@ function App() {
                                 }
                               ]}
                             />} />
+                            <Route path="login-clean" element={<Login onLogin={async (email, password) => {
+                              console.log('Clean login attempt:', { email });
+                              // Mock successful login
+                              await new Promise(resolve => setTimeout(resolve, 1000));
+                              alert('Login successful! Clean interface demo.');
+                            }} />} />
                             <Route path="enhanced-receipts" element={<EnhancedReceiptUpload 
                               projectId="proj-001"
                               onUploadComplete={(uploads) => {
