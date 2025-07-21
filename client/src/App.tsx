@@ -50,20 +50,39 @@ import ClientOnboarding from "./components/ClientOnboarding";
 import SecurityPanel from "./components/SecurityPanel";
 import InviteClientModal from "./components/InviteClientModal";
 import WalkthroughGuide from "./components/WalkthroughGuide";
+import RoleBasedNavigation from "./components/RoleBasedNavigation";
+import ProtectedRoute from "./components/ProtectedRoute";
+import ClientDashboard from "./components/ClientDashboard";
+import FinanceDashboard from "./components/FinanceDashboard";
 
-interface ProtectedRouteProps {
+interface AuthProtectedRouteProps {
   children: React.ReactNode;
   role?: string;
 }
 
-const ProtectedRoute = ({ children, role }: ProtectedRouteProps) => {
+const AuthProtectedRoute = ({ children, role }: AuthProtectedRouteProps) => {
   const { user, role: userRole } = useAuth();
   if (!user) return <Navigate to="/login" />;
   if (role && userRole !== role) return <Navigate to="/unauthorized" />;
   return <>{children}</>;
 };
 
+
+
 function App() {
+  // Get current user from localStorage for role-based routing
+  const getCurrentUser = () => {
+    try {
+      const storedUser = localStorage.getItem("lush_user");
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+      console.error("Failed to parse stored user:", error);
+      return null;
+    }
+  };
+  
+  const user = getCurrentUser();
+  
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -79,7 +98,7 @@ function App() {
                   <Route
                     path="/*"
                     element={
-                      <ProtectedRoute>
+                      <AuthProtectedRoute>
                         <ResponsiveLayout>
                           <Routes>
                             <Route path="dashboard" element={
@@ -195,10 +214,32 @@ function App() {
                             <Route path="builder" element={<PolishedBuilderPortal />} />
                             <Route path="client-upgrades" element={<ClientUpgradePanel />} />
                             <Route path="client-portal" element={<PolishedClientPortal />} />
+                            <Route path="client" element={
+                              <ProtectedRoute allowedRoles={['client', 'admin']} userRole={user?.role}>
+                                <ClientDashboard />
+                              </ProtectedRoute>
+                            } />
+                            <Route path="finance" element={
+                              <ProtectedRoute allowedRoles={['accountant', 'admin']} userRole={user?.role}>
+                                <FinanceDashboard />
+                              </ProtectedRoute>
+                            } />
                             <Route path="client-onboarding" element={<ClientOnboarding onComplete={() => window.location.href = '/client-portal'} />} />
-                            <Route path="security" element={<SecurityPanel />} />
-                            <Route path="walkthrough" element={<WalkthroughGuide isActive={true} onClose={() => window.location.href = '/dashboard'} />} />
-                            <Route path="heatmap" element={<HeatmapVisualizer />} />
+                            <Route path="security" element={
+                              <ProtectedRoute allowedRoles={['admin']} userRole={user?.role}>
+                                <SecurityPanel />
+                              </ProtectedRoute>
+                            } />
+                            <Route path="walkthrough" element={
+                              <ProtectedRoute allowedRoles={['admin']} userRole={user?.role}>
+                                <WalkthroughGuide isActive={true} onClose={() => window.location.href = '/dashboard'} />
+                              </ProtectedRoute>
+                            } />
+                            <Route path="heatmap" element={
+                              <ProtectedRoute allowedRoles={['investor', 'admin']} userRole={user?.role}>
+                                <HeatmapVisualizer />
+                              </ProtectedRoute>
+                            } />
                             <Route path="ai-workflows" element={<AIWorkflowEngine />} />
                             <Route path="role-dashboard" element={<RoleBasedDashboard />} />
                             <Route path="admin/role-manager" element={<AdminRoleManager />} />
@@ -211,7 +252,7 @@ function App() {
                           <FloatingAIChat />
                           <MobileNotifications />
                         </ResponsiveLayout>
-                      </ProtectedRoute>
+                      </AuthProtectedRoute>
                     }
                   />
                 </Routes>

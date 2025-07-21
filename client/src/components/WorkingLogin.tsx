@@ -9,7 +9,8 @@ const testUsers = {
   "admin@lush.com": { password: "admin123", role: "admin", name: "Sarah Chen" },
   "builder@lush.com": { password: "builder123", role: "builder", name: "Mike Johnson" },
   "client@lush.com": { password: "client123", role: "client", name: "Jennifer Williams" },
-  "investor@lush.com": { password: "investor123", role: "investor", name: "Robert Kim" }
+  "investor@lush.com": { password: "investor123", role: "investor", name: "Robert Kim" },
+  "accountant@lush.com": { password: "accountant123", role: "accountant", name: "Emma Davis" }
 };
 
 const WorkingLogin = () => {
@@ -63,10 +64,13 @@ const WorkingLogin = () => {
             navigate("/builder");
             break;
           case "client":
-            navigate("/project-view");
+            navigate("/client");
             break;
           case "investor":
             navigate("/investor-portal");
+            break;
+          case "accountant":
+            navigate("/finance");
             break;
           default:
             navigate("/dashboard");
@@ -157,6 +161,7 @@ const WorkingLogin = () => {
                 <div>Builder: builder@lush.com / builder123</div>
                 <div>Client: client@lush.com / client123</div>
                 <div>Investor: investor@lush.com / investor123</div>
+                <div>Accountant: accountant@lush.com / accountant123</div>
               </div>
             </div>
 
