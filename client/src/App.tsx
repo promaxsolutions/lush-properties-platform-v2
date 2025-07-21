@@ -62,6 +62,7 @@ import UserDetailView from "./components/UserDetailView";
 import ImpersonationBanner from "./components/ImpersonationBanner";
 import PortalPreview from "./components/PortalPreview";
 import ImpersonateUser from "./components/ImpersonateUser";
+import AdminAuditPanel from "./components/AdminAuditPanel";
 import ClientDashboard from "./components/ClientDashboard";
 import FinanceDashboard from "./components/FinanceDashboard";
 import InvestorDashboard from "./components/InvestorDashboard";
@@ -435,7 +436,7 @@ function App() {
                             <Route path="mobile-test" element={<MobileTestingGuide />} />
                             <Route path="audit" element={
                               <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
-                                <ComprehensiveLoginAudit />
+                                <AdminAuditPanel />
                               </RouteGuard>
                             } />
                             {/* Missing routes - add all navigation paths */}

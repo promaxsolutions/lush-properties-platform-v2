@@ -9,6 +9,9 @@ import nodemailer from "nodemailer";
 import { z } from "zod";
 import axios from "axios";
 import accountantDocsRouter from "./routes/accountant-docs";
+import auditRoutes from "./routes/audit-routes";
+import { logActivity, initializeSampleAuditData } from "./audit-logger";
+import { comprehensiveAudit } from "./middleware/impersonation-audit";
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(process.cwd(), "uploads");
@@ -46,8 +49,17 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Apply comprehensive audit middleware to all routes
+  app.use(comprehensiveAudit);
+  
   // Register accountant documents router
   app.use('/api/accountant', accountantDocsRouter);
+  
+  // Mount audit routes
+  app.use("/api/audit", auditRoutes);
+  
+  // Initialize sample audit data for demo
+  initializeSampleAuditData();
   // Get all projects
   app.get("/api/projects", async (req, res) => {
     try {
