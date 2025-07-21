@@ -1633,6 +1633,86 @@ Lush Properties Project Management`;
     }
   });
 
+  // Lender response endpoint
+  app.post("/api/claims/lender-response", async (req, res) => {
+    try {
+      const { claimId, action, response, lenderEmail } = req.body;
+      
+      console.log(`📋 Lender response received for claim ${claimId}:`);
+      console.log(`Action: ${action}`);
+      console.log(`Response: ${response}`);
+      
+      // In production, this would:
+      // 1. Update claim status in database
+      // 2. Send email notification to builder
+      // 3. Update payment workflow if approved
+      // 4. Log the response for audit trail
+
+      // Simulate email to builder
+      console.log("📧 Email notification sent to builder");
+      console.log(`Subject: Claim ${action === 'approve' ? 'Approved' : 'Requires Changes'}`);
+      
+      res.json({
+        success: true,
+        message: `Claim ${action} response processed successfully`,
+        data: {
+          claimId,
+          action,
+          processedAt: new Date(),
+          notificationSent: true
+        }
+      });
+
+    } catch (error) {
+      console.error("Lender response error:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to process lender response" 
+      });
+    }
+  });
+
+  // Get pending claims for lender review
+  app.get("/api/claims/pending", async (req, res) => {
+    try {
+      // Sample pending claims for lender review
+      const pendingClaims = [
+        {
+          id: '2',
+          milestone: 'Frame Complete',
+          amount: 120000,
+          project: 'Luxury Townhouse Development',
+          submittedAt: '2024-02-10',
+          builderEmail: 'builder@lush.com',
+          attachments: ['frame_template.pdf', 'frame_photo.jpg', 'timber_invoice.pdf'],
+          daysPending: 5
+        },
+        {
+          id: '3',
+          milestone: 'Lockup Complete', 
+          amount: 95000,
+          project: 'Modern Apartment Complex',
+          submittedAt: '2024-02-20',
+          builderEmail: 'builder@lush.com',
+          attachments: ['lockup_template.pdf', 'lockup_photo.jpg'],
+          daysPending: 2
+        }
+      ];
+      
+      res.json({
+        success: true,
+        claims: pendingClaims
+      });
+
+    } catch (error) {
+      console.error("Get pending claims error:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to get pending claims" 
+      });
+    }
+  });
+
   // Auto-cleanup expired invitations every 12 hours
   setInterval(async () => {
     try {

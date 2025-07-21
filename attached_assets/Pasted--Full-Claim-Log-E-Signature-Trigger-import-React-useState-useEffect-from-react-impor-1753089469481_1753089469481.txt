@@ -1,0 +1,55 @@
+// 📄 Full Claim Log + E-Signature Trigger
+import React, { useState, useEffect } from "react";
+import { sendClaimEmail, checkClaimFollowup, fetchClaimLogs, triggerESignature } from "../utils/claimsAPI";
+
+export default function ClaimDashboard({ project }) {
+  const [claimLogs, setClaimLogs] = useState([]);
+  const [refresh, setRefresh] = useState(false);
+
+  useEffect(() => {
+    async function loadClaims() {
+      const logs = await fetchClaimLogs(project.id);
+      setClaimLogs(logs);
+    }
+    loadClaims();
+  }, [project.id, refresh]);
+
+  const handleTriggerESign = async (claimId) => {
+    const response = await triggerESignature(claimId);
+    if (response.success) alert("🖊️ E-sign request sent!");
+  };
+
+  return (
+    <div className="p-4">
+      <h2 className="text-xl font-bold mb-3">📄 Progress Claim Log</h2>
+      <table className="w-full text-sm border">
+        <thead>
+          <tr className="bg-gray-200">
+            <th className="border px-2">📍 Milestone</th>
+            <th className="border px-2">💰 Amount</th>
+            <th className="border px-2">🗓️ Date</th>
+            <th className="border px-2">📩 Status</th>
+            <th className="border px-2">🖊️ E-Sign</th>
+          </tr>
+        </thead>
+        <tbody>
+          {claimLogs.map((claim, i) => (
+            <tr key={i} className="border-b">
+              <td className="border px-2">{claim.milestone}</td>
+              <td className="border px-2">${claim.amount}</td>
+              <td className="border px-2">{new Date(claim.date).toLocaleDateString()}</td>
+              <td className="border px-2">{claim.status}</td>
+              <td className="border px-2 text-center">
+                {claim.status === "sent" && (
+                  <button onClick={() => handleTriggerESign(claim.id)} className="text-blue-600 underline text-xs">Request E-Sign</button>
+                )}
+                {claim.status === "signed" && <span className="text-green-600 text-xs">✅ Signed</span>}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <button onClick={() => setRefresh(!refresh)} className="mt-3 bg-blue-600 text-white px-3 py-1 rounded text-sm">🔄 Refresh</button>
+    </div>
+  );
+}

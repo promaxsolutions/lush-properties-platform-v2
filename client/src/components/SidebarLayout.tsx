@@ -12,7 +12,10 @@ import {
   Settings, 
   LogOut,
   User,
-  Brain
+  Brain,
+  TestTube,
+  History,
+  Building
 } from "lucide-react";
 
 interface SidebarLayoutProps {
@@ -66,6 +69,21 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
       label: "Claim Engine", 
       path: "/claim-engine", 
       icon: <FileText className="h-5 w-5" /> 
+    },
+    { 
+      label: "Claim Test", 
+      path: "/claim-test", 
+      icon: <TestTube className="h-5 w-5" /> 
+    },
+    { 
+      label: "Claim History", 
+      path: "/claim-history", 
+      icon: <History className="h-5 w-5" /> 
+    },
+    { 
+      label: "Lender Simulator", 
+      path: "/lender-simulator", 
+      icon: <Building className="h-5 w-5" /> 
     },
     { 
       label: "Claims", 

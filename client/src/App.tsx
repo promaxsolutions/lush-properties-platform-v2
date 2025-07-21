@@ -32,6 +32,9 @@ import MobileNotifications from "./components/MobileNotifications";
 import ReceiptAnalyzer from "./components/ReceiptAnalyzer";
 import BudgetTestDemo from "./components/BudgetTestDemo";
 import ClaimEngine from "./components/ClaimEngine";
+import ClaimTestDemo from "./components/ClaimTestDemo";
+import ClaimHistory from "./components/ClaimHistory";
+import LenderResponseSimulator from "./components/LenderResponseSimulator";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -73,6 +76,9 @@ function App() {
                             <Route path="budget-analyzer" element={<ReceiptAnalyzer />} />
                             <Route path="budget-test" element={<BudgetTestDemo />} />
                             <Route path="claim-engine" element={<ClaimEngine />} />
+                            <Route path="claim-test" element={<ClaimTestDemo />} />
+                            <Route path="claim-history" element={<ClaimHistory />} />
+                            <Route path="lender-simulator" element={<LenderResponseSimulator />} />
                             <Route path="claims" element={<Claims />} />
                             <Route path="xero" element={<Xero />} />
                             <Route path="settings" element={<Settings />} />
