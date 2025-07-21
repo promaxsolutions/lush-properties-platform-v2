@@ -98,7 +98,21 @@ const AuthProtectedRoute = ({ children, role }: AuthProtectedRouteProps) => {
   return <>{children}</>;
 };
 
-
+// Fallback router component to redirect users to correct dashboard
+const FallbackRouter = ({ userRole }: { userRole?: string }) => {
+  const dashboardRoutes = {
+    admin: '/dashboard',
+    builder: '/builder',
+    client: '/client',
+    accountant: '/finance',
+    investor: '/investor'
+  };
+  
+  const targetRoute = userRole ? dashboardRoutes[userRole] || '/dashboard' : '/login';
+  console.log(`[FALLBACK] Redirecting ${userRole || 'unknown'} to ${targetRoute}`);
+  
+  return <Navigate to={targetRoute} replace />;
+};
 
 function App() {
   // Get current user from localStorage for role-based routing
@@ -417,7 +431,51 @@ function App() {
                                 <ComprehensiveLoginAudit />
                               </RouteGuard>
                             } />
-                            <Route path="*" element={<Navigate to="/dashboard" />} />
+                            {/* Missing routes - add all navigation paths */}
+                            <Route path="uploads" element={
+                              <RouteGuard allowedRoles={['builder', 'client', 'admin']} userRole={currentUser?.role}>
+                                <div className="p-8 text-center">
+                                  <h2 className="text-2xl font-bold mb-4">Upload Center</h2>
+                                  <p>Role-specific upload functionality coming soon...</p>
+                                </div>
+                              </RouteGuard>
+                            } />
+                            <Route path="timeline" element={
+                              <RouteGuard allowedRoles={['builder', 'admin']} userRole={currentUser?.role}>
+                                <div className="p-8 text-center">
+                                  <h2 className="text-2xl font-bold mb-4">Project Timeline</h2>
+                                  <p>Builder timeline view coming soon...</p>
+                                </div>
+                              </RouteGuard>
+                            } />
+                            <Route path="documents" element={
+                              <RouteGuard allowedRoles={['client', 'investor', 'admin']} userRole={currentUser?.role}>
+                                <div className="p-8 text-center">
+                                  <h2 className="text-2xl font-bold mb-4">My Documents</h2>
+                                  <p>Document management coming soon...</p>
+                                </div>
+                              </RouteGuard>
+                            } />
+                            <Route path="receipts" element={
+                              <RouteGuard allowedRoles={['accountant', 'admin']} userRole={currentUser?.role}>
+                                <div className="p-8 text-center">
+                                  <h2 className="text-2xl font-bold mb-4">Receipt Management</h2>
+                                  <p>Receipt processing system coming soon...</p>
+                                </div>
+                              </RouteGuard>
+                            } />
+                            <Route path="users" element={
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
+                                <div className="p-8 text-center">
+                                  <h2 className="text-2xl font-bold mb-4">Team Manager</h2>
+                                  <p>User management system coming soon...</p>
+                                </div>
+                              </RouteGuard>
+                            } />
+                            {/* Fallback routing based on user role */}
+                            <Route path="*" element={
+                              <FallbackRouter userRole={currentUser?.role} />
+                            } />
                           </Routes>
                           <AuthSyncHandler />
                           <SmoothRoleSwitcher />

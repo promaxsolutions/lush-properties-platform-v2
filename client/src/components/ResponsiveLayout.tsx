@@ -51,24 +51,42 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
   const [user, setUser] = useState(getCurrentUser());
   const userRole = user?.role || 'client';
 
-  // Listen for user changes to refresh layout
+  // Listen for user changes to refresh layout and reset sidebar state
   useEffect(() => {
     const handleUserChange = () => {
       const freshUser = getCurrentUser();
       setUser(freshUser);
+      setSidebarOpen(false); // Reset sidebar state on user change
       console.log('[LAYOUT] User changed, refreshing layout for role:', freshUser?.role);
+    };
+
+    const handleLogout = () => {
+      setUser(null);
+      setSidebarOpen(false);
+      console.log('[LAYOUT] Logout detected, clearing user and resetting sidebar');
     };
 
     window.addEventListener('userLogin', handleUserChange);
     window.addEventListener('roleChange', handleUserChange);
+    window.addEventListener('logout', handleLogout);
     window.addEventListener('storage', handleUserChange);
     
     return () => {
       window.removeEventListener('userLogin', handleUserChange);
       window.removeEventListener('roleChange', handleUserChange);
+      window.removeEventListener('logout', handleLogout);
       window.removeEventListener('storage', handleUserChange);
     };
   }, []);
+
+  // Force fresh role check on navigation changes
+  useEffect(() => {
+    const freshUser = getCurrentUser();
+    if (freshUser && (!user || user.role !== freshUser.role)) {
+      setUser(freshUser);
+      console.log('[LAYOUT] Navigation change detected, refreshing user role:', freshUser.role);
+    }
+  }, [location]);
 
   // Logout is now handled by SecureLogout component
 
