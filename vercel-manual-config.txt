@@ -1,0 +1,20 @@
+VERCEL MANUAL CONFIGURATION
+
+Copy these exact settings in your Vercel dashboard:
+
+BUILD COMMAND:
+vite build
+
+OUTPUT DIRECTORY:
+dist
+
+INSTALL COMMAND:
+npm install
+
+ROOT DIRECTORY:
+. (leave blank or set to root)
+
+NODE VERSION:
+18.x (or latest)
+
+After setting these, click SAVE and then REDEPLOY.
