@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation } from 'wouter';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Shield, Home, ArrowLeft, AlertTriangle } from 'lucide-react';
+import { Shield, Home, ArrowLeft, AlertTriangle, RefreshCw } from 'lucide-react';
 
 interface RouteGuardProps {
   children: React.ReactNode;
@@ -90,11 +90,45 @@ const RouteGuard = ({ children, allowedRoles, userRole, requireAuth = true }: Ro
               
               <Button
                 variant="outline"
+                onClick={() => {
+                  // Force refresh auth context and reload
+                  window.dispatchEvent(new CustomEvent('userLogin'));
+                  setTimeout(() => window.location.reload(), 100);
+                }}
+                className="w-full"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh & Retry
+              </Button>
+              
+              <Button
+                variant="secondary"
+                onClick={() => window.location.href = "/quick-role-fix"}
+                className="w-full"
+              >
+                <AlertTriangle className="h-4 w-4 mr-2" />
+                Fix Role Issues
+              </Button>
+              
+              <Button
+                variant="outline"
                 onClick={() => window.history.back()}
                 className="w-full"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Go Back
+              </Button>
+              
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  localStorage.removeItem("lush_user");
+                  window.location.href = "/login";
+                }}
+                className="w-full"
+                size="sm"
+              >
+                Clear & Re-login
               </Button>
             </div>
 
