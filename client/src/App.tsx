@@ -63,6 +63,7 @@ import BuilderDebugTest from "./components/BuilderDebugTest";
 import RoleSystemTester from "./components/RoleSystemTester";
 import ErrorDiagnostics from "./components/ErrorDiagnostics";
 import QuickRoleFixer from "./components/QuickRoleFixer";
+import AuthSyncHandler from "./components/AuthSyncHandler";
 
 interface AuthProtectedRouteProps {
   children: React.ReactNode;
@@ -387,6 +388,7 @@ function App() {
                             <Route path="quick-role-fix" element={<QuickRoleFixer />} />
                             <Route path="*" element={<Navigate to="/dashboard" />} />
                           </Routes>
+                          <AuthSyncHandler />
                           <AIChatWidget />
                           <FloatingAIChat />
                           <MobileNotifications />

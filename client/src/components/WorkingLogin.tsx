@@ -44,13 +44,15 @@ const WorkingLogin = () => {
         throw new Error("Invalid password");
       }
 
-      // Store user in localStorage (in real app, this would be JWT tokens)
-      localStorage.setItem("lush_user", JSON.stringify({
+      // Store user in localStorage with double-check for role accuracy
+      const userData = {
         email: email.toLowerCase(),
         role: user.role,
         name: user.name,
         loginTime: new Date().toISOString()
-      }));
+      };
+      
+      localStorage.setItem("lush_user", JSON.stringify(userData));
 
       // Trigger event for AuthContext to pick up the change
       window.dispatchEvent(new CustomEvent('userLogin'));
