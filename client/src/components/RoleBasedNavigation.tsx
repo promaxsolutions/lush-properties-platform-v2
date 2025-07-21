@@ -29,50 +29,68 @@ interface RoleBasedNavigationProps {
 }
 
 const getNavigationItems = (userRole: string): NavigationItem[] => {
-  // Admin gets full navigation access
-  if (userRole === 'admin') {
+  // Admin gets full navigation access to all portals
+  if (userRole === 'admin' || userRole === 'superadmin') {
     return [
       {
         path: '/dashboard',
         label: 'Admin Dashboard',
-        icon: <Home className="h-5 w-5" />,
-        roles: ['admin']
+        icon: <LayoutDashboard className="h-5 w-5" />,
+        roles: ['admin', 'superadmin']
       },
       {
         path: '/builder',
         label: 'Builder Portal',
         icon: <Building className="h-5 w-5" />,
-        roles: ['admin']
+        roles: ['admin', 'superadmin']
       },
       {
         path: '/client',
         label: 'Client Portal',
-        icon: <Users className="h-5 w-5" />,
-        roles: ['admin']
+        icon: <Home className="h-5 w-5" />,
+        roles: ['admin', 'superadmin']
       },
       {
         path: '/finance',
         label: 'Finance Portal',
-        icon: <CreditCard className="h-5 w-5" />,
-        roles: ['admin']
+        icon: <DollarSign className="h-5 w-5" />,
+        roles: ['admin', 'superadmin']
       },
       {
         path: '/investor',
         label: 'Investor Portal',
         icon: <TrendingUp className="h-5 w-5" />,
-        roles: ['admin']
+        roles: ['admin', 'superadmin']
       },
       {
         path: '/users',
         label: 'Team Manager',
         icon: <Users className="h-5 w-5" />,
-        roles: ['admin']
+        roles: ['admin', 'superadmin']
       },
       {
-        path: '/security',
+        path: '/audit',
         label: 'Security',
         icon: <Settings className="h-5 w-5" />,
-        roles: ['admin']
+        roles: ['admin', 'superadmin']
+      },
+      {
+        path: '/contracts',
+        label: 'Contracts',
+        icon: <FileText className="h-5 w-5" />,
+        roles: ['admin', 'superadmin']
+      },
+      {
+        path: '/profits',
+        label: 'Profit Calculator',
+        icon: <Receipt className="h-5 w-5" />,
+        roles: ['admin', 'superadmin']
+      },
+      {
+        path: '/ai-workflows',
+        label: 'AI Workflows',
+        icon: <MessageCircle className="h-5 w-5" />,
+        roles: ['admin', 'superadmin']
       }
     ];
   }
