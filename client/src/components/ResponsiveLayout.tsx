@@ -132,8 +132,10 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
     </div>
   );
 
+  const isImpersonating = localStorage.getItem('impersonation_active') === 'true';
+  
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen bg-gray-50 ${isImpersonating ? 'pt-12' : ''}`}>
       {/* Mobile Header */}
       <div className="lg:hidden bg-white border-b sticky top-0 z-40">
         <div className="flex items-center justify-between px-4 py-3">

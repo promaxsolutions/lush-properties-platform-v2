@@ -57,6 +57,9 @@ import EnhancedRouteGuard from "./components/EnhancedRouteGuard";
 import AccessDeniedPage from "./components/AccessDeniedPage";
 import ComprehensiveLoginAudit from "./components/ComprehensiveLoginAudit";
 import SmoothScrollWrapper from "./components/SmoothScrollWrapper";
+import AdminUserList from "./components/AdminUserList";
+import UserDetailView from "./components/UserDetailView";
+import ImpersonationBanner from "./components/ImpersonationBanner";
 import ClientDashboard from "./components/ClientDashboard";
 import FinanceDashboard from "./components/FinanceDashboard";
 import InvestorDashboard from "./components/InvestorDashboard";
@@ -468,10 +471,12 @@ function App() {
                             } />
                             <Route path="users" element={
                               <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
-                                <div className="p-8 text-center">
-                                  <h2 className="text-2xl font-bold mb-4">Team Manager</h2>
-                                  <p>User management system coming soon...</p>
-                                </div>
+                                <AdminUserList />
+                              </RouteGuard>
+                            } />
+                            <Route path="users/:userId" element={
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
+                                <UserDetailView />
                               </RouteGuard>
                             } />
                             {/* Fallback routing based on user role */}
@@ -485,6 +490,7 @@ function App() {
                           <FloatingAIChat />
                           <MobileNotifications />
                           <MobilePWAInstaller />
+                          <ImpersonationBanner />
                         </ResponsiveLayout>
                       </AuthProtectedRoute>
                     }
