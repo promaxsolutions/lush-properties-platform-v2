@@ -55,6 +55,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import RouteGuard from "./components/RouteGuard";
 import EnhancedRouteGuard from "./components/EnhancedRouteGuard";
 import AccessDeniedPage from "./components/AccessDeniedPage";
+import ComprehensiveLoginAudit from "./components/ComprehensiveLoginAudit";
 import ClientDashboard from "./components/ClientDashboard";
 import FinanceDashboard from "./components/FinanceDashboard";
 import InvestorDashboard from "./components/InvestorDashboard";
@@ -411,6 +412,11 @@ function App() {
                             <Route path="error-diagnostics" element={<ErrorDiagnostics />} />
                             <Route path="quick-role-fix" element={<QuickRoleFixer />} />
                             <Route path="mobile-test" element={<MobileTestingGuide />} />
+                            <Route path="audit" element={
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
+                                <ComprehensiveLoginAudit />
+                              </RouteGuard>
+                            } />
                             <Route path="*" element={<Navigate to="/dashboard" />} />
                           </Routes>
                           <AuthSyncHandler />
