@@ -63,6 +63,11 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
       icon: <Brain className="h-5 w-5" /> 
     },
     { 
+      label: "Claim Engine", 
+      path: "/claim-engine", 
+      icon: <FileText className="h-5 w-5" /> 
+    },
+    { 
       label: "Claims", 
       path: "/claims", 
       icon: <FileText className="h-5 w-5" /> 

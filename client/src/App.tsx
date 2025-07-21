@@ -31,6 +31,7 @@ import SmartReceiptUpload from "./components/SmartReceiptUpload";
 import MobileNotifications from "./components/MobileNotifications";
 import ReceiptAnalyzer from "./components/ReceiptAnalyzer";
 import BudgetTestDemo from "./components/BudgetTestDemo";
+import ClaimEngine from "./components/ClaimEngine";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -71,6 +72,7 @@ function App() {
                             <Route path="smart-upload" element={<SmartReceiptUpload />} />
                             <Route path="budget-analyzer" element={<ReceiptAnalyzer />} />
                             <Route path="budget-test" element={<BudgetTestDemo />} />
+                            <Route path="claim-engine" element={<ClaimEngine />} />
                             <Route path="claims" element={<Claims />} />
                             <Route path="xero" element={<Xero />} />
                             <Route path="settings" element={<Settings />} />

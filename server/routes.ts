@@ -1460,6 +1460,179 @@ Lush Properties Project Management`;
     }
   });
 
+  // Submit progress claim endpoint
+  app.post("/api/claims/submit", upload.fields([
+    { name: 'template', maxCount: 1 },
+    { name: 'receipt', maxCount: 1 },
+    { name: 'photo', maxCount: 1 }
+  ]), async (req, res) => {
+    try {
+      const { project, milestone, amount, lenderEmail, builderEmail, description, projectId } = req.body;
+      const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+      
+      const claim = {
+        id: Date.now().toString(),
+        projectId: projectId || 'default',
+        project,
+        milestone,
+        amount: parseFloat(amount),
+        lenderEmail,
+        builderEmail,
+        description,
+        files: {
+          template: files?.template?.[0]?.filename,
+          receipt: files?.receipt?.[0]?.filename,
+          photo: files?.photo?.[0]?.filename
+        },
+        status: 'sent',
+        submittedAt: new Date(),
+        followUpCount: 0
+      };
+
+      console.log("📤 Progress claim submitted:", claim);
+
+      // In production, this would:
+      // 1. Save to database
+      // 2. Send actual email to lender
+      // 3. Set up follow-up automation
+
+      // Simulate sending email
+      console.log(`📧 Email sent to ${lenderEmail}:`);
+      console.log(`Subject: Progress Claim - ${milestone} - ${project}`);
+      console.log(`Amount: $${amount}`);
+      console.log(`Attachments: ${Object.values(claim.files).filter(Boolean).length} files`);
+
+      res.json({
+        success: true,
+        message: "Progress claim submitted successfully",
+        data: claim
+      });
+
+    } catch (error) {
+      console.error("Submit claim error:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to submit progress claim" 
+      });
+    }
+  });
+
+  // Claim follow-up endpoint
+  app.post("/api/claims/followup/:projectId", async (req, res) => {
+    try {
+      const { projectId } = req.params;
+      const { milestone, amount } = req.body;
+      
+      console.log(`🔔 Follow-up reminder sent for project ${projectId}`);
+      console.log(`Milestone: ${milestone}, Amount: $${amount}`);
+      
+      // In production, this would:
+      // 1. Check if follow-up is needed (time elapsed, no response)
+      // 2. Send reminder email to lender
+      // 3. Update follow-up count in database
+      // 4. Schedule next follow-up if needed
+
+      res.json({
+        success: true,
+        message: "Follow-up reminder sent successfully"
+      });
+
+    } catch (error) {
+      console.error("Claim follow-up error:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to send follow-up reminder" 
+      });
+    }
+  });
+
+  // Get claim status endpoint
+  app.get("/api/claims/status/:projectId/:milestone", async (req, res) => {
+    try {
+      const { projectId, milestone } = req.params;
+      
+      // In production, fetch from database
+      // For demo, return sample status
+      const status = Math.random() > 0.7 ? 'approved' : 'sent';
+      
+      res.json({
+        success: true,
+        status,
+        projectId,
+        milestone
+      });
+
+    } catch (error) {
+      console.error("Get claim status error:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to get claim status" 
+      });
+    }
+  });
+
+  // Update claim status endpoint
+  app.post("/api/claims/update-status", async (req, res) => {
+    try {
+      const { projectId, milestone, status } = req.body;
+      
+      console.log(`📋 Claim status updated: ${projectId} - ${milestone} - ${status}`);
+      
+      // In production, update database and notify relevant parties
+      
+      res.json({
+        success: true,
+        message: "Claim status updated successfully"
+      });
+
+    } catch (error) {
+      console.error("Update claim status error:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to update claim status" 
+      });
+    }
+  });
+
+  // Get claim history endpoint
+  app.get("/api/claims/history/:projectId", async (req, res) => {
+    try {
+      const { projectId } = req.params;
+      
+      // Sample claim history
+      const claims = [
+        {
+          id: '1',
+          milestone: 'Foundation Complete',
+          amount: 85000,
+          status: 'approved',
+          submittedAt: '2024-01-15',
+          approvedAt: '2024-01-18'
+        },
+        {
+          id: '2', 
+          milestone: 'Frame Complete',
+          amount: 120000,
+          status: 'sent',
+          submittedAt: '2024-02-10',
+          followUpCount: 1
+        }
+      ];
+      
+      res.json({
+        success: true,
+        claims
+      });
+
+    } catch (error) {
+      console.error("Get claim history error:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to get claim history" 
+      });
+    }
+  });
+
   // Auto-cleanup expired invitations every 12 hours
   setInterval(async () => {
     try {
