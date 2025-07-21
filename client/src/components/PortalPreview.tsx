@@ -64,6 +64,11 @@ const PortalPreview = ({ userId, role }: PortalPreviewProps) => {
       timestamp: new Date().toISOString()
     });
     
+    // Set preview context without impersonation
+    localStorage.setItem('portal_preview_mode', 'true');
+    localStorage.setItem('preview_role', previewRole);
+    localStorage.setItem('preview_user_id', previewUserId);
+    
     // Navigate to the actual portal
     window.location.href = portalUrl;
   };

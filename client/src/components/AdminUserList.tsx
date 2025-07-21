@@ -320,21 +320,41 @@ const AdminUserList = () => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        onClick={() => {
-                          console.log('[ADMIN-NAV] Impersonate user clicked:', {
-                            userId: user.id,
-                            userName: user.name,
-                            userRole: user.role,
-                            timestamp: new Date().toISOString()
-                          });
-                          handleImpersonateUser(user);
-                        }}
-                        className="text-blue-600"
-                      >
-                        <Shield className="h-4 w-4 mr-2" />
-                        Impersonate User
-                      </DropdownMenuItem>
+                      {/* Check if current user is superadmin for impersonation */}
+                      {JSON.parse(localStorage.getItem('lush_user') || '{}').role === 'superadmin' ? (
+                        <Link href={`/impersonate/${user.id}`}>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              console.log('[ADMIN-NAV] Impersonate user clicked:', {
+                                userId: user.id,
+                                userName: user.name,
+                                userRole: user.role,
+                                timestamp: new Date().toISOString()
+                              });
+                            }}
+                            className="text-red-600"
+                          >
+                            <Shield className="h-4 w-4 mr-2" />
+                            Impersonate User
+                          </DropdownMenuItem>
+                        </Link>
+                      ) : (
+                        <DropdownMenuItem
+                          onClick={() => {
+                            console.log('[ADMIN-NAV] Quick impersonate clicked:', {
+                              userId: user.id,
+                              userName: user.name,
+                              userRole: user.role,
+                              timestamp: new Date().toISOString()
+                            });
+                            handleImpersonateUser(user);
+                          }}
+                          className="text-blue-600"
+                        >
+                          <Shield className="h-4 w-4 mr-2" />
+                          Quick Switch
+                        </DropdownMenuItem>
+                      )}
                       <Link href={`/portal/${user.role}/${user.id}`}>
                         <DropdownMenuItem
                           onClick={() => {

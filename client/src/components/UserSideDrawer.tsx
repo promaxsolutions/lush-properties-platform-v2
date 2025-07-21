@@ -187,22 +187,43 @@ const UserSideDrawer = ({ user, isOpen, onClose, onImpersonate }: UserSideDrawer
               </Button>
             </Link>
             
-            <Button 
-              className="w-full bg-blue-600 hover:bg-blue-700" 
-              onClick={() => {
-                console.log('[USER-DRAWER] Impersonate clicked:', {
-                  userId: user.id,
-                  userName: user.name,
-                  userRole: user.role,
-                  timestamp: new Date().toISOString()
-                });
-                onImpersonate(user);
-                onClose();
-              }}
-            >
-              <Shield className="h-4 w-4 mr-2" />
-              Impersonate User
-            </Button>
+            {/* Check current user role for impersonation access */}
+            {JSON.parse(localStorage.getItem('lush_user') || '{}').role === 'superadmin' ? (
+              <Link href={`/impersonate/${user.id}`}>
+                <Button 
+                  className="w-full bg-red-600 hover:bg-red-700" 
+                  onClick={() => {
+                    console.log('[USER-DRAWER] Superadmin impersonate clicked:', {
+                      userId: user.id,
+                      userName: user.name,
+                      userRole: user.role,
+                      timestamp: new Date().toISOString()
+                    });
+                    onClose();
+                  }}
+                >
+                  <Shield className="h-4 w-4 mr-2" />
+                  Impersonate User
+                </Button>
+              </Link>
+            ) : (
+              <Button 
+                className="w-full bg-blue-600 hover:bg-blue-700" 
+                onClick={() => {
+                  console.log('[USER-DRAWER] Quick switch clicked:', {
+                    userId: user.id,
+                    userName: user.name,
+                    userRole: user.role,
+                    timestamp: new Date().toISOString()
+                  });
+                  onImpersonate(user);
+                  onClose();
+                }}
+              >
+                <Shield className="h-4 w-4 mr-2" />
+                Quick Switch
+              </Button>
+            )}
           </div>
         </div>
       </div>

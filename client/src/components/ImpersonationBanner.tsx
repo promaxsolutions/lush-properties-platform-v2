@@ -17,30 +17,57 @@ const ImpersonationBanner = () => {
   }, []);
 
   const handleExitImpersonation = () => {
-    // Restore admin session
-    const adminSessionBackup = localStorage.getItem('admin_session_backup');
+    // Check if this is a superadmin impersonation
+    const superadminBackup = localStorage.getItem('superadmin_session_backup');
+    const adminBackup = localStorage.getItem('admin_session_backup');
+    const impersonatingSuperadmin = localStorage.getItem('impersonating_superadmin');
     
-    if (adminSessionBackup) {
-      localStorage.setItem('lush_user', adminSessionBackup);
+    // Restore appropriate session
+    if (superadminBackup && impersonatingSuperadmin) {
+      localStorage.setItem('lush_user', superadminBackup);
+      localStorage.removeItem('superadmin_session_backup');
+      localStorage.removeItem('impersonating_superadmin');
+      
+      // Security audit for superadmin exit
+      const securityAuditEntry = {
+        id: `security-audit-exit-${Date.now()}`,
+        action: 'SUPERADMIN_IMPERSONATION_EXIT',
+        superadmin: impersonatingSuperadmin,
+        previouslyImpersonated: impersonatedUser,
+        timestamp: new Date().toISOString(),
+        ipAddress: 'client-ip',
+        userAgent: navigator.userAgent,
+        riskLevel: 'HIGH'
+      };
+      
+      const securityAudits = JSON.parse(localStorage.getItem('security_audit_log') || '[]');
+      securityAudits.push(securityAuditEntry);
+      localStorage.setItem('security_audit_log', JSON.stringify(securityAudits));
+      
+    } else if (adminBackup) {
+      localStorage.setItem('lush_user', adminBackup);
+      localStorage.removeItem('admin_session_backup');
     }
     
     // Clear impersonation flags
     localStorage.removeItem('impersonation_active');
     localStorage.removeItem('impersonated_user');
-    localStorage.removeItem('admin_session_backup');
+    localStorage.removeItem('portal_preview_mode');
+    localStorage.removeItem('preview_role');
+    localStorage.removeItem('preview_user_id');
     
     // Log exit impersonation
     console.log('[ADMIN-AUDIT] Impersonation ended:', {
-      adminUser: 'admin@lush.com',
+      adminUser: impersonatingSuperadmin || 'admin@lush.com',
       previouslyImpersonated: impersonatedUser,
       timestamp: new Date().toISOString(),
       action: 'EXIT_IMPERSONATION'
     });
     
-    // Audit log entry
+    // Regular audit log entry
     const auditEntry = {
       id: `audit-${Date.now()}`,
-      adminUser: 'admin@lush.com',
+      adminUser: impersonatingSuperadmin || 'admin@lush.com',
       action: 'EXIT_IMPERSONATION',
       targetUser: impersonatedUser,
       timestamp: new Date().toISOString(),
