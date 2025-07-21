@@ -1,0 +1,76 @@
+// 👤 1. Login & Role Access Checks
+For each of the following roles: Admin, Builder, Accountant, Client, Investor
+- Log in using valid credentials.
+- Confirm the user is redirected to the correct dashboard.
+- Confirm only role-specific nav items are visible.
+- Try accessing a restricted page manually (e.g., /admin as builder) and expect access denied.
+
+// 🧭 2. Nav Menu Route Tests
+For each logged-in user:
+- Click each nav item from the sidebar or top menu.
+- Confirm smooth scroll or route transition is working.
+- Confirm each page loads the expected UI (Project list, Receipts, Claims, etc).
+- On mobile, test nav collapse behavior and that nav buttons still respond.
+
+// 🧑🏽‍💼 3. User Role Management
+As Admin:
+- Go to /users
+- Create a new user and assign them a role (e.g., builder).
+- Edit an existing user's role and confirm change is saved.
+- Use “Preview Portal” to impersonate and confirm role-based UI.
+
+
+// 🧾 4. Project Uploads & Claims
+As Builder or Admin:
+- Create a new project with address and deposit.
+- Upload a contract and floor plan.
+- Upload a receipt photo via camera or upload prompt.
+- AI should scan and attach spending to a budget line.
+- Try submitting a progress claim — confirm e-sign trigger and PDF preview.
+- Check if claim shows in project timeline.
+
+
+// 📦 5. Client View & Progress Tracking
+As Client:
+- Log in and confirm only your project(s) show.
+- Check if progress photos are grouped by milestone.
+- Check if upgrade requests or message prompts are functional.
+- Confirm alerts are received for Roofing, Lockup, Handover stages.
+
+
+// 📊 6. Dashboard Summary & Charts
+- For each role (Admin, Builder, Accountant, Investor):
+  - Check that dashboard shows personalized view.
+  - Charts should display equity, claims, spending summary.
+  - Investor should see only their invested projects + ROI tips.
+  - Admin should see global totals.
+  - Confirm charts render below the project list on mobile.
+
+
+// 🔁 7. Xero Sync & Receipt Tracker
+As Accountant:
+- Upload receipts and test AI parsing.
+- Match receipts to categories (labour, materials).
+- View spending breakdown by builder or category.
+- Trigger invoice preview and confirm auto-calculation.
+- Confirm sync status or log if Xero is not yet integrated.
+
+
+// 🔐 8. Security & Audit
+As Admin:
+- Try impersonation and confirm actions log to audit trail.
+- Check if login attempt and role-switching logs exist.
+- Confirm 2FA option is present or pending setup.
+
+// 🧠 9. AI + Notifications
+- Trigger reminders for a missed claim, milestone, or upgrade.
+- Upload a dodgy receipt and expect AI to warn.
+- Ask AI assistant “What’s the project with highest ROI?”
+- On mobile, confirm AI chat is accessible and persistent.
+
+// 📱 10. Mobile-Specific Tests
+- Log in from mobile browser.
+- Confirm nav collapses properly.
+- Swipe project cards.
+- Try uploading from mobile cam.
+- Install PWA if button is present.
