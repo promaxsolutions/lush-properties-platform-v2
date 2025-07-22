@@ -2,6 +2,9 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
+import ErrorBoundary from "./components/ErrorBoundary";
+import { ToastContainer } from "./components/Toast";
+import { useToast } from "./hooks/useToast";
 import { Toaster } from "./components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Login from "./components/Login";
@@ -84,6 +87,12 @@ import InvestorRoleFixer from "./components/InvestorRoleFixer";
 import SmoothRoleSwitcher from "./components/SmoothRoleSwitcher";
 import MobilePWAInstaller from "./components/MobilePWAInstaller";
 import MobileTestingGuide from "./components/MobileTestingGuide";
+import PWAInstaller from "./components/PWAInstaller";
+import AccessibilityEnhancer from "./components/AccessibilityEnhancer";
+import EnhancedDashboard from "./components/EnhancedDashboard";
+import QuickActions from "./components/QuickActions";
+import SmartNotifications from "./components/SmartNotifications";
+import SystemHealthMonitor from "./components/SystemHealthMonitor";
 
 interface AuthProtectedRouteProps {
   children: React.ReactNode;
@@ -141,6 +150,7 @@ function App() {
   
   const user = getCurrentUser();
   const { user: authUser } = useAuth();
+  const { toasts, removeToast } = useToast();
   
   // Use either auth context user or localStorage user
   const currentUser = authUser || user;
@@ -555,6 +565,14 @@ function App() {
                           <FloatingAIChat />
                           <MobileNotifications />
                           <MobilePWAInstaller />
+                          <PWAInstaller />
+                          <AccessibilityEnhancer />
+                          <QuickActions userRole={currentUser?.role || 'client'} />
+                          <SmartNotifications 
+                            userRole={currentUser?.role || 'client'} 
+                            userId={currentUser?.id || 'default'} 
+                          />
+                          <SystemHealthMonitor />
                           <ImpersonationBanner />
                         </ResponsiveLayout>
                       </AuthProtectedRoute>

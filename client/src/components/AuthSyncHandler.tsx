@@ -13,7 +13,7 @@ const AuthSyncHandler = () => {
         if (!userStr) return;
         
         const userData = JSON.parse(userStr);
-        const expectedRoles = {
+        const expectedRoles: { [key: string]: string } = {
           "admin@lush.com": "admin",
           "builder@lush.com": "builder", 
           "client@lush.com": "client",
@@ -21,7 +21,7 @@ const AuthSyncHandler = () => {
           "accountant@lush.com": "accountant"
         };
 
-        const expectedRole = expectedRoles[userData.email?.toLowerCase()];
+        const expectedRole = expectedRoles[userData.email?.toLowerCase() || ''];
         
         // If role doesn't match expected role, fix it silently
         if (expectedRole && userData.role !== expectedRole) {
@@ -36,7 +36,7 @@ const AuthSyncHandler = () => {
         }
 
         // Check if we're on the wrong dashboard for our role, but only auto-redirect if we're on a dashboard page
-        const dashboards = {
+        const dashboards: { [key: string]: string } = {
           admin: '/dashboard',
           builder: '/builder',
           client: '/client',
@@ -45,7 +45,7 @@ const AuthSyncHandler = () => {
         };
         
         const currentRole = userData.role;
-        const correctDashboard = dashboards[currentRole];
+        const correctDashboard = dashboards[currentRole || ''];
         const currentPath = window.location.pathname;
         
         // Only auto-redirect if we're on a dashboard page that doesn't match our role

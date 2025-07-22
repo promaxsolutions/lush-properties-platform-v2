@@ -1,0 +1,195 @@
+/* Accessibility Enhancement Styles */
+
+/* High Contrast Mode */
+.high-contrast {
+  --background: hsl(0, 0%, 0%);
+  --foreground: hsl(0, 0%, 100%);
+  --primary: hsl(60, 100%, 50%);
+  --primary-foreground: hsl(0, 0%, 0%);
+  --secondary: hsl(0, 0%, 20%);
+  --secondary-foreground: hsl(0, 0%, 100%);
+  --muted: hsl(0, 0%, 15%);
+  --muted-foreground: hsl(0, 0%, 85%);
+  --accent: hsl(0, 0%, 25%);
+  --accent-foreground: hsl(0, 0%, 100%);
+  --destructive: hsl(0, 100%, 60%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --border: hsl(0, 0%, 40%);
+  --input: hsl(0, 0%, 20%);
+  --ring: hsl(60, 100%, 50%);
+}
+
+.high-contrast * {
+  border-color: var(--border) !important;
+}
+
+.high-contrast img {
+  filter: contrast(1.2) brightness(1.1);
+}
+
+/* Large Text Mode */
+.large-text {
+  font-size: 118% !important;
+}
+
+.large-text .text-xs {
+  font-size: 0.875rem !important;
+}
+
+.large-text .text-sm {
+  font-size: 1rem !important;
+}
+
+.large-text .text-base {
+  font-size: 1.125rem !important;
+}
+
+.large-text .text-lg {
+  font-size: 1.25rem !important;
+}
+
+.large-text .text-xl {
+  font-size: 1.5rem !important;
+}
+
+.large-text .text-2xl {
+  font-size: 1.875rem !important;
+}
+
+.large-text .text-3xl {
+  font-size: 2.25rem !important;
+}
+
+/* Reduced Motion Mode */
+.reduced-motion,
+.reduced-motion * {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+.reduced-motion .animate-spin {
+  animation: none !important;
+}
+
+.reduced-motion .animate-pulse {
+  animation: none !important;
+}
+
+.reduced-motion .animate-bounce {
+  animation: none !important;
+}
+
+/* Focus Indicators */
+:focus-visible {
+  outline: 3px solid var(--primary) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 3px rgba(var(--primary), 0.5) !important;
+}
+
+/* Screen Reader Only Text */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Skip to Content Link */
+.skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 9999;
+  transition: top 0.3s;
+}
+
+.skip-to-content:focus {
+  top: 6px;
+}
+
+/* Touch Target Minimum Size */
+@media (hover: none) {
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  [role="button"],
+  [role="tab"],
+  [role="menuitem"],
+  [role="option"],
+  select,
+  summary {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Color Blind Friendly Indicators */
+.status-success::before {
+  content: "✓ ";
+  color: var(--primary);
+}
+
+.status-error::before {
+  content: "✗ ";
+  color: var(--destructive);
+}
+
+.status-warning::before {
+  content: "⚠ ";
+  color: orange;
+}
+
+/* High Contrast Focus States */
+.high-contrast button:focus,
+.high-contrast input:focus,
+.high-contrast select:focus,
+.high-contrast textarea:focus {
+  outline: 3px solid var(--primary) !important;
+  outline-offset: 2px !important;
+}
+
+/* Ensure text remains readable */
+.high-contrast .text-gray-500,
+.high-contrast .text-gray-600,
+.high-contrast .text-gray-400 {
+  color: var(--muted-foreground) !important;
+}
+
+/* Animation preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Color contrast improvements */
+.high-contrast .bg-gray-100 {
+  background-color: var(--secondary) !important;
+}
+
+.high-contrast .bg-white {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+}
+
+.high-contrast .border-gray-200 {
+  border-color: var(--border) !important;
+}
