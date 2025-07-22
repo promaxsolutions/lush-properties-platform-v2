@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'wouter';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Users, 
@@ -189,7 +189,7 @@ const getNavigationItems = (userRole: string): NavigationItem[] => {
 };
 
 const RoleBasedNavigation = ({ userRole, isCollapsed = false }: RoleBasedNavigationProps) => {
-  const [location] = useLocation();
+  const location = useLocation();
 
   // Get navigation items based on user role with proper filtering
   const navigationItems = getNavigationItems(userRole);
@@ -208,12 +208,12 @@ const RoleBasedNavigation = ({ userRole, isCollapsed = false }: RoleBasedNavigat
   return (
     <nav className="space-y-2 p-4">
       {allowedItems.map((item) => {
-        const isActive = location === item.path;
+        const isActive = location.pathname === item.path;
         
         return (
           <Link 
             key={item.path} 
-            href={item.path}
+            to={item.path}
             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 cursor-pointer transform hover:scale-[1.02] active:scale-[0.98] mobile-nav-item ${
               isActive
                 ? 'bg-lush-primary text-white shadow-sm'

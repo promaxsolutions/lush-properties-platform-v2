@@ -49,10 +49,12 @@ const AuthSyncHandler = () => {
         const currentPath = window.location.pathname;
         
         // Only auto-redirect if we're on a dashboard page that doesn't match our role
+        // Admin users can access any portal, so don't redirect them
         const dashboardPaths = ['/dashboard', '/builder', '/client', '/finance', '/investor'];
         if (correctDashboard && 
             dashboardPaths.includes(currentPath) &&
-            currentPath !== correctDashboard) {
+            currentPath !== correctDashboard &&
+            currentRole !== 'admin' && currentRole !== 'superadmin') {
           console.log(`[AUTH-SYNC] Redirecting ${currentRole} from ${currentPath} to ${correctDashboard}`);
           window.location.href = correctDashboard;
         }
