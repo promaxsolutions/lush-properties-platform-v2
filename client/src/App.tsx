@@ -165,8 +165,28 @@ function App() {
                         <ResponsiveLayout>
                           <Routes>
                             <Route path="dashboard" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
+                              <RouteGuard allowedRoles={['admin', 'superadmin']} userRole={currentUser?.role}>
                                 {window.innerWidth < 768 ? <MobileDashboard /> : <Dashboard />}
+                              </RouteGuard>
+                            } />
+                            <Route path="builder" element={
+                              <RouteGuard allowedRoles={['builder', 'admin', 'superadmin']} userRole={currentUser?.role}>
+                                <PolishedBuilderPortal />
+                              </RouteGuard>
+                            } />
+                            <Route path="client" element={
+                              <RouteGuard allowedRoles={['client', 'admin', 'superadmin']} userRole={currentUser?.role}>
+                                <ClientDashboard />
+                              </RouteGuard>
+                            } />
+                            <Route path="finance" element={
+                              <RouteGuard allowedRoles={['accountant', 'admin', 'superadmin']} userRole={currentUser?.role}>
+                                <FinanceDashboard />
+                              </RouteGuard>
+                            } />
+                            <Route path="users" element={
+                              <RouteGuard allowedRoles={['admin', 'superadmin']} userRole={currentUser?.role}>
+                                <AdminUserList />
                               </RouteGuard>
                             } />
                             <Route path="mobile" element={
@@ -344,7 +364,7 @@ function App() {
                               </RouteGuard>
                             } />
                             <Route path="profits" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
+                              <RouteGuard allowedRoles={['admin', 'superadmin']} userRole={currentUser?.role}>
                                 <ProfitCalculator />
                               </RouteGuard>
                             } />
