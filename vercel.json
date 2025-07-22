@@ -1,8 +1,6 @@
 {
-  "buildCommand": "npx vite build",
+  "version": 2,
+  "buildCommand": "npm run build:frontend",
   "outputDirectory": "dist/public",
-  "installCommand": "npm install",
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
+  "installCommand": "npm install"
 }
