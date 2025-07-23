@@ -1,7 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PiggyBank, TrendingUp, Building, DollarSign, Camera, FileText, MapPin } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { PiggyBank, TrendingUp, Building, DollarSign, Camera, FileText, MapPin, Upload, Target, Edit2, ExternalLink, Lightbulb, Save, X, RefreshCw, BarChart3, Mail, Bell, Calendar as CalendarIcon, Clock, AlertCircle, Brain } from 'lucide-react';
+import { Bar, Line, Pie } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+  ArcElement,
+} from "chart.js";
+
+// Register Chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+  ArcElement
+);
 
 const MobileDashboard = () => {
   const [syncStatus, setSyncStatus] = useState<'online' | 'offline' | 'syncing'>('online');
@@ -11,6 +40,27 @@ const MobileDashboard = () => {
   const [localRole, setLocalRole] = useState<string>("admin");
   const [auditTrail, setAuditTrail] = useState<any[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
+  const [editingProjectId, setEditingProjectId] = useState<number | null>(null);
+  const [editingName, setEditingName] = useState("");
+  const [editingDeposit, setEditingDeposit] = useState(0);
+  const [aiTips, setAiTips] = useState<Record<number, string>>({});
+  const [loadingTips, setLoadingTips] = useState<Record<number, boolean>>({});
+  const [uploading, setUploading] = useState(false);
+  const [receipts, setReceipts] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [alerts, setAlerts] = useState<string[]>([
+    "📬 Builder notified of pending claim",
+    "✅ Client upgrade request confirmed", 
+    "🧠 AI: Estimated completion in 9 weeks"
+  ]);
+  const [aiInsights, setAiInsights] = useState<string[]>([
+    "💸 AI Suggests: ORDE loan 4.99% fixed is best option (saves $22K)",
+    "🧱 Builder 'MacHomes' has 4.7 star reliability, 3.9 on timelines",
+    "📈 Fundability: 8.7/10 — Project primed for investor proposal",
+    "📤 Smart reply sent to builder: 'Plumbing final due this week'",
+    "🚨 Cost Alert: Roofing quote is 12% above average in Whitlam"
+  ]);
   
   const firstName = "Alex";
   const localTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -28,22 +78,38 @@ const MobileDashboard = () => {
         {
           id: 1,
           name: "56 Inge King Crescent",
-          address: "56 Inge King Crescent, Bonner ACT 2914",
-          stage: "Framing",
-          progressPercentage: 45,
+          address: "56 Inge King Crescent, Forrest ACT 2603",
+          lender: "Commonwealth Bank",
+          stage: "Stage 7 - Fitout",
+          loanApproved: 1100000,
+          landCost: 650000,
+          buildCost: 450000,
+          userDeposit: 150000,
+          progressPercentage: 85,
+          documentsCount: 12,
+          nextAction: "Final inspection scheduled",
+          claimsRaised: 935000,
           builderEmail: "builder@example.com",
           clientEmail: "client@example.com",
-          investorEmails: ["investor@example.com"]
+          investorEmails: ["investor1@example.com", "investor2@example.com"]
         },
         {
           id: 2,
-          name: "Block 15 Section 87",
+          name: "Block 15 Section 87, Whitlam",
           address: "Block 15 Section 87, Whitlam ACT 2611",
-          stage: "Slab",
+          lender: "Westpac Banking",
+          stage: "Stage 2 - Slab",
+          loanApproved: 400000,
+          landCost: 280000,
+          buildCost: 320000,
+          userDeposit: 80000,
           progressPercentage: 25,
+          documentsCount: 8,
+          nextAction: "Slab inspection due",
+          claimsRaised: 200000,
           builderEmail: "builder@example.com",
-          clientEmail: "client2@example.com",
-          investorEmails: ["investor@example.com"]
+          clientEmail: "otherclient@example.com",
+          investorEmails: ["investor3@example.com"]
         }
       ];
 
@@ -125,14 +191,122 @@ const MobileDashboard = () => {
     logAuditAction("Map accessed", `Opened Google Maps for ${address}`);
   };
 
-  // Mock data
+  // Calculate comprehensive financial summary
   const globalSummary = {
-    totalLoanApproved: 1500000,
-    totalProjectedSales: 1800000,
-    totalInvestment: 1200000,
-    totalClaimsRaised: 450000,
-    totalUserDeposit: 230000,
-    netEquity: 580000
+    totalLoanApproved: projects.reduce((sum, p) => sum + (p.loanApproved || 0), 0),
+    totalProjectedSales: projects.reduce((sum, p) => sum + (p.loanApproved || 0) + (p.userDeposit || 0), 0),
+    totalInvestment: projects.reduce((sum, p) => sum + (p.landCost || 0) + (p.buildCost || 0), 0),
+    totalClaimsRaised: projects.reduce((sum, p) => sum + (p.claimsRaised || 0), 0),
+    totalUserDeposit: projects.reduce((sum, p) => sum + (p.userDeposit || 0), 0),
+    get netEquity() { 
+      return this.totalProjectedSales - this.totalInvestment; 
+    }
+  };
+
+  // AI functionality
+  const generateAiTip = async (projectId: number, project: any) => {
+    setLoadingTips(prev => ({ ...prev, [projectId]: true }));
+    
+    try {
+      const response = await fetch('/api/ai-chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: `Analyze this property project: ${project.name}, ${project.address}, Stage: ${project.stage}, Progress: ${project.progressPercentage}%, Loan: $${project.loanApproved}. Provide a brief profit tip.`,
+          context: 'profit-analysis'
+        })
+      });
+      
+      const data = await response.json();
+      setAiTips(prev => ({ ...prev, [projectId]: data.reply || "AI analysis complete" }));
+    } catch (error) {
+      setAiTips(prev => ({ ...prev, [projectId]: "Analysis temporarily unavailable" }));
+    } finally {
+      setLoadingTips(prev => ({ ...prev, [projectId]: false }));
+    }
+  };
+
+  const handleEditProject = (project: any) => {
+    setEditingProjectId(project.id);
+    setEditingName(project.name);
+    setEditingDeposit(project.userDeposit);
+  };
+
+  const saveProject = () => {
+    if (editingProjectId) {
+      setProjects(prev => prev.map(p => 
+        p.id === editingProjectId 
+          ? { ...p, name: editingName, userDeposit: editingDeposit }
+          : p
+      ));
+      setEditingProjectId(null);
+      logAuditAction("Project updated", `Updated ${editingName} deposit to $${editingDeposit.toLocaleString()}`);
+    }
+  };
+
+  const cancelEdit = () => {
+    setEditingProjectId(null);
+    setEditingName("");
+    setEditingDeposit(0);
+  };
+
+  const raiseClaim = async (project: any) => {
+    try {
+      const response = await fetch('/api/claims', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          projectId: project.id,
+          amount: Math.min(100000, project.loanApproved - project.claimsRaised),
+          description: `Progress claim for ${project.stage}`,
+          lender: project.lender
+        })
+      });
+      
+      if (response.ok) {
+        notifyUser("Claim Submitted", `Progress claim raised for ${project.name}`);
+        logAuditAction("Claim raised", `Submitted progress claim for ${project.name}`);
+      }
+    } catch (error) {
+      console.error('Failed to raise claim:', error);
+    }
+  };
+
+  // Chart data for mobile visualization
+  const equityChartData = {
+    labels: projects.map(p => p.name.split(',')[0]),
+    datasets: [{
+      label: 'Net Equity',
+      data: projects.map(p => (p.loanApproved + p.userDeposit) - (p.landCost + p.buildCost)),
+      backgroundColor: 'rgba(34, 197, 94, 0.6)',
+      borderColor: 'rgba(34, 197, 94, 1)',
+      borderWidth: 2
+    }]
+  };
+
+  const progressChartData = {
+    labels: projects.map(p => p.name.split(',')[0]),
+    datasets: [{
+      label: 'Progress %',
+      data: projects.map(p => p.progressPercentage),
+      backgroundColor: 'rgba(59, 130, 246, 0.6)',
+      borderColor: 'rgba(59, 130, 246, 1)',
+      borderWidth: 2,
+      tension: 0.3
+    }]
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      title: { display: false }
+    },
+    scales: {
+      y: { beginAtZero: true, grid: { display: false } },
+      x: { grid: { display: false } }
+    }
   };
 
   return (
@@ -230,13 +404,16 @@ const MobileDashboard = () => {
           <Card className="bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200">
             <CardHeader className="pb-1">
               <CardTitle className="flex items-center gap-1 text-xs font-medium text-purple-700">
-                <Building className="h-3 w-3" />
-                <span>Investment</span>
+                <DollarSign className="h-3 w-3" />
+                <span>Net Equity</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
               <div className="text-sm font-bold text-purple-900">
-                ${Math.round(globalSummary.totalInvestment / 1000)}K
+                ${Math.round(globalSummary.netEquity / 1000)}K
+              </div>
+              <div className="text-xs text-purple-600">
+                Total profit margin
               </div>
             </CardContent>
           </Card>
@@ -244,128 +421,267 @@ const MobileDashboard = () => {
           <Card className="bg-gradient-to-r from-orange-50 to-orange-100 border-orange-200">
             <CardHeader className="pb-1">
               <CardTitle className="flex items-center gap-1 text-xs font-medium text-orange-700">
-                <DollarSign className="h-3 w-3" />
-                <span>Claims</span>
+                <Target className="h-3 w-3" />
+                <span>Claims Raised</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
               <div className="text-sm font-bold text-orange-900">
                 ${Math.round(globalSummary.totalClaimsRaised / 1000)}K
               </div>
+              <div className="text-xs text-orange-600">
+                Progress payments
+              </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Mobile Camera Section */}
-        <Card className="bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-purple-700 text-sm">
-              <Camera className="h-4 w-4" />
-              📷 Mobile Receipt Capture
+        {/* Mobile Charts Section */}
+        <div className="space-y-3 mb-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <BarChart3 className="h-4 w-4 text-green-600" />
+                Equity Overview
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-32">
+                <Bar data={equityChartData} options={chartOptions} />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-blue-600" />
+                Project Progress
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-32">
+                <Line data={progressChartData} options={chartOptions} />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* AI Insights Panel */}
+        <Card className="mb-4">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Brain className="h-4 w-4 text-purple-600" />
+              AI Insights
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            {!cameraEnabled && !capturedImage && (
-              <Button 
-                onClick={handleCameraCapture}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white text-sm"
-              >
-                📱 Take Receipt Photo
-              </Button>
-            )}
-            
-            {cameraEnabled && (
-              <div className="text-center p-4 bg-gray-100 rounded-lg">
-                <Camera className="h-8 w-8 mx-auto text-purple-600 mb-2 animate-pulse" />
-                <p className="text-sm font-medium">Camera Active</p>
-                <p className="text-xs text-gray-600">Position receipt in frame</p>
-              </div>
-            )}
-            
-            {capturedImage && (
-              <div className="space-y-2">
-                <div className="text-center p-3 bg-green-50 rounded-lg border border-green-200">
-                  <p className="text-green-700 font-medium text-sm">📸 Photo Captured</p>
-                </div>
-                <div className="flex gap-2">
-                  <Button className="flex-1 bg-green-600 hover:bg-green-700 text-xs">
-                    🔍 Process
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setCapturedImage(null)}
-                    className="flex-1 text-xs"
-                  >
-                    🔄 Retake
-                  </Button>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Projects Overview */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">🏗️ Projects Overview</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {projects.map((project) => (
-              <div key={project.id} className="border rounded-lg p-3 bg-gray-50">
-                <div className="flex justify-between items-start mb-2">
-                  <h4 className="text-sm font-bold text-gray-900 truncate flex-1">
-                    {project.name}
-                  </h4>
-                  <button 
-                    onClick={() => handleMapClick(project.address)}
-                    className="text-blue-600 ml-2"
-                  >
-                    <MapPin className="h-4 w-4" />
-                  </button>
-                </div>
-                <p className="text-xs text-gray-600 mb-2">Stage: {project.stage}</p>
-                <div className="w-full bg-gray-200 h-2 rounded">
-                  <div 
-                    className="h-2 rounded bg-blue-500" 
-                    style={{ width: `${project.progressPercentage}%` }}
-                  ></div>
-                </div>
-                <p className="text-xs text-gray-500 mt-1">{project.progressPercentage}% Complete</p>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        {/* Audit Trail */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-sm">
-              <FileText className="h-4 w-4" />
-              📝 Recent Activity
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2 text-xs max-h-32 overflow-y-auto">
-              {auditTrail.map((log, idx) => (
-                <div key={idx} className="p-2 bg-gray-50 rounded border-l-2 border-blue-200">
-                  <span className="text-gray-500">{log.timestamp}</span> • 
-                  <span className="font-medium text-blue-600 mx-1">{log.user}</span> • 
-                  <span className="text-gray-700">{log.action}</span>
+          <CardContent className="pt-0">
+            <div className="space-y-2 max-h-32 overflow-y-auto">
+              {aiInsights.slice(0, 3).map((insight, index) => (
+                <div key={index} className="text-xs p-2 bg-gradient-to-r from-green-50 to-blue-50 rounded border-l-2 border-green-400">
+                  <div className="flex items-start gap-2">
+                    <Lightbulb className="h-3 w-3 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700">{insight}</span>
+                  </div>
                 </div>
               ))}
             </div>
           </CardContent>
         </Card>
 
-        {/* Mobile Footer */}
-        <footer className="bg-white rounded-lg p-3 text-center text-xs text-gray-500 space-y-1">
-          <p>📱 Add to Home Screen for best experience</p>
-          <div className="flex justify-center items-center gap-2">
-            <span>Built by Lush Properties Pty Ltd • 2025</span>
-            <span>•</span>
-            <span className="text-blue-600">Mobile Ready</span>
-          </div>
-        </footer>
+        {/* Enhanced Project Management Cards */}
+        <div className="space-y-3">
+          {projects.map((project) => (
+            <Card key={project.id} className="shadow-sm border">
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  {editingProjectId === project.id ? (
+                    <div className="flex-1 space-y-2">
+                      <Input
+                        value={editingName}
+                        onChange={(e) => setEditingName(e.target.value)}
+                        className="text-sm"
+                        placeholder="Project name"
+                      />
+                      <Input
+                        type="number"
+                        value={editingDeposit}
+                        onChange={(e) => setEditingDeposit(Number(e.target.value))}
+                        className="text-sm"
+                        placeholder="Deposit amount"
+                      />
+                      <div className="flex gap-2">
+                        <Button onClick={saveProject} size="sm" className="text-xs bg-green-600 hover:bg-green-700">
+                          <Save className="h-3 w-3 mr-1" />
+                          Save
+                        </Button>
+                        <Button onClick={cancelEdit} size="sm" variant="outline" className="text-xs">
+                          <X className="h-3 w-3 mr-1" />
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex-1">
+                      <CardTitle className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                        <Building className="h-4 w-4 text-blue-600" />
+                        {project.name}
+                        {localRole === 'admin' && (
+                          <Button
+                            onClick={() => handleEditProject(project)}
+                            size="sm"
+                            variant="ghost"
+                            className="p-1 h-auto"
+                          >
+                            <Edit2 className="h-3 w-3" />
+                          </Button>
+                        )}
+                      </CardTitle>
+                      <p className="text-xs text-gray-600 mt-1">
+                        {project.stage} • {project.progressPercentage}% complete
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </CardHeader>
+              
+              <CardContent className="pt-0 space-y-3">
+                {/* Project Financial Summary */}
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="bg-gray-50 p-2 rounded">
+                    <div className="text-gray-600">Loan Approved</div>
+                    <div className="font-semibold text-green-700">
+                      ${(project.loanApproved / 1000).toFixed(0)}K
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 p-2 rounded">
+                    <div className="text-gray-600">User Deposit</div>
+                    <div className="font-semibold text-blue-700">
+                      ${(project.userDeposit / 1000).toFixed(0)}K
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 p-2 rounded">
+                    <div className="text-gray-600">Claims Raised</div>
+                    <div className="font-semibold text-orange-700">
+                      ${(project.claimsRaised / 1000).toFixed(0)}K
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 p-2 rounded">
+                    <div className="text-gray-600">Net Equity</div>
+                    <div className="font-semibold text-purple-700">
+                      ${(((project.loanApproved + project.userDeposit) - (project.landCost + project.buildCost)) / 1000).toFixed(0)}K
+                    </div>
+                  </div>
+                </div>
+
+                {/* Progress Bar */}
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-600">Progress</span>
+                    <span className="font-medium">{project.progressPercentage}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${project.progressPercentage}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                {/* Project Address with Map Link */}
+                <div className="flex items-center gap-2 text-xs">
+                  <MapPin className="h-3 w-3 text-gray-500" />
+                  <button 
+                    onClick={() => handleMapClick(project.address)}
+                    className="text-blue-600 hover:text-blue-800 underline flex-1 text-left"
+                  >
+                    {project.address}
+                  </button>
+                </div>
+
+                {/* Next Action */}
+                <div className="bg-blue-50 p-2 rounded text-xs">
+                  <div className="text-blue-800 font-medium">Next Action:</div>
+                  <div className="text-blue-700">{project.nextAction}</div>
+                </div>
+
+                {/* AI Tip Section */}
+                <div className="border-t pt-2">
+                  {aiTips[project.id] ? (
+                    <div className="bg-gradient-to-r from-green-50 to-blue-50 p-2 rounded border-l-2 border-green-400">
+                      <div className="flex items-start gap-2">
+                        <Lightbulb className="h-3 w-3 text-green-600 mt-0.5 flex-shrink-0" />
+                        <div className="text-xs text-gray-700">{aiTips[project.id]}</div>
+                      </div>
+                    </div>
+                  ) : (
+                    <Button
+                      onClick={() => generateAiTip(project.id, project)}
+                      disabled={loadingTips[project.id]}
+                      size="sm"
+                      variant="outline"
+                      className="w-full text-xs h-8"
+                    >
+                      {loadingTips[project.id] ? (
+                        <RefreshCw className="h-3 w-3 animate-spin mr-1" />
+                      ) : (
+                        <Brain className="h-3 w-3 mr-1" />
+                      )}
+                      {loadingTips[project.id] ? 'Analyzing...' : 'Get AI Tip'}
+                    </Button>
+                  )}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    onClick={() => raiseClaim(project)}
+                    size="sm"
+                    className="flex-1 text-xs bg-[#007144] hover:bg-[#00a060]"
+                  >
+                    <FileText className="h-3 w-3 mr-1" />
+                    Raise Claim
+                  </Button>
+                  
+                  <Button
+                    onClick={handleCameraCapture}
+                    size="sm"
+                    variant="outline"
+                    className="flex-1 text-xs"
+                    disabled={cameraEnabled}
+                  >
+                    <Camera className="h-3 w-3 mr-1" />
+                    {cameraEnabled ? 'Recording...' : 'Photo'}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Mobile Audit Trail */}
+        {localRole === 'admin' && (
+          <Card className="mt-4">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Clock className="h-4 w-4 text-gray-600" />
+                Recent Activity
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="max-h-32 overflow-y-auto space-y-1">
+                {auditTrail.slice(0, 5).map((entry, index) => (
+                  <div key={index} className="text-xs border-b border-gray-100 pb-1">
+                    <div className="flex justify-between">
+                      <span className="text-gray-700">{entry.action}</span>
+                      <span className="text-gray-500">{entry.timestamp}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </main>
     </div>
   );
