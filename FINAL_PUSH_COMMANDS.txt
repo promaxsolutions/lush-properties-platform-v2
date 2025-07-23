@@ -6,7 +6,7 @@
 # Go to Replit → Three dots menu → "Download as zip" → Extract to Downloads
 
 # Sync the enhanced API backend
-rsync -av --exclude='.git' --exclude='node_modules' ~/Downloads/"lush-properties-platform 2"/ .
+rsync -av --exclude='.git' --exclude='node_modules' ~/Downloads/"lush-properties-platform 3"/ .
 
 # Add the complete backend implementation
 git add api/index.js VERCEL_API_COMPLETE.md
