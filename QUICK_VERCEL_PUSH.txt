@@ -1,0 +1,10 @@
+# Quick Vercel Fix Push Commands
+
+# These commands will fix the deployment issue and make your app live:
+
+git add .
+git commit -m "fix: Update Vercel deployment configuration for full-stack app"
+git push origin main
+
+# This will trigger a new Vercel deployment with the correct configuration
+# Your app will be live at: https://lush-properties-platform-v2-g9x5-5z4w8bulh.vercel.app/
