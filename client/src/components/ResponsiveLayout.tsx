@@ -167,9 +167,15 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
       <div className="lg:hidden bg-white border-b sticky top-0 z-40">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
-            {/* Mobile Header like screenshot */}
+            {/* User Avatar */}
             <div className="w-8 h-8 bg-[#007144] rounded-full flex items-center justify-center">
-              <span className="text-sm font-bold text-white">A</span>
+              <span className="text-sm font-bold text-white">
+                {userRole === 'admin' ? 'A' : 
+                 userRole === 'builder' ? 'M' :
+                 userRole === 'client' ? 'J' :
+                 userRole === 'investor' ? 'D' :
+                 userRole === 'accountant' ? 'E' : 'U'}
+              </span>
             </div>
             
             <div className="flex items-center gap-3">
@@ -205,12 +211,13 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
                 <span>Logout</span>
               </button>
               
-              {/* Role Display */}
-              <div className="text-xs bg-yellow-100 px-2 py-1 rounded border">
-                Role: 👑 {userRole === 'admin' ? 'Admin' : userRole?.charAt(0).toUpperCase() + userRole?.slice(1)}
+              <div className="text-xs text-gray-900">
+                Hi {userRole === 'admin' ? 'Alex' : 
+                    userRole === 'builder' ? 'Mike' :
+                    userRole === 'client' ? 'Jennifer' :
+                    userRole === 'investor' ? 'David' :
+                    userRole === 'accountant' ? 'Emma' : 'User'}
               </div>
-              
-              <div className="text-xs text-gray-900">Hi Alex</div>
             </div>
           </div>
           

@@ -800,7 +800,13 @@ Give me a brief insight into potential profitability, risk factors, and recommen
           <div className="flex items-center gap-3">
             {/* User Avatar */}
             <div className="w-8 h-8 bg-[#007144] rounded-full flex items-center justify-center">
-              <span className="text-sm font-bold text-white">A</span>
+              <span className="text-sm font-bold text-white">
+                {userRole === 'admin' ? 'A' : 
+                 userRole === 'builder' ? 'M' :
+                 userRole === 'client' ? 'J' :
+                 userRole === 'investor' ? 'D' :
+                 userRole === 'accountant' ? 'E' : 'U'}
+              </span>
             </div>
             
             {/* User Info */}
@@ -837,17 +843,15 @@ Give me a brief insight into potential profitability, risk factors, and recommen
                 <span>Logout</span>
               </button>
               
-              {/* Role Display */}
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">Role:</span>
-                <span className="text-sm font-medium text-gray-900 bg-yellow-100 px-2 py-1 rounded border">
-                  👑 {userRole === 'admin' ? 'Admin' : userRole?.charAt(0).toUpperCase() + userRole?.slice(1)}
-                </span>
-              </div>
-              
               {/* Time/User Display */}
               <div className="text-right">
-                <div className="text-sm font-medium text-gray-900">Hi Alex</div>
+                <div className="text-sm font-medium text-gray-900">
+                  Hi {userRole === 'admin' ? 'Alex' : 
+                      userRole === 'builder' ? 'Mike' :
+                      userRole === 'client' ? 'Jennifer' :
+                      userRole === 'investor' ? 'David' :
+                      userRole === 'accountant' ? 'Emma' : 'User'}
+                </div>
                 <div className="text-xs text-gray-500">{localTime}</div>
               </div>
             </div>
