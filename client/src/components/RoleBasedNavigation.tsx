@@ -224,16 +224,16 @@ const RoleBasedNavigation = ({
           <Link 
             key={item.path} 
             to={item.path}
-            className={`flex items-center gap-3 px-3 py-3 rounded-lg font-medium transition-all duration-300 cursor-pointer transform hover:scale-[1.02] active:scale-[0.98] ${
-              mobile ? 'min-h-[48px] text-base' : 'text-sm'
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+              mobile ? 'min-h-[48px] text-base font-medium' : 'text-sm'
             } ${
               isActive
                 ? mobile 
                   ? 'bg-[#007144] text-white shadow-sm'
-                  : 'bg-white/20 text-white shadow-sm'
+                  : 'bg-green-100 text-green-700 font-medium'
                 : mobile 
                   ? 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-                  : 'text-green-100 hover:bg-white/10 hover:text-white'
+                  : 'text-gray-600 hover:bg-gray-100'
             }`}
             data-nav-item={item.path}
             data-nav-role={currentRole}

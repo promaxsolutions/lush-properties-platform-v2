@@ -157,32 +157,32 @@ const MobileOptimizedLayout = ({ children }: MobileOptimizedLayoutProps) => {
       {!isMobile && (
         <div className="flex h-screen">
           {/* Desktop Sidebar */}
-          <aside className="w-64 bg-gradient-to-b from-[#007144] to-[#00a060] text-white shadow-xl flex-shrink-0 overflow-y-auto">
-            <div className="p-6 border-b border-white/20">
+          <aside className="w-64 bg-white shadow-lg flex-shrink-0 overflow-y-auto border-r">
+            <div className="p-6 border-b">
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-gradient-to-br from-[#007144] to-[#00a060] rounded-xl flex items-center justify-center shadow-sm">
                   <span className="text-xl font-bold text-white">L</span>
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold">Lush Properties</h1>
-                  <p className="text-sm text-green-100">Pty Ltd</p>
+                  <h1 className="text-xl font-bold text-gray-900">Lush Properties</h1>
+                  <p className="text-sm text-[#007144] font-medium">Pty Ltd</p>
                 </div>
               </div>
-              <p className="text-sm text-green-100 mt-2">Premium Projects. Powerful Returns.</p>
+              <p className="text-sm text-gray-600 mt-2">Premium Projects. Powerful Returns.</p>
             </div>
             <nav className="p-4">
               <RoleBasedNavigation role={userRole} />
-              <div className="mt-8 pt-6 border-t border-white/20">
+              <div className="mt-8 pt-6 border-t">
                 <div className="flex items-center gap-3 mb-4 px-3 py-2">
-                  <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                    <User className="h-4 w-4 text-white" />
+                  <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                    <User className="h-4 w-4 text-gray-600" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-white">{user?.email || 'User'}</p>
-                    <p className="text-xs text-green-100 capitalize">{userRole}</p>
+                    <p className="text-sm font-medium text-gray-900">{user?.email || 'User'}</p>
+                    <p className="text-xs text-gray-500 capitalize">{userRole}</p>
                   </div>
                 </div>
-                <SecureLogout className="w-full text-white border-white/20 hover:bg-white/10" />
+                <SecureLogout className="w-full" />
               </div>
             </nav>
           </aside>
