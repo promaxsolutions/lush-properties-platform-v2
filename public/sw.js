@@ -3,8 +3,7 @@ const CACHE_NAME = 'lush-properties-pty-ltd-v1.0';
 const urlsToCache = [
   '/',
   '/dashboard',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
+  '/login',
   '/manifest.json'
 ];
 

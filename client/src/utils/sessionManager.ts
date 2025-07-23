@@ -135,7 +135,7 @@ export const performSecureLogin = async (userData: any) => {
     investor: '/investor'
   };
   
-  const targetDashboard = dashboards[userData.role] || '/dashboard';
+  const targetDashboard = dashboards[userData.role as keyof typeof dashboards] || '/dashboard';
   
   // Store fresh role to prevent reuse
   localStorage.setItem('current_role', userData.role);

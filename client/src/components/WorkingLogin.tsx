@@ -72,7 +72,7 @@ const WorkingLogin = () => {
 
   // Show loading screen during role transition
   if (showLoadingScreen) {
-    return <LoadingSpinner type="login" />;
+    return <LoadingSpinner />;
   }
 
   return (
