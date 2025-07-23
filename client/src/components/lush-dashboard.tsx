@@ -1079,7 +1079,7 @@ Give me a brief insight into potential profitability, risk factors, and recommen
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-64">
+            <div className="h-48 sm:h-56 lg:h-64">
               <Bar data={equityChartData} options={chartOptions} />
             </div>
           </CardContent>
@@ -1094,7 +1094,7 @@ Give me a brief insight into potential profitability, risk factors, and recommen
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-64">
+            <div className="h-48 sm:h-56 lg:h-64">
               <Line data={progressTimelineData} options={timelineOptions} />
             </div>
           </CardContent>
@@ -1683,8 +1683,8 @@ Give me a brief insight into potential profitability, risk factors, and recommen
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="w-full max-w-md mx-auto">
-              <Pie data={builderBreakdown()} />
+            <div className="w-full max-w-md mx-auto h-40 sm:h-48 lg:h-56">
+              <Pie data={builderBreakdown()} options={{ responsive: true, maintainAspectRatio: false }} />
             </div>
           </CardContent>
         </Card>
@@ -1700,7 +1700,9 @@ Give me a brief insight into potential profitability, risk factors, and recommen
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Bar data={chartData} options={{ responsive: true, plugins: { legend: { position: 'top' } } }} />
+            <div className="h-40 sm:h-48 lg:h-56">
+              <Bar data={chartData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } } }} />
+            </div>
           </CardContent>
         </Card>
 
@@ -1712,24 +1714,27 @@ Give me a brief insight into potential profitability, risk factors, and recommen
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Line 
-              data={timelineData} 
-              options={{ 
-                responsive: true,
-                plugins: { legend: { position: 'top' } },
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                    max: 100,
-                    ticks: {
-                      callback: function(value: any) {
-                        return value + '%';
+            <div className="h-40 sm:h-48 lg:h-56">
+              <Line 
+                data={timelineData} 
+                options={{ 
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: { legend: { position: 'top' } },
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      max: 100,
+                      ticks: {
+                        callback: function(value: any) {
+                          return value + '%';
+                        }
                       }
                     }
                   }
-                }
-              }} 
-            />
+                }} 
+              />
+            </div>
           </CardContent>
         </Card>
       </div>

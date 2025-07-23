@@ -272,27 +272,37 @@ const MobileDashboard = () => {
     }
   };
 
-  // Chart data for mobile visualization
+  // Chart data for mobile visualization  
   const equityChartData = {
-    labels: projects.map(p => p.name.split(',')[0]),
+    labels: projects.map(p => {
+      // Shorten labels for mobile display
+      const name = p.name.split(',')[0];
+      return name.length > 12 ? name.substring(0, 12) + '...' : name;
+    }),
     datasets: [{
       label: 'Net Equity',
       data: projects.map(p => (p.loanApproved + p.userDeposit) - (p.landCost + p.buildCost)),
       backgroundColor: 'rgba(34, 197, 94, 0.6)',
       borderColor: 'rgba(34, 197, 94, 1)',
-      borderWidth: 2
+      borderWidth: 1.5,
+      borderRadius: 3
     }]
   };
 
   const progressChartData = {
-    labels: projects.map(p => p.name.split(',')[0]),
+    labels: projects.map(p => {
+      // Shorten labels for mobile display
+      const name = p.name.split(',')[0];
+      return name.length > 12 ? name.substring(0, 12) + '...' : name;
+    }),
     datasets: [{
       label: 'Progress %',
       data: projects.map(p => p.progressPercentage),
       backgroundColor: 'rgba(59, 130, 246, 0.6)',
       borderColor: 'rgba(59, 130, 246, 1)',
-      borderWidth: 2,
-      tension: 0.3
+      borderWidth: 1.5,
+      tension: 0.3,
+      fill: false
     }]
   };
 
@@ -304,8 +314,35 @@ const MobileDashboard = () => {
       title: { display: false }
     },
     scales: {
-      y: { beginAtZero: true, grid: { display: false } },
-      x: { grid: { display: false } }
+      y: { 
+        beginAtZero: true, 
+        grid: { display: false },
+        ticks: {
+          font: { size: 10 },
+          maxTicksLimit: 4
+        }
+      },
+      x: { 
+        grid: { display: false },
+        ticks: {
+          font: { size: 10 },
+          maxRotation: 0,
+          minRotation: 0
+        }
+      }
+    },
+    elements: {
+      bar: {
+        borderRadius: 4
+      }
+    },
+    layout: {
+      padding: {
+        top: 5,
+        bottom: 5,
+        left: 5,
+        right: 5
+      }
     }
   };
 
@@ -418,8 +455,8 @@ const MobileDashboard = () => {
                 Equity Overview
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="h-32">
+            <CardContent className="px-3 pb-3">
+              <div className="h-20 sm:h-24">
                 <Bar data={equityChartData} options={chartOptions} />
               </div>
             </CardContent>
@@ -432,8 +469,8 @@ const MobileDashboard = () => {
                 Project Progress
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="h-32">
+            <CardContent className="px-3 pb-3">
+              <div className="h-20 sm:h-24">
                 <Line data={progressChartData} options={chartOptions} />
               </div>
             </CardContent>
