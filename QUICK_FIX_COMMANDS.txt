@@ -1,21 +1,43 @@
-# Quick Fix - Run these commands one by one in your Mac terminal
+## Copy This Exact vercel.json Content:
 
-# First, cancel the current command (press Ctrl+C)
+```bash
+cd ~/Desktop/projects/lush-properties-platform
 
-# Then run these commands:
+# Replace vercel.json with this exact content:
+cat > vercel.json << 'EOF'
+{
+  "version": 2,
+  "functions": {
+    "api/index.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist/public"
+      }
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/((?!api).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+EOF
 
-cd ~/Downloads
-ls -la
-
-# Look for a folder that contains your Replit download (workspace, lush-properties-platform, etc.)
-# Once you see the folder name, replace "ACTUAL_FOLDER_NAME" below with that name
-
-cd ~/lush-properties-platform-v2
-
-# Copy the files (replace ACTUAL_FOLDER_NAME with the real folder name you saw)
-rsync -av --exclude='.git' --exclude='node_modules' ~/Downloads/ACTUAL_FOLDER_NAME/ .
-
-# Commit and push
+# Now commit and push:
 git add .
-git commit -m "feat: Advanced UI/UX Polish & Infrastructure Suite"
+git commit -m "Fixed SPA routing with rewrites configuration"
 git push origin main
+```
+
+This replaces the complex routing with simple rewrites that properly handle React Router SPA fallback.
