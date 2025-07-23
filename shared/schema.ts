@@ -36,8 +36,8 @@ export const teamInvitations = pgTable("team_invitations", {
   email: text("email").notNull(),
   role: text("role").notNull(), // admin, broker, builder, client, investor, accountant
   projectId: integer("project_id").references(() => projects.id),
-  magicToken: varchar("magic_token", { length: 128 }).notNull().unique(),
-  tokenExpiry: timestamp("token_expiry").notNull(),
+  magicToken: varchar("invite_token", { length: 128 }).notNull().unique(),
+  tokenExpiry: timestamp("invite_expiry").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   createdBy: integer("created_by").references(() => users.id),
   status: text("status").default("pending").notNull(), // pending, active, expired
