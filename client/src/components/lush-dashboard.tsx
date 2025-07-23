@@ -88,6 +88,8 @@ const LushDashboard = () => {
   const [showNav, setShowNav] = useState(true);
   const [syncStatus, setSyncStatus] = useState<'online' | 'offline' | 'syncing'>('online');
   const [offlineQueue, setOfflineQueue] = useState<any[]>([]);
+  const [showSmartAlerts, setShowSmartAlerts] = useState(true);
+  const [showAIInsights, setShowAIInsights] = useState(true);
   
   // Mock user context - in real app this would come from auth context
   const [localRole, setLocalRole] = useState("admin"); // Role switching for testing
@@ -833,45 +835,75 @@ Give me a brief insight into potential profitability, risk factors, and recommen
         </div>
       )}
 
-      {/* Smart Alerts Section */}
-      <div className="bg-white border-b p-4">
-        <h2 className="text-lg font-semibold mb-2 flex items-center gap-2">
-          <Bell className="h-5 w-5 text-blue-600" />
-          🔔 Smart Alerts
-        </h2>
-        <ul className="list-disc ml-4 text-sm text-gray-700 space-y-1">
-          {alerts.map((alert, i) => (
-            <li key={i}>{alert}</li>
-          ))}
-        </ul>
-      </div>
-
-      {/* AI Workflow Insights */}
-      <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-b p-4">
-        <h2 className="text-lg font-semibold mb-2 flex items-center gap-2">
-          <Lightbulb className="h-5 w-5 text-purple-600" />
-          🤖 AI Workflow Insights
-        </h2>
-        <ul className="list-disc ml-4 text-sm text-gray-800 space-y-1">
-          {aiInsights.map((insight, i) => (
-            <li key={i} className="font-medium">{insight}</li>
-          ))}
-        </ul>
-        <div className="mt-3 flex justify-between items-center">
-          <div className="text-xs text-purple-600 font-medium">
-            All AI systems running ⚙️ — Lush Properties Pty Ltd powered by OpenAI
+      {/* Smart Alerts Section - Dismissible */}
+      {showSmartAlerts && (
+        <div className="bg-white border-b p-4 relative">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-lg font-semibold flex items-center gap-2">
+              <Bell className="h-5 w-5 text-blue-600" />
+              🔔 Smart Alerts
+            </h2>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setShowSmartAlerts(false);
+                console.log('[Smart Alerts] Dismissed by user');
+              }}
+              className="text-gray-400 hover:text-gray-600 h-6 w-6 p-0"
+            >
+              <X className="h-4 w-4" />
+            </Button>
           </div>
-          <Button 
-            size="sm" 
-            variant="outline"
-            onClick={() => window.location.href = '/ai-workflows'}
-            className="text-xs bg-purple-50 border-purple-200 hover:bg-purple-100"
-          >
-            <Brain className="h-3 w-3 mr-1" />
-            View All
-          </Button>
+          <ul className="list-disc ml-4 text-sm text-gray-700 space-y-1">
+            {alerts.map((alert, i) => (
+              <li key={i}>{alert}</li>
+            ))}
+          </ul>
         </div>
-      </div>
+      )}
+
+      {/* AI Workflow Insights - Dismissible */}
+      {showAIInsights && (
+        <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-b p-4 relative">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-lg font-semibold flex items-center gap-2">
+              <Lightbulb className="h-5 w-5 text-purple-600" />
+              🤖 AI Workflow Insights
+            </h2>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setShowAIInsights(false);
+                console.log('[AI Workflow Insights] Dismissed by user');
+              }}
+              className="text-gray-400 hover:text-gray-600 h-6 w-6 p-0"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+          <ul className="list-disc ml-4 text-sm text-gray-800 space-y-1">
+            {aiInsights.map((insight, i) => (
+              <li key={i} className="font-medium">{insight}</li>
+            ))}
+          </ul>
+          <div className="mt-3 flex justify-between items-center">
+            <div className="text-xs text-purple-600 font-medium">
+              All AI systems running ⚙️ — Lush Properties Pty Ltd powered by OpenAI
+            </div>
+            <Button 
+              size="sm" 
+              variant="outline"
+              onClick={() => window.location.href = '/ai-workflows'}
+              className="text-xs bg-purple-50 border-purple-200 hover:bg-purple-100"
+            >
+              <Brain className="h-3 w-3 mr-1" />
+              View All
+            </Button>
+          </div>
+        </div>
+      )}
 
       <main className="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
         {/* Welcome Section */}
