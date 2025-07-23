@@ -1,48 +1,43 @@
-# MIME Type Error Fix
+# VERCEL MIME TYPE FIX
 
-## Error Analysis
-The console shows:
-- `Failed to load module script: Expected a JavaScript module but got HTML`
-- Service Worker and Manifest errors
-- Build assets not being served correctly
+## The Real Issue
+The error shows JavaScript files are being served as HTML (MIME type 'text/html'), which means:
+1. The build output directory is wrong
+2. Static assets aren't being served properly
+3. All requests are falling back to index.html
 
-## Root Cause
-Vercel's static build system is incorrectly serving HTML for JS assets. The route fallback is interfering with asset delivery.
+## Immediate Fix
 
-## Fix: Simplified vercel.json
-Replace complex routing with simple build configuration:
-
-```json
-{
-  "version": 2,
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist/public"
-}
-```
-
-## Terminal Commands:
 ```bash
-cd ~/Downloads/lush-properties-platform
+cd ~/Desktop/projects/lush-properties-platform
 
-# Create simplified vercel.json
+# Create proper vercel.json with correct build configuration
 cat > vercel.json << 'EOF'
 {
-  "version": 2,
-  "buildCommand": "npm run build", 
-  "outputDirectory": "dist/public"
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/public",
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
 EOF
 
-# Push the fix
-git add vercel.json
-git commit -m "Simplify Vercel config to fix MIME type errors"
+git add .
+git commit -m "Fixed build output directory and MIME types"
 git push origin main
 ```
 
-## Why This Works
-- Removes complex routing that interferes with asset serving
-- Uses simple build + output directory approach
-- Lets Vercel handle SPA routing automatically
-- Ensures JS/CSS assets serve with correct MIME types
+This explicitly tells Vercel:
+- Use `npm run build` to build the project
+- Look for static files in `dist/public` 
+- Route API calls to backend
+- Serve index.html for all other routes
 
-This should resolve the module loading errors and display your React app properly.
+The MIME type error should be resolved once Vercel knows where to find the actual JavaScript files.
