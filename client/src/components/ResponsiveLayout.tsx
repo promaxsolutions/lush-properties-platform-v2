@@ -11,7 +11,6 @@ import {
   Menu,
   X
 } from "lucide-react";
-import { getCurrentUser, getUserDisplayName, getUserEmail, getUserAvatar, secureLogout } from "@/utils/userHelpers";
 
 interface ResponsiveLayoutProps {
   children: ReactNode;
@@ -97,15 +96,23 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
       <div className={`flex items-center gap-3 mb-6 ${mobile ? 'pb-4 border-b' : ''}`}>
         <div className="w-10 h-10 bg-[#007144] rounded-full flex items-center justify-center">
           <span className="text-lg font-bold text-white">
-            {getUserAvatar(user)}
+            {userRole?.charAt(0).toUpperCase() || 'U'}
           </span>
         </div>
         <div>
           <div className="font-medium text-gray-900 text-sm">
-            {getUserDisplayName(user)}
+            {userRole === 'admin' && 'Administrator'}
+            {userRole === 'builder' && 'Builder'}
+            {userRole === 'client' && 'Client'}
+            {userRole === 'investor' && 'Investor'}
+            {userRole === 'accountant' && 'Accountant'}
           </div>
           <div className="text-xs text-gray-500">
-            {getUserEmail(user)}
+            {userRole === 'admin' && 'admin@lush.com'}
+            {userRole === 'builder' && 'builder@lush.com'}
+            {userRole === 'client' && 'client@lush.com'}
+            {userRole === 'investor' && 'investor@lush.com'}
+            {userRole === 'accountant' && 'accountant@lush.com'}
           </div>
         </div>
       </div>
@@ -118,7 +125,11 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
       {/* Logout Button for Sidebar */}
       <div className="mt-6 pt-6 border-t">
         <button
-          onClick={secureLogout}
+          onClick={() => {
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.href = '/login';
+          }}
           className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -160,22 +171,34 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-[#007144] rounded-full flex items-center justify-center">
                 <span className="text-sm font-bold text-white">
-                  {getUserAvatar(user)}
+                  {userRole?.charAt(0).toUpperCase() || 'U'}
                 </span>
               </div>
               <div className="text-sm">
                 <div className="font-medium text-gray-900">
-                  {getUserDisplayName(user)}
+                  {userRole === 'admin' && 'Admin'}
+                  {userRole === 'builder' && 'Builder'}
+                  {userRole === 'client' && 'Client'}
+                  {userRole === 'investor' && 'Investor'}
+                  {userRole === 'accountant' && 'Accountant'}
                 </div>
                 <div className="text-xs text-gray-500">
-                  {getUserEmail(user)}
+                  {userRole === 'admin' && 'admin@lush.com'}
+                  {userRole === 'builder' && 'builder@lush.com'}
+                  {userRole === 'client' && 'client@lush.com'}
+                  {userRole === 'investor' && 'investor@lush.com'}
+                  {userRole === 'accountant' && 'accountant@lush.com'}
                 </div>
               </div>
             </div>
             
             {/* Logout Button */}
             <button
-              onClick={secureLogout}
+              onClick={() => {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = '/login';
+              }}
               className="flex items-center gap-1 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

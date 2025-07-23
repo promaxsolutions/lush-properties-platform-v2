@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Upload, FileText, DollarSign, Building, TrendingUp, PiggyBank, Target, Edit2, ExternalLink, Lightbulb, Save, X, RefreshCw, BarChart3, TrendingUp as TrendIcon, Mail, Bell, Calendar as CalendarIcon, Clock, AlertCircle, Brain } from "lucide-react";
-import { getCurrentUser, getUserDisplayName, getUserEmail, getUserAvatar, secureLogout } from "@/utils/userHelpers";
 import { Bar, Line, Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -802,22 +801,34 @@ Give me a brief insight into potential profitability, risk factors, and recommen
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-[#007144] rounded-full flex items-center justify-center">
                 <span className="text-sm font-bold text-white">
-                  {getUserAvatar(getCurrentUser())}
+                  {userRole?.charAt(0).toUpperCase() || 'U'}
                 </span>
               </div>
               <div className="hidden sm:block">
                 <div className="text-sm font-medium text-gray-900">
-                  {getUserDisplayName(getCurrentUser())}
+                  {userRole === 'admin' && 'Administrator'}
+                  {userRole === 'builder' && 'Builder'}
+                  {userRole === 'client' && 'Client'}
+                  {userRole === 'investor' && 'Investor'}
+                  {userRole === 'accountant' && 'Accountant'}
                 </div>
                 <div className="text-xs text-gray-500">
-                  {getUserEmail(getCurrentUser())}
+                  {userRole === 'admin' && 'admin@lush.com'}
+                  {userRole === 'builder' && 'builder@lush.com'}
+                  {userRole === 'client' && 'client@lush.com'}
+                  {userRole === 'investor' && 'investor@lush.com'}
+                  {userRole === 'accountant' && 'accountant@lush.com'}
                 </div>
               </div>
             </div>
             
             {/* Logout Button */}
             <button
-              onClick={secureLogout}
+              onClick={() => {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = '/login';
+              }}
               className="flex items-center gap-1 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
