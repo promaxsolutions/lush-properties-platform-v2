@@ -63,7 +63,6 @@ const MobileDashboard = () => {
   ]);
   
   const firstName = "Alex";
-  const localTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
   useEffect(() => {
     fetchProjects();
@@ -320,10 +319,7 @@ const MobileDashboard = () => {
             {syncStatus === 'offline' && <span className="text-xs text-orange-600">📱</span>}
             {syncStatus === 'syncing' && <span className="text-xs text-blue-600">🔄</span>}
           </div>
-          <div className="text-right">
-            <div className="text-xs font-medium text-gray-900">Hi {firstName}</div>
-            <div className="text-xs text-gray-500">{localTime}</div>
-          </div>
+
         </div>
         
 
