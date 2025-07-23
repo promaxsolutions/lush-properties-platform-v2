@@ -163,7 +163,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({ userRole, onAction }) => {
     return (
       <Button
         onClick={() => setIsVisible(true)}
-        className="fixed bottom-20 right-4 z-40 bg-lush-primary hover:bg-lush-primary/90 text-white p-3 rounded-full shadow-lg"
+        className="fixed bottom-4 right-4 z-50 bg-[#007144] hover:bg-[#00a060] text-white p-3 rounded-full shadow-lg lg:bottom-6 lg:right-6"
         aria-label="Show quick actions"
       >
         <Zap className="w-5 h-5" />
@@ -172,7 +172,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({ userRole, onAction }) => {
   }
 
   return (
-    <Card className="fixed bottom-20 right-4 z-40 w-72 shadow-xl border-2">
+    <Card className="fixed bottom-16 right-4 z-50 w-72 shadow-xl border-2 lg:bottom-20 lg:right-6">
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-semibold text-sm flex items-center gap-2">

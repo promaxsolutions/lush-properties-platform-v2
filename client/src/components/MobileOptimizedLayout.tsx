@@ -25,7 +25,8 @@ const MobileOptimizedLayout = ({ children }: MobileOptimizedLayoutProps) => {
 
   useEffect(() => {
     const checkScreenSize = () => {
-      setIsMobile(window.innerWidth < 768);
+      // Better breakpoints for tablet optimization
+      setIsMobile(window.innerWidth < 1024); // Include tablets in mobile view
     };
     
     checkScreenSize();

@@ -216,29 +216,29 @@ const FloatingAIChat = () => {
 
   if (!isOpen) {
     return (
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-20 right-4 z-40 lg:bottom-6 lg:right-6">
         <Button
           onClick={() => setIsOpen(true)}
-          className="w-14 h-14 rounded-full bg-lush-primary hover:bg-lush-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center"
+          className="w-12 h-12 rounded-full bg-[#007144] hover:bg-[#00a060] text-white shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center lg:w-14 lg:h-14"
           title="AI Assistant"
         >
-          <MessageCircle className="h-6 w-6" />
+          <MessageCircle className="h-5 w-5 lg:h-6 lg:w-6" />
         </Button>
         {/* Notification dot */}
-        <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
-          <Bot className="h-2 w-2 text-white" />
+        <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center lg:w-4 lg:h-4">
+          <Bot className="h-1.5 w-1.5 text-white lg:h-2 lg:w-2" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
-      <Card className={`w-96 shadow-2xl transition-all duration-300 ${isMinimized ? 'h-16' : 'h-[600px]'}`}>
+    <div className="fixed bottom-20 right-4 z-40 lg:bottom-6 lg:right-6">
+      <Card className={`w-80 shadow-2xl transition-all duration-300 lg:w-96 ${isMinimized ? 'h-16' : 'h-[450px] lg:h-[600px]'}`}>
         <CardHeader className="pb-3 border-b">
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-lg">
-              <div className="w-8 h-8 bg-lush-primary rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-[#007144] rounded-full flex items-center justify-center">
                 <Bot className="h-4 w-4 text-white" />
               </div>
               AI Assistant

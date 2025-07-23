@@ -84,7 +84,7 @@ import ErrorDiagnostics from "./components/ErrorDiagnostics";
 import QuickRoleFixer from "./components/QuickRoleFixer";
 import AuthSyncHandler from "./components/AuthSyncHandler";
 import InvestorRoleFixer from "./components/InvestorRoleFixer";
-import SmoothRoleSwitcher from "./components/SmoothRoleSwitcher";
+
 import MobilePWAInstaller from "./components/MobilePWAInstaller";
 import MobileTestingGuide from "./components/MobileTestingGuide";
 import PWAInstaller from "./components/PWAInstaller";
@@ -560,8 +560,8 @@ function App() {
                           </Routes>
                           <AuthSyncHandler />
                           <EnhancedRouteHandler userRole={currentUser?.role} />
-                          <SmoothRoleSwitcher />
-                          <AIChatWidget />
+
+
                           <FloatingAIChat />
                           <MobileNotifications />
                           <MobilePWAInstaller />
