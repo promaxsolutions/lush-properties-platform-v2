@@ -161,7 +161,7 @@ const SmartNotifications = () => {
 
   if (!isVisible) {
     return (
-      <div className="floating-button-base floating-button-5" style={{ zIndex: 30 }}>
+      <div className="floating-button-base floating-button-5 hidden lg:block" style={{ zIndex: 30 }}>
         <div className="relative">
           <Button
             onClick={() => handleVisibilityChange(true)}
@@ -182,7 +182,7 @@ const SmartNotifications = () => {
   }
 
   return (
-    <div className="floating-button-base floating-button-5" style={{ zIndex: 30 }}>
+    <div className="floating-button-base floating-button-5 hidden lg:block" style={{ zIndex: 30 }}>
       <Card className="w-80 shadow-xl border-2 bg-white max-h-96">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">

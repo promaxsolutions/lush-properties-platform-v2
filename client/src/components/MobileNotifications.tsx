@@ -15,8 +15,27 @@ interface Notification {
 }
 
 const MobileNotifications = () => {
-  // Notifications cleared per user request - no persistent mobile alerts
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  // Demo notifications for testing purposes
+  const [notifications, setNotifications] = useState<Notification[]>([
+    {
+      id: '1',
+      type: 'milestone',
+      title: 'Demo: Milestone Detected',
+      message: 'Foundation work milestone found in uploaded receipt',
+      timestamp: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
+      actionLabel: 'View Details',
+      actionUrl: '/smart-upload'
+    },
+    {
+      id: '2',
+      type: 'warning',
+      title: 'Demo: Missing Receipts',
+      message: 'Roofing and lockup milestone receipts still needed',
+      timestamp: new Date(Date.now() - 60 * 60 * 1000), // 1 hour ago
+      actionLabel: 'Upload Now',
+      actionUrl: '/smart-upload'
+    }
+  ]);
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -64,10 +83,12 @@ const MobileNotifications = () => {
     return `${days}d ago`;
   };
 
-  // Mobile notification system disabled per user request
+  // Mobile notification system with demo data for testing
   useEffect(() => {
-    console.log('[MobileNotifications] All notification listeners disabled per user request');
-  }, []);
+    const unread = notifications.filter(n => !n.read).length;
+    setUnreadCount(unread);
+    console.log('[MobileNotifications] Demo notifications loaded for testing');
+  }, [notifications]);
 
   // Auto-collapse notifications after 5 seconds
   useEffect(() => {
