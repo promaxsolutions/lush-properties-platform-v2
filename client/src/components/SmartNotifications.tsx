@@ -32,36 +32,12 @@ const SmartNotifications = () => {
   const [autoCollapseTimer, setAutoCollapseTimer] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    // Load saved notifications
-    const savedNotifications = localStorage.getItem('lush-notifications');
-    if (savedNotifications) {
-      try {
-        const parsed = JSON.parse(savedNotifications);
-        setNotifications(parsed);
-        setUnreadCount(parsed.filter((n: Notification) => !n.read).length);
-      } catch (error) {
-        console.error('Failed to parse notifications:', error);
-      }
-    }
+    // Clear any existing persistent notifications per user request
+    localStorage.removeItem('lush-notifications');
+    setNotifications([]);
+    setUnreadCount(0);
 
-    // Generate sample notifications based on user role
-    const userRole = getCurrentUserRole();
-    const sampleNotifications = generateRoleBasedNotifications(userRole);
-    
-    if (notifications.length === 0 && sampleNotifications.length > 0) {
-      setNotifications(sampleNotifications);
-      setUnreadCount(sampleNotifications.filter(n => !n.read).length);
-      localStorage.setItem('lush-notifications', JSON.stringify(sampleNotifications));
-      
-      // Auto-show notifications initially, then auto-collapse after 5 seconds
-      setIsVisible(true);
-      const timer = setTimeout(() => {
-        setIsVisible(false);
-        console.log('[SmartNotifications] Auto-collapsed initial notifications after 5 seconds');
-      }, 5000);
-      setAutoCollapseTimer(timer);
-      console.log('[SmartNotifications] Initial notifications shown, auto-collapse timer started');
-    }
+    console.log('[SmartNotifications] All notifications cleared per user request');
   }, []);
 
   const getCurrentUserRole = () => {
@@ -105,31 +81,7 @@ const SmartNotifications = () => {
       );
     }
 
-    if (role === 'builder') {
-      notifications.push(
-        {
-          id: `${baseId}-3`,
-          type: 'success',
-          title: 'Claim Approved',
-          message: 'Progress claim #PC-2024-001 has been approved',
-          timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000), // 1 hour ago
-          priority: 'medium',
-          category: 'Claims',
-          actionUrl: '/claims',
-          read: false
-        },
-        {
-          id: `${baseId}-4`,
-          type: 'info',
-          title: 'Milestone Reminder',
-          message: 'Foundation inspection due this week',
-          timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000), // 6 hours ago
-          priority: 'medium',
-          category: 'Milestones',
-          read: false
-        }
-      );
-    }
+    // Notifications removed per user request - no persistent milestone or missing receipt alerts
 
     return notifications;
   };
