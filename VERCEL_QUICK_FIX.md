@@ -1,46 +1,94 @@
-# Vercel Quick Fix - Dashboard Override
+# 🔧 VERCEL 404 QUICK FIX
 
-## Problem: Build Still Failing Despite Push
-Vercel might be using cached configuration or wrong branch.
+## Still Getting 404? Here's the Fix:
 
-## Solution: Dashboard Override (Fastest)
+The issue might be that Vercel needs a different build configuration. Let's update both the build settings and routing.
 
-### 1. Go to Vercel Dashboard
-- Visit: https://vercel.com/dashboard
-- Click: `lush-properties-platform-v2`
+### 1. Create Proper Build Script
 
-### 2. Override Build Settings
-Go to **Settings** → **General** → **Build & Output Settings**
+Replace your `package.json` scripts section with:
 
-**IMPORTANT: Override with these exact values:**
-- **Framework Preset:** Other
-- **Build Command:** `cd client && npm install && npx vite build`
-- **Output Directory:** `client/dist`
-- **Install Command:** `npm install`
-- **Root Directory:** `. (leave blank or set to root)`
+```json
+"scripts": {
+  "dev": "NODE_ENV=development tsx server/index.ts",
+  "build": "npm run build:frontend && npm run build:backend",
+  "build:frontend": "vite build",
+  "build:backend": "echo 'Backend build complete'",
+  "start": "node api/index.js",
+  "preview": "vite preview"
+}
+```
 
-### 3. Environment Variables (Add if missing)
-Go to **Settings** → **Environment Variables**
-Add:
-- `NODE_ENV=production`
-- Any other env vars your app needs
+### 2. Update vercel.json (Simplified)
 
-### 4. Force Redeploy
-1. **Deployments** tab
-2. **"..."** menu on latest deployment
-3. **"Redeploy"**
+```json
+{
+  "version": 2,
+  "functions": {
+    "api/index.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
+```
 
-## Why This Works
-- Bypasses vercel.json entirely
-- Uses dashboard settings (higher priority)
-- Forces build from client directory where Vite expects source files
-- Matches your actual project structure
+### 3. Terminal Commands:
 
-## Alternative: Use Netlify
-If Vercel continues failing:
-1. Go to https://netlify.com
-2. Connect GitHub repository
-3. Build settings: `npm run build`, publish directory: `dist/public`
-4. Deploy
+```bash
+cd ~/Desktop/projects/lush-properties-platform
 
-This dashboard override should resolve the build issues by working around the configuration conflicts.
+# Update package.json build scripts
+# (Copy the new scripts section above)
+
+# Update vercel.json 
+# (Copy the new configuration above)
+
+# Commit and push
+git add .
+git commit -m "Fixed Vercel build configuration"
+git push origin main
+```
+
+### 4. Alternative: Direct Vercel Dashboard Fix
+
+If that doesn't work:
+
+1. Go to https://vercel.com/dashboard
+2. Find your project
+3. Click "Settings" 
+4. Go to "Build & Output Settings"
+5. Set:
+   - **Build Command**: `vite build`
+   - **Output Directory**: `dist`
+   - **Install Command**: `npm install`
+
+### 5. Manual Redeploy
+
+After changing settings:
+1. Go to "Deployments" tab
+2. Click "Redeploy" on latest deployment
+3. Wait 2-3 minutes
+
+This should resolve the 404 issue completely.
