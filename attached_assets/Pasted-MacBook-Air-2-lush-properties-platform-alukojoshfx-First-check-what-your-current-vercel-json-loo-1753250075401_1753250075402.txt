@@ -1,0 +1,59 @@
+MacBook-Air-2:lush-properties-platform alukojoshfx$ # First, check what your current vercel.json looks like:
+MacBook-Air-2:lush-properties-platform alukojoshfx$ cat vercel.json
+{
+  "version": 2,
+  "buildCommand": "npm run build:frontend",
+  "outputDirectory": "dist/public",
+  "installCommand": "npm install"
+}MacBook-Air-2:lush-properties-platform alukojoshfx$ 
+MacBook-Air-2:lush-properties-platform alukojoshfx$ # If it's still wrong, let's fix it directly:
+MacBook-Air-2:lush-properties-platform alukojoshfx$ cat > vercel.json << 'EOF'
+> {
+>   "version": 2,
+>   "builds": [
+>     {
+>       "src": "package.json",
+>       "use": "@vercel/static-build",
+>       "config": {
+>         "distDir": "dist/public"
+>       }
+>     }
+>   ],
+>   "routes": [
+>     {
+>       "src": "/(.*)",
+>       "dest": "/dist/public/$1"
+>     }
+>   ]
+> }
+> EOF
+MacBook-Air-2:lush-properties-platform alukojoshfx$ 
+MacBook-Air-2:lush-properties-platform alukojoshfx$ # Then commit and push:
+MacBook-Air-2:lush-properties-platform alukojoshfx$ git add vercel.json
+MacBook-Air-2:lush-properties-platform alukojoshfx$ git commit -m "fix: Correct Vercel build configuration"
+[main fbface2] fix: Correct Vercel build configuration
+ Committer: Joshua Aluko <alukojoshfx@MacBook-Air-2.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 1 file changed, 16 insertions(+), 4 deletions(-)
+MacBook-Air-2:lush-properties-platform alukojoshfx$ git push origin main
+Enumerating objects: 5, done.
+Counting objects: 100% (5/5), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 444 bytes | 444.00 KiB/s, done.
+Total 3 (delta 1), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To https://github.com/promaxsolutions/lush-properties-platform-v2.git
+   5070c50..fbface2  main -> main
+MacBook-Air-2:lush-properties-platform alukojoshfx$ 
