@@ -23,6 +23,41 @@ const FinanceDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [xeroConnected, setXeroConnected] = useState(true);
 
+  // Get current user role
+  const getCurrentUser = () => {
+    const userStr = localStorage.getItem("lush_user");
+    if (!userStr) return null;
+    try {
+      return JSON.parse(userStr);
+    } catch {
+      return null;
+    }
+  };
+
+  const user = getCurrentUser();
+  const userRole = user?.role || 'accountant';
+
+  // Get time-based greeting
+  const getTimeOfDay = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'morning';
+    if (hour < 17) return 'afternoon';
+    return 'evening';
+  };
+
+  // Get current date and time with timezone
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    const options = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZoneName: 'short'
+    };
+    return now.toLocaleDateString(undefined, options);
+  };
+
   // Mock financial data
   const financialStats = {
     totalReceipts: 47,
@@ -100,20 +135,34 @@ const FinanceDashboard = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Finance Dashboard</h1>
-          <p className="text-gray-600">Manage receipts, claims, and financial integration</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Badge variant={xeroConnected ? "default" : "secondary"} className="bg-blue-600">
-            Xero {xeroConnected ? 'Connected' : 'Disconnected'}
-          </Badge>
-          <Button onClick={handleXeroSync} variant="outline">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Sync Xero
-          </Button>
+      {/* Beautiful Welcome Header */}
+      <div className="bg-white rounded-lg shadow-sm border p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="bg-gradient-to-r from-green-50 to-blue-50 px-6 py-3 rounded-lg border border-green-100">
+            <div className="text-xl font-semibold text-gray-800">
+              Good {getTimeOfDay()}, {userRole === 'admin' ? 'Alex' : 
+                                      userRole === 'builder' ? 'Mike' :
+                                      userRole === 'client' ? 'Jennifer' :
+                                      userRole === 'investor' ? 'David' :
+                                      userRole === 'accountant' ? 'Emma' : 'User'}! 👋
+            </div>
+            <div className="text-sm text-gray-600 mt-1">{getCurrentDateTime()}</div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#007144] rounded-full flex items-center justify-center">
+              <span className="text-lg font-bold text-white">
+                {userRole === 'admin' ? 'A' : 
+                 userRole === 'builder' ? 'M' :
+                 userRole === 'client' ? 'J' :
+                 userRole === 'investor' ? 'D' :
+                 userRole === 'accountant' ? 'E' : 'U'}
+              </span>
+            </div>
+            <div>
+              <div className="text-sm font-medium text-gray-900">Finance Dashboard</div>
+              <div className="text-xs text-gray-500">Financial Management</div>
+            </div>
+          </div>
         </div>
       </div>
 

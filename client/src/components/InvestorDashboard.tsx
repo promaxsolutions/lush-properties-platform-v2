@@ -36,6 +36,41 @@ import {
 const InvestorDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
 
+  // Get current user role
+  const getCurrentUser = () => {
+    const userStr = localStorage.getItem("lush_user");
+    if (!userStr) return null;
+    try {
+      return JSON.parse(userStr);
+    } catch {
+      return null;
+    }
+  };
+
+  const user = getCurrentUser();
+  const userRole = user?.role || 'investor';
+
+  // Get time-based greeting
+  const getTimeOfDay = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'morning';
+    if (hour < 17) return 'afternoon';
+    return 'evening';
+  };
+
+  // Get current date and time with timezone
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    const options = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZoneName: 'short'
+    };
+    return now.toLocaleDateString(undefined, options);
+  };
+
   // Mock investor data
   const investorStats = {
     totalInvested: 2400000,
@@ -199,6 +234,37 @@ const InvestorDashboard = () => {
 
   return (
     <div className="space-y-6">
+      {/* Beautiful Welcome Header */}
+      <div className="bg-white rounded-lg shadow-sm border p-6">
+        <div className="flex items-center justify-between">
+          <div className="bg-gradient-to-r from-green-50 to-blue-50 px-6 py-3 rounded-lg border border-green-100">
+            <div className="text-xl font-semibold text-gray-800">
+              Good {getTimeOfDay()}, {userRole === 'admin' ? 'Alex' : 
+                                      userRole === 'builder' ? 'Mike' :
+                                      userRole === 'client' ? 'Jennifer' :
+                                      userRole === 'investor' ? 'David' :
+                                      userRole === 'accountant' ? 'Emma' : 'User'}! 👋
+            </div>
+            <div className="text-sm text-gray-600 mt-1">{getCurrentDateTime()}</div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#007144] rounded-full flex items-center justify-center">
+              <span className="text-lg font-bold text-white">
+                {userRole === 'admin' ? 'A' : 
+                 userRole === 'builder' ? 'M' :
+                 userRole === 'client' ? 'J' :
+                 userRole === 'investor' ? 'D' :
+                 userRole === 'accountant' ? 'E' : 'U'}
+              </span>
+            </div>
+            <div>
+              <div className="text-sm font-medium text-gray-900">Investor Portal</div>
+              <div className="text-xs text-gray-500">Investment Portfolio</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

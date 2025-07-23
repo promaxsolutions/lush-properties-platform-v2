@@ -34,6 +34,41 @@ interface BuilderSubmission {
 }
 
 const PolishedBuilderPortal = () => {
+  // Get current user role
+  const getCurrentUser = () => {
+    const userStr = localStorage.getItem("lush_user");
+    if (!userStr) return null;
+    try {
+      return JSON.parse(userStr);
+    } catch {
+      return null;
+    }
+  };
+
+  const user = getCurrentUser();
+  const userRole = user?.role || 'builder';
+
+  // Get time-based greeting
+  const getTimeOfDay = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'morning';
+    if (hour < 17) return 'afternoon';
+    return 'evening';
+  };
+
+  // Get current date and time with timezone
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    const options = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZoneName: 'short'
+    };
+    return now.toLocaleDateString(undefined, options);
+  };
+
   const [submissions, setSubmissions] = useState<BuilderSubmission[]>([
     {
       id: 'sub_001',
@@ -129,9 +164,36 @@ const PolishedBuilderPortal = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Page Header */}
+      {/* Beautiful Welcome Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-4xl mx-auto px-4 py-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="bg-gradient-to-r from-green-50 to-blue-50 px-6 py-3 rounded-lg border border-green-100">
+              <div className="text-xl font-semibold text-gray-800">
+                Good {getTimeOfDay()}, {userRole === 'admin' ? 'Alex' : 
+                                        userRole === 'builder' ? 'Mike' :
+                                        userRole === 'client' ? 'Jennifer' :
+                                        userRole === 'investor' ? 'David' :
+                                        userRole === 'accountant' ? 'Emma' : 'User'}! 👋
+              </div>
+              <div className="text-sm text-gray-600 mt-1">{getCurrentDateTime()}</div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-[#007144] rounded-full flex items-center justify-center">
+                <span className="text-lg font-bold text-white">
+                  {userRole === 'admin' ? 'A' : 
+                   userRole === 'builder' ? 'M' :
+                   userRole === 'client' ? 'J' :
+                   userRole === 'investor' ? 'D' :
+                   userRole === 'accountant' ? 'E' : 'U'}
+                </span>
+              </div>
+              <div>
+                <div className="text-sm font-medium text-gray-900">Builder Portal</div>
+                <div className="text-xs text-gray-500">Project Submissions</div>
+              </div>
+            </div>
+          </div>
           <div className="flex items-center gap-3">
             <div className="p-3 bg-lush-primary rounded-xl">
               <Hammer className="h-6 w-6 text-white" />
