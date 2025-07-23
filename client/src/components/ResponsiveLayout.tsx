@@ -92,20 +92,7 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
 
   const NavContent = ({ mobile = false }: { mobile?: boolean }) => (
     <div className={`flex flex-col h-full ${mobile ? 'p-4' : 'p-6'}`}>
-      {/* Logo */}
-      <div className={`flex items-center gap-3 mb-8 ${mobile ? 'pb-4 border-b' : ''}`}>
-        <div className={`bg-gradient-to-br from-lush-primary to-lush-accent rounded-xl flex items-center justify-center shadow-lg ${mobile ? 'w-10 h-10' : 'w-12 h-12'}`}>
-          <span className={`font-bold text-white ${mobile ? 'text-lg' : 'text-xl'}`}>L</span>
-        </div>
-        <div className={mobile ? 'block' : 'hidden lg:block'}>
-          <h1 className={`font-bold text-gray-900 leading-tight ${mobile ? 'text-base' : 'text-lg'}`}>
-            Lush Properties
-          </h1>
-          <p className={`text-lush-primary font-medium ${mobile ? 'text-xs' : 'text-sm'}`}>
-            Pty Ltd
-          </p>
-        </div>
-      </div>
+      {/* Logo removed per user request */}
 
       {/* Role-Based Navigation */}
       <div className="flex-1">
@@ -140,13 +127,7 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
       <div className="lg:hidden bg-white border-b sticky top-0 z-40">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-lush-primary to-lush-accent rounded-lg flex items-center justify-center">
-              <span className="text-sm font-bold text-white">L</span>
-            </div>
-            <div>
-              <h1 className="text-lg font-bold text-gray-900">Lush Properties</h1>
-              <p className="text-xs text-lush-primary font-medium">Pty Ltd</p>
-            </div>
+            {/* Logo removed per user request */}
           </div>
           
           <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
