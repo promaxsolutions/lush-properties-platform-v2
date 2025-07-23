@@ -35,7 +35,7 @@ interface QuickActionsProps {
 }
 
 const QuickActions: React.FC<QuickActionsProps> = ({ userRole, onAction }) => {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false); // Start closed for better UX
   const { success, info } = useToast();
 
   const handleAction = (actionId: string, action: () => void) => {
@@ -161,11 +161,12 @@ const QuickActions: React.FC<QuickActionsProps> = ({ userRole, onAction }) => {
 
   if (!isVisible || allowedActions.length === 0) {
     return (
-      <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 50 }}>
+      <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 40 }}>
         <Button
           onClick={() => setIsVisible(true)}
-          className="bg-[#007144] hover:bg-[#00a060] text-white p-3 rounded-full shadow-lg"
+          className="bg-[#007144] hover:bg-[#00a060] text-white p-3 rounded-full shadow-lg transition-all duration-200"
           aria-label="Show quick actions"
+          title={`Quick Actions (${allowedActions.length} available)`}
         >
           <Zap className="w-5 h-5" />
         </Button>
@@ -174,8 +175,8 @@ const QuickActions: React.FC<QuickActionsProps> = ({ userRole, onAction }) => {
   }
 
   return (
-    <div style={{ position: 'fixed', bottom: '80px', right: '24px', zIndex: 50 }}>
-      <Card className="w-72 shadow-xl border-2">
+    <div style={{ position: 'fixed', bottom: '80px', right: '24px', zIndex: 40 }}>
+      <Card className="w-72 shadow-xl border-2 bg-white">
         <CardContent className="p-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-semibold text-sm flex items-center gap-2">

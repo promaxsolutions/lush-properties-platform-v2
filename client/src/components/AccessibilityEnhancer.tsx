@@ -1,222 +1,163 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { 
-  Eye, 
-  EyeOff, 
-  Type, 
-  Contrast,
-  Keyboard,
-  Volume2,
-  VolumeX,
-  X
-} from 'lucide-react';
+import { Eye, Moon, Sun, Type, Minus, Plus, Zap } from 'lucide-react';
 
-interface AccessibilitySettings {
-  highContrast: boolean;
-  largeText: boolean;
-  reducedMotion: boolean;
-  screenReader: boolean;
-  keyboardNavigation: boolean;
-  soundEffects: boolean;
-}
-
-const AccessibilityEnhancer: React.FC = () => {
-  const [settings, setSettings] = useLocalStorage<AccessibilitySettings>('accessibility-settings', {
-    highContrast: false,
-    largeText: false,
-    reducedMotion: false,
-    screenReader: false,
-    keyboardNavigation: true,
-    soundEffects: true
-  });
-
+const AccessibilityEnhancer = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [highContrast, setHighContrast] = useState(false);
+  const [fontSize, setFontSize] = useState(16);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
-    // Apply accessibility settings to document
+    // Load saved accessibility preferences
+    const savedHighContrast = localStorage.getItem('accessibility-high-contrast') === 'true';
+    const savedFontSize = parseInt(localStorage.getItem('accessibility-font-size') || '16');
+    const savedReducedMotion = localStorage.getItem('accessibility-reduced-motion') === 'true';
+
+    setHighContrast(savedHighContrast);
+    setFontSize(savedFontSize);
+    setReducedMotion(savedReducedMotion);
+
+    // Apply settings
+    applyAccessibilitySettings(savedHighContrast, savedFontSize, savedReducedMotion);
+  }, []);
+
+  const applyAccessibilitySettings = (contrast: boolean, size: number, motion: boolean) => {
     const root = document.documentElement;
     
-    if (settings.highContrast) {
+    if (contrast) {
       root.classList.add('high-contrast');
     } else {
       root.classList.remove('high-contrast');
     }
-    
-    if (settings.largeText) {
-      root.classList.add('large-text');
-    } else {
-      root.classList.remove('large-text');
-    }
-    
-    if (settings.reducedMotion) {
+
+    root.style.fontSize = `${size}px`;
+
+    if (motion) {
       root.classList.add('reduced-motion');
     } else {
       root.classList.remove('reduced-motion');
     }
+  };
 
-    // Set CSS custom properties
-    root.style.setProperty('--motion-duration', settings.reducedMotion ? '0s' : '0.3s');
-    
-  }, [settings]);
+  const toggleHighContrast = () => {
+    const newValue = !highContrast;
+    setHighContrast(newValue);
+    localStorage.setItem('accessibility-high-contrast', String(newValue));
+    applyAccessibilitySettings(newValue, fontSize, reducedMotion);
+  };
 
-  useEffect(() => {
-    // Keyboard navigation handler
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!settings.keyboardNavigation) return;
-      
-      // Alt + A: Toggle accessibility panel
-      if (e.altKey && e.key === 'a') {
-        e.preventDefault();
-        setIsVisible(!isVisible);
-      }
-      
-      // Alt + C: Toggle high contrast
-      if (e.altKey && e.key === 'c') {
-        e.preventDefault();
-        setSettings(prev => ({ ...prev, highContrast: !prev.highContrast }));
-      }
-      
-      // Alt + T: Toggle large text
-      if (e.altKey && e.key === 't') {
-        e.preventDefault();
-        setSettings(prev => ({ ...prev, largeText: !prev.largeText }));
-      }
-    };
+  const adjustFontSize = (increment: number) => {
+    const newSize = Math.max(12, Math.min(24, fontSize + increment));
+    setFontSize(newSize);
+    localStorage.setItem('accessibility-font-size', String(newSize));
+    applyAccessibilitySettings(highContrast, newSize, reducedMotion);
+  };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [settings.keyboardNavigation, isVisible, setSettings]);
-
-  const updateSetting = <K extends keyof AccessibilitySettings>(
-    key: K, 
-    value: AccessibilitySettings[K]
-  ) => {
-    setSettings(prev => ({ ...prev, [key]: value }));
-    
-    // Provide audio feedback if enabled
-    if (settings.soundEffects) {
-      const audio = new Audio();
-      audio.volume = 0.1;
-      audio.src = `data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFApGn+DyvmMcBjiR2O/JdisGJXfH8N/2QAoUXrTp67pVFA==`;
-      audio.play().catch(() => {}); // Ignore errors
-    }
+  const toggleReducedMotion = () => {
+    const newValue = !reducedMotion;
+    setReducedMotion(newValue);
+    localStorage.setItem('accessibility-reduced-motion', String(newValue));
+    applyAccessibilitySettings(highContrast, fontSize, newValue);
   };
 
   if (!isVisible) {
     return (
-      <Button
-        onClick={() => setIsVisible(true)}
-        className="fixed bottom-4 right-4 z-50 bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg"
-        aria-label="Open accessibility settings"
-        title="Open accessibility settings (Alt + A)"
-      >
-        <Eye className="w-5 h-5" />
-      </Button>
+      <div style={{ position: 'fixed', bottom: '180px', right: '24px', zIndex: 35 }}>
+        <Button
+          onClick={() => setIsVisible(true)}
+          className="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg transition-all duration-200 flex items-center justify-center"
+          aria-label="Accessibility Options"
+          title="Accessibility Options"
+        >
+          <Eye className="h-5 w-5" />
+        </Button>
+      </div>
     );
   }
 
   return (
-    <Card className="fixed bottom-4 right-4 z-50 w-80 shadow-xl border-2">
-      <CardContent className="p-4">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-lg">Accessibility</h3>
-          <Button
-            onClick={() => setIsVisible(false)}
-            variant="ghost"
-            size="sm"
-            aria-label="Close accessibility settings"
-          >
-            <X className="w-4 h-4" />
-          </Button>
-        </div>
-        
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Contrast className="w-4 h-4" />
+    <div style={{ position: 'fixed', bottom: '240px', right: '24px', zIndex: 35 }}>
+      <Card className="w-64 shadow-xl border-2 bg-white">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-semibold text-sm flex items-center gap-2">
+              <Eye className="w-4 h-4 text-blue-600" />
+              Accessibility
+            </h3>
+            <Button
+              onClick={() => setIsVisible(false)}
+              variant="ghost"
+              size="sm"
+              className="p-1 h-auto"
+            >
+              ×
+            </Button>
+          </div>
+          
+          <div className="space-y-3">
+            {/* High Contrast Toggle */}
+            <div className="flex items-center justify-between">
               <span className="text-sm">High Contrast</span>
+              <Button
+                onClick={toggleHighContrast}
+                variant={highContrast ? "default" : "outline"}
+                size="sm"
+                className="p-2"
+              >
+                {highContrast ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              </Button>
             </div>
-            <Button
-              onClick={() => updateSetting('highContrast', !settings.highContrast)}
-              variant={settings.highContrast ? 'default' : 'outline'}
-              size="sm"
-              aria-pressed={settings.highContrast}
-            >
-              {settings.highContrast ? 'On' : 'Off'}
-            </Button>
+
+            {/* Font Size Controls */}
+            <div className="flex items-center justify-between">
+              <span className="text-sm">Font Size</span>
+              <div className="flex items-center gap-1">
+                <Button
+                  onClick={() => adjustFontSize(-2)}
+                  variant="outline"
+                  size="sm"
+                  className="p-1 h-6 w-6"
+                  disabled={fontSize <= 12}
+                >
+                  <Minus className="w-3 h-3" />
+                </Button>
+                <span className="text-xs px-2">{fontSize}px</span>
+                <Button
+                  onClick={() => adjustFontSize(2)}
+                  variant="outline"
+                  size="sm"
+                  className="p-1 h-6 w-6"
+                  disabled={fontSize >= 24}
+                >
+                  <Plus className="w-3 h-3" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Reduced Motion Toggle */}
+            <div className="flex items-center justify-between">
+              <span className="text-sm">Reduce Motion</span>
+              <Button
+                onClick={toggleReducedMotion}
+                variant={reducedMotion ? "default" : "outline"}
+                size="sm"
+                className="p-2"
+              >
+                <Zap className={`w-4 h-4 ${reducedMotion ? '' : 'animate-pulse'}`} />
+              </Button>
+            </div>
           </div>
           
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Type className="w-4 h-4" />
-              <span className="text-sm">Large Text</span>
-            </div>
-            <Button
-              onClick={() => updateSetting('largeText', !settings.largeText)}
-              variant={settings.largeText ? 'default' : 'outline'}
-              size="sm"
-              aria-pressed={settings.largeText}
-            >
-              {settings.largeText ? 'On' : 'Off'}
-            </Button>
+          <div className="mt-3 pt-3 border-t">
+            <p className="text-xs text-gray-500 text-center">
+              Settings saved automatically
+            </p>
           </div>
-          
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <EyeOff className="w-4 h-4" />
-              <span className="text-sm">Reduced Motion</span>
-            </div>
-            <Button
-              onClick={() => updateSetting('reducedMotion', !settings.reducedMotion)}
-              variant={settings.reducedMotion ? 'default' : 'outline'}
-              size="sm"
-              aria-pressed={settings.reducedMotion}
-            >
-              {settings.reducedMotion ? 'On' : 'Off'}
-            </Button>
-          </div>
-          
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Keyboard className="w-4 h-4" />
-              <span className="text-sm">Keyboard Navigation</span>
-            </div>
-            <Button
-              onClick={() => updateSetting('keyboardNavigation', !settings.keyboardNavigation)}
-              variant={settings.keyboardNavigation ? 'default' : 'outline'}
-              size="sm"
-              aria-pressed={settings.keyboardNavigation}
-            >
-              {settings.keyboardNavigation ? 'On' : 'Off'}
-            </Button>
-          </div>
-          
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              {settings.soundEffects ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-              <span className="text-sm">Sound Effects</span>
-            </div>
-            <Button
-              onClick={() => updateSetting('soundEffects', !settings.soundEffects)}
-              variant={settings.soundEffects ? 'default' : 'outline'}
-              size="sm"
-              aria-pressed={settings.soundEffects}
-            >
-              {settings.soundEffects ? 'On' : 'Off'}
-            </Button>
-          </div>
-        </div>
-        
-        <div className="mt-4 pt-3 border-t text-xs text-gray-600">
-          <p>Keyboard shortcuts:</p>
-          <p>• Alt + A: Toggle panel</p>
-          <p>• Alt + C: Toggle contrast</p>
-          <p>• Alt + T: Toggle large text</p>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

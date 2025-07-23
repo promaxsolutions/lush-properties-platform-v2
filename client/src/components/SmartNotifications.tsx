@@ -1,373 +1,284 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useToast } from '@/hooks/useToast';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
-import {
-  Bell,
-  X,
-  CheckCircle,
-  AlertTriangle,
-  Info,
-  Calendar,
-  DollarSign,
-  FileText,
-  Clock,
-  MapPin,
-  User
+import { 
+  Bell, 
+  X, 
+  AlertCircle, 
+  CheckCircle, 
+  Clock, 
+  TrendingUp, 
+  DollarSign, 
+  FileText 
 } from 'lucide-react';
 
 interface Notification {
   id: string;
-  type: 'info' | 'warning' | 'success' | 'error' | 'milestone' | 'financial' | 'document' | 'meeting';
+  type: 'info' | 'success' | 'warning' | 'error';
   title: string;
   message: string;
   timestamp: Date;
-  read: boolean;
-  actionUrl?: string;
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  priority: 'low' | 'medium' | 'high';
   category: string;
-  projectId?: string;
-  userId?: string;
+  actionUrl?: string;
+  read: boolean;
 }
 
-interface SmartNotificationsProps {
-  userRole: string;
-  userId: string;
-}
-
-const SmartNotifications: React.FC<SmartNotificationsProps> = ({ userRole, userId }) => {
-  const [notifications, setNotifications] = useLocalStorage<Notification[]>('notifications', []);
+const SmartNotifications = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [filter, setFilter] = useState<'all' | 'unread' | 'urgent'>('unread');
-  const { success } = useToast();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
 
-  // Generate smart notifications based on user role and activities
   useEffect(() => {
-    const generateSmartNotifications = () => {
-      const now = new Date();
-      const smartNotifications: Notification[] = [];
+    // Load saved notifications
+    const savedNotifications = localStorage.getItem('lush-notifications');
+    if (savedNotifications) {
+      try {
+        const parsed = JSON.parse(savedNotifications);
+        setNotifications(parsed);
+        setUnreadCount(parsed.filter((n: Notification) => !n.read).length);
+      } catch (error) {
+        console.error('Failed to parse notifications:', error);
+      }
+    }
 
-      // Admin notifications
-      if (userRole === 'admin') {
-        smartNotifications.push({
-          id: `admin-${Date.now()}-1`,
+    // Generate sample notifications based on user role
+    const userRole = getCurrentUserRole();
+    const sampleNotifications = generateRoleBasedNotifications(userRole);
+    
+    if (notifications.length === 0 && sampleNotifications.length > 0) {
+      setNotifications(sampleNotifications);
+      setUnreadCount(sampleNotifications.filter(n => !n.read).length);
+      localStorage.setItem('lush-notifications', JSON.stringify(sampleNotifications));
+    }
+  }, []);
+
+  const getCurrentUserRole = () => {
+    try {
+      const user = localStorage.getItem('lush_user');
+      return user ? JSON.parse(user).role : 'client';
+    } catch {
+      return 'client';
+    }
+  };
+
+  const generateRoleBasedNotifications = (role: string): Notification[] => {
+    const baseId = Date.now();
+    
+    const notifications: Notification[] = [];
+
+    if (role === 'admin') {
+      notifications.push(
+        {
+          id: `${baseId}-1`,
           type: 'warning',
-          title: 'Pending Approvals',
-          message: '3 progress claims awaiting your approval',
-          timestamp: new Date(now.getTime() - 2 * 60 * 60 * 1000), // 2 hours ago
-          read: false,
-          actionUrl: '/claims',
+          title: 'Pending Claims Review',
+          message: '3 progress claims awaiting approval from builders',
+          timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
           priority: 'high',
-          category: 'Workflow'
-        });
-      }
-
-      // Builder notifications
-      if (userRole === 'builder') {
-        smartNotifications.push({
-          id: `builder-${Date.now()}-1`,
-          type: 'milestone',
-          title: 'Milestone Due Tomorrow',
-          message: 'Foundation inspection scheduled for Riverway Project',
-          timestamp: new Date(now.getTime() - 30 * 60 * 1000), // 30 minutes ago
-          read: false,
-          actionUrl: '/builder',
-          priority: 'urgent',
-          category: 'Construction',
-          projectId: 'proj-001'
-        });
-      }
-
-      // Client notifications
-      if (userRole === 'client') {
-        smartNotifications.push({
-          id: `client-${Date.now()}-1`,
+          category: 'Claims',
+          actionUrl: '/claims',
+          read: false
+        },
+        {
+          id: `${baseId}-2`,
           type: 'info',
-          title: 'Progress Update Available',
-          message: 'New photos uploaded for your Lakeside Villa project',
-          timestamp: new Date(now.getTime() - 45 * 60 * 1000), // 45 minutes ago
-          read: false,
-          actionUrl: '/client',
+          title: 'New Project Added',
+          message: 'Project "Luxury Villa - Toorak" has been created',
+          timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 hours ago
           priority: 'medium',
-          category: 'Updates',
-          projectId: 'proj-002'
-        });
-      }
+          category: 'Projects',
+          actionUrl: '/projects',
+          read: false
+        }
+      );
+    }
 
-      // Accountant notifications
-      if (userRole === 'accountant') {
-        smartNotifications.push({
-          id: `accountant-${Date.now()}-1`,
-          type: 'financial',
-          title: 'Receipt Processing Complete',
-          message: '12 receipts processed and categorized automatically',
-          timestamp: new Date(now.getTime() - 15 * 60 * 1000), // 15 minutes ago
-          read: false,
-          actionUrl: '/finance',
-          priority: 'medium',
-          category: 'Finance'
-        });
-      }
-
-      // Investor notifications
-      if (userRole === 'investor') {
-        smartNotifications.push({
-          id: `investor-${Date.now()}-1`,
+    if (role === 'builder') {
+      notifications.push(
+        {
+          id: `${baseId}-3`,
           type: 'success',
-          title: 'ROI Update',
-          message: 'Your Westfield project achieved 18.5% return this quarter',
-          timestamp: new Date(now.getTime() - 60 * 60 * 1000), // 1 hour ago
-          read: false,
-          actionUrl: '/investor',
+          title: 'Claim Approved',
+          message: 'Progress claim #PC-2024-001 has been approved',
+          timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000), // 1 hour ago
           priority: 'medium',
-          category: 'Performance'
-        });
-      }
-
-      // Add universal notifications
-      smartNotifications.push({
-        id: `universal-${Date.now()}-1`,
-        type: 'info',
-        title: 'System Maintenance',
-        message: 'Scheduled maintenance tonight from 11 PM - 1 AM',
-        timestamp: new Date(now.getTime() - 3 * 60 * 60 * 1000), // 3 hours ago
-        read: false,
-        priority: 'low',
-        category: 'System'
-      });
-
-      // Only add new notifications that don't already exist
-      const existingIds = new Set(notifications.map(n => n.id));
-      const newNotifications = smartNotifications.filter(n => !existingIds.has(n.id));
-      
-      if (newNotifications.length > 0) {
-        setNotifications(prev => [...newNotifications, ...prev].slice(0, 50)); // Keep max 50 notifications
-      }
-    };
-
-    generateSmartNotifications();
-  }, [userRole, notifications, setNotifications]);
-
-  const getIcon = (type: Notification['type']) => {
-    switch (type) {
-      case 'success':
-        return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case 'warning':
-        return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
-      case 'error':
-        return <AlertTriangle className="w-4 h-4 text-red-500" />;
-      case 'milestone':
-        return <Calendar className="w-4 h-4 text-blue-500" />;
-      case 'financial':
-        return <DollarSign className="w-4 h-4 text-green-600" />;
-      case 'document':
-        return <FileText className="w-4 h-4 text-purple-500" />;
-      case 'meeting':
-        return <MapPin className="w-4 h-4 text-orange-500" />;
-      default:
-        return <Info className="w-4 h-4 text-blue-500" />;
+          category: 'Claims',
+          actionUrl: '/claims',
+          read: false
+        },
+        {
+          id: `${baseId}-4`,
+          type: 'info',
+          title: 'Milestone Reminder',
+          message: 'Foundation inspection due this week',
+          timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000), // 6 hours ago
+          priority: 'medium',
+          category: 'Milestones',
+          read: false
+        }
+      );
     }
+
+    return notifications;
   };
 
-  const getPriorityColor = (priority: Notification['priority']) => {
-    switch (priority) {
-      case 'urgent':
-        return 'border-l-4 border-l-red-500 bg-red-50';
-      case 'high':
-        return 'border-l-4 border-l-orange-500 bg-orange-50';
-      case 'medium':
-        return 'border-l-4 border-l-blue-500 bg-blue-50';
-      default:
-        return 'border-l-4 border-l-gray-300 bg-gray-50';
-    }
-  };
-
-  const markAsRead = (notificationId: string) => {
-    setNotifications(prev =>
-      prev.map(n => n.id === notificationId ? { ...n, read: true } : n)
+  const markAsRead = (id: string) => {
+    const updated = notifications.map(n => 
+      n.id === id ? { ...n, read: true } : n
     );
+    setNotifications(updated);
+    setUnreadCount(updated.filter(n => !n.read).length);
+    localStorage.setItem('lush-notifications', JSON.stringify(updated));
   };
 
   const markAllAsRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-    success('All notifications marked as read');
+    const updated = notifications.map(n => ({ ...n, read: true }));
+    setNotifications(updated);
+    setUnreadCount(0);
+    localStorage.setItem('lush-notifications', JSON.stringify(updated));
   };
 
-  const deleteNotification = (notificationId: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== notificationId));
+  const deleteNotification = (id: string) => {
+    const updated = notifications.filter(n => n.id !== id);
+    setNotifications(updated);
+    setUnreadCount(updated.filter(n => !n.read).length);
+    localStorage.setItem('lush-notifications', JSON.stringify(updated));
   };
 
-  const filteredNotifications = notifications.filter(notification => {
-    switch (filter) {
-      case 'unread':
-        return !notification.read;
-      case 'urgent':
-        return notification.priority === 'urgent' || notification.priority === 'high';
-      default:
-        return true;
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case 'success': return <CheckCircle className="w-4 h-4 text-green-600" />;
+      case 'warning': return <AlertCircle className="w-4 h-4 text-yellow-600" />;
+      case 'error': return <AlertCircle className="w-4 h-4 text-red-600" />;
+      default: return <Bell className="w-4 h-4 text-blue-600" />;
     }
-  });
+  };
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'high': return 'bg-red-100 text-red-800';
+      case 'medium': return 'bg-yellow-100 text-yellow-800';
+      default: return 'bg-blue-100 text-blue-800';
+    }
+  };
 
   if (!isVisible) {
     return (
-      <Button
-        onClick={() => setIsVisible(true)}
-        className="fixed top-4 right-20 z-40 bg-white hover:bg-gray-50 text-gray-700 border shadow-sm p-2 rounded-full relative"
-        aria-label={`Open notifications (${unreadCount} unread)`}
-      >
-        <Bell className="w-5 h-5" />
-        {unreadCount > 0 && (
-          <Badge 
-            variant="destructive" 
-            className="absolute -top-2 -right-2 text-xs h-5 px-1.5 min-w-[20px] rounded-full"
+      <div style={{ position: 'fixed', bottom: '240px', right: '24px', zIndex: 30 }}>
+        <div className="relative">
+          <Button
+            onClick={() => setIsVisible(true)}
+            className="w-12 h-12 rounded-full bg-orange-600 hover:bg-orange-700 text-white shadow-lg transition-all duration-200 flex items-center justify-center"
+            aria-label={`Notifications (${unreadCount} unread)`}
+            title={`Notifications (${unreadCount} unread)`}
           >
-            {unreadCount > 99 ? '99+' : unreadCount}
-          </Badge>
-        )}
-      </Button>
+            <Bell className="h-5 w-5" />
+          </Button>
+          {unreadCount > 0 && (
+            <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold">
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </div>
+          )}
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card className="fixed top-4 right-4 z-40 w-96 max-h-[80vh] shadow-xl border-2">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Bell className="w-5 h-5 text-lush-primary" />
-            Notifications
-            {unreadCount > 0 && (
-              <Badge variant="secondary" className="text-xs">
-                {unreadCount} new
-              </Badge>
-            )}
-          </CardTitle>
-          <Button
-            onClick={() => setIsVisible(false)}
-            variant="ghost"
-            size="sm"
-          >
-            <X className="w-4 h-4" />
-          </Button>
-        </div>
-
-        {/* Filter buttons */}
-        <div className="flex gap-2 mt-3">
-          <Button
-            onClick={() => setFilter('all')}
-            variant={filter === 'all' ? 'default' : 'outline'}
-            size="sm"
-            className="text-xs"
-          >
-            All
-          </Button>
-          <Button
-            onClick={() => setFilter('unread')}
-            variant={filter === 'unread' ? 'default' : 'outline'}
-            size="sm"
-            className="text-xs"
-          >
-            Unread ({unreadCount})
-          </Button>
-          <Button
-            onClick={() => setFilter('urgent')}
-            variant={filter === 'urgent' ? 'default' : 'outline'}
-            size="sm"
-            className="text-xs"
-          >
-            Urgent
-          </Button>
-        </div>
-      </CardHeader>
-
-      <CardContent className="p-0 max-h-[60vh] overflow-y-auto">
-        {filteredNotifications.length === 0 ? (
-          <div className="p-4 text-center text-gray-500">
-            <Bell className="w-12 h-12 mx-auto mb-3 opacity-30" />
-            <p className="text-sm">No notifications to show</p>
-          </div>
-        ) : (
-          <div className="space-y-1">
-            {filteredNotifications.map((notification) => (
-              <div
-                key={notification.id}
-                className={`p-4 cursor-pointer hover:bg-gray-50 ${getPriorityColor(notification.priority)} ${
-                  !notification.read ? 'font-medium' : 'opacity-75'
-                }`}
-                onClick={() => {
-                  markAsRead(notification.id);
-                  if (notification.actionUrl) {
-                    window.location.href = notification.actionUrl;
-                  }
-                }}
+    <div style={{ position: 'fixed', bottom: '300px', right: '24px', zIndex: 30 }}>
+      <Card className="w-80 shadow-xl border-2 bg-white max-h-96">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Bell className="w-4 h-4 text-orange-600" />
+              Notifications ({unreadCount} new)
+            </CardTitle>
+            <div className="flex gap-1">
+              {unreadCount > 0 && (
+                <Button
+                  onClick={markAllAsRead}
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs px-2 py-1 h-auto"
+                >
+                  Mark all read
+                </Button>
+              )}
+              <Button
+                onClick={() => setIsVisible(false)}
+                variant="ghost"
+                size="sm"
+                className="p-1 h-auto"
               >
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 mt-0.5">
-                    {getIcon(notification.type)}
-                  </div>
-                  
-                  <div className="flex-grow min-w-0">
-                    <div className="flex items-center justify-between mb-1">
-                      <h4 className="text-sm font-medium truncate">
-                        {notification.title}
-                      </h4>
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteNotification(notification.id);
-                        }}
-                        variant="ghost"
-                        size="sm"
-                        className="p-1 h-auto opacity-50 hover:opacity-100"
-                      >
-                        <X className="w-3 h-3" />
-                      </Button>
-                    </div>
-                    
-                    <p className="text-xs text-gray-600 mb-2">
-                      {notification.message}
-                    </p>
-                    
-                    <div className="flex items-center justify-between text-xs text-gray-500">
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-3 h-3" />
-                        <span>
-                          {notification.timestamp.toLocaleTimeString([], { 
-                            hour: '2-digit', 
-                            minute: '2-digit' 
-                          })}
-                        </span>
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="max-h-64 overflow-y-auto">
+            {notifications.length === 0 ? (
+              <div className="p-4 text-center text-gray-500 text-sm">
+                No notifications yet
+              </div>
+            ) : (
+              notifications.map((notification) => (
+                <div
+                  key={notification.id}
+                  className={`p-3 border-b border-gray-100 hover:bg-gray-50 ${
+                    !notification.read ? 'bg-blue-50' : ''
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    {getNotificationIcon(notification.type)}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h4 className="text-sm font-medium truncate">
+                          {notification.title}
+                        </h4>
+                        <Badge className={`text-xs ${getPriorityColor(notification.priority)}`}>
+                          {notification.priority}
+                        </Badge>
                       </div>
-                      
-                      <Badge variant="outline" className="text-xs px-1.5 py-0">
-                        {notification.category}
-                      </Badge>
+                      <p className="text-xs text-gray-600 leading-relaxed">
+                        {notification.message}
+                      </p>
+                      <div className="flex items-center justify-between mt-2">
+                        <span className="text-xs text-gray-400">
+                          {new Date(notification.timestamp).toLocaleTimeString()}
+                        </span>
+                        <div className="flex gap-1">
+                          {!notification.read && (
+                            <Button
+                              onClick={() => markAsRead(notification.id)}
+                              variant="ghost"
+                              size="sm"
+                              className="text-xs px-2 py-0 h-auto text-blue-600"
+                            >
+                              Mark read
+                            </Button>
+                          )}
+                          <Button
+                            onClick={() => deleteNotification(notification.id)}
+                            variant="ghost"
+                            size="sm"
+                            className="text-xs px-2 py-0 h-auto text-red-600"
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
-        )}
-
-        {unreadCount > 0 && (
-          <div className="p-3 border-t">
-            <Button
-              onClick={markAllAsRead}
-              variant="outline"
-              size="sm"
-              className="w-full text-xs"
-            >
-              Mark all as read
-            </Button>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

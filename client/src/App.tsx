@@ -49,6 +49,7 @@ import MobileOptimizedLayout from "./components/MobileOptimizedLayout";
 import PolishedBuilderPortal from "./components/PolishedBuilderPortal";
 import PolishedClientPortal from "./components/PolishedClientPortal";
 import FloatingAIChat from "./components/FloatingAIChat";
+import AccessibilityEnhancer from "./components/AccessibilityEnhancer";
 import ClientOnboarding from "./components/ClientOnboarding";
 import SecurityPanel from "./components/SecurityPanel";
 import InviteClientModal from "./components/InviteClientModal";
@@ -88,11 +89,11 @@ import InvestorRoleFixer from "./components/InvestorRoleFixer";
 import MobilePWAInstaller from "./components/MobilePWAInstaller";
 import MobileTestingGuide from "./components/MobileTestingGuide";
 import PWAInstaller from "./components/PWAInstaller";
-import AccessibilityEnhancer from "./components/AccessibilityEnhancer";
 import EnhancedDashboard from "./components/EnhancedDashboard";
-import QuickActions from "./components/QuickActions";
+
 import SmartNotifications from "./components/SmartNotifications";
 import SystemHealthMonitor from "./components/SystemHealthMonitor";
+import QuickActions from "./components/QuickActions";
 
 interface AuthProtectedRouteProps {
   children: React.ReactNode;
@@ -563,15 +564,12 @@ function App() {
 
 
                           <FloatingAIChat />
+                          <QuickActions userRole={currentUser?.role || 'client'} />
+                          <AccessibilityEnhancer />
+                          <SmartNotifications />
                           <MobileNotifications />
                           <MobilePWAInstaller />
                           <PWAInstaller />
-                          <AccessibilityEnhancer />
-                          <QuickActions userRole={currentUser?.role || 'client'} />
-                          <SmartNotifications 
-                            userRole={currentUser?.role || 'client'} 
-                            userId={currentUser?.id || 'default'} 
-                          />
                           <SystemHealthMonitor />
                           <ImpersonationBanner />
                         </MobileOptimizedLayout>

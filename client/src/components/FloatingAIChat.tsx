@@ -217,16 +217,20 @@ const FloatingAIChat = () => {
   if (!isOpen) {
     return (
       <div style={{ position: 'fixed', bottom: '120px', right: '24px', zIndex: 45 }}>
-        <Button
-          onClick={() => setIsOpen(true)}
-          className="w-12 h-12 rounded-full bg-[#007144] hover:bg-[#00a060] text-white shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center lg:w-14 lg:h-14"
-          title="AI Assistant"
-        >
-          <MessageCircle className="h-5 w-5 lg:h-6 lg:w-6" />
-        </Button>
-        {/* Notification dot */}
-        <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center lg:w-4 lg:h-4">
-          <Bot className="h-1.5 w-1.5 text-white lg:h-2 lg:w-2" />
+        <div className="relative">
+          <Button
+            onClick={() => setIsOpen(true)}
+            className="w-12 h-12 rounded-full bg-[#007144] hover:bg-[#00a060] text-white shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center lg:w-14 lg:h-14"
+            title="AI Assistant"
+          >
+            <MessageCircle className="h-5 w-5 lg:h-6 lg:w-6" />
+          </Button>
+          {/* Only show notification dot if there are unread messages or AI suggestions */}
+          {messages.length === 0 && (
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center lg:w-4 lg:h-4">
+              <Bot className="h-1.5 w-1.5 text-white lg:h-2 lg:w-2" />
+            </div>
+          )}
         </div>
       </div>
     );
