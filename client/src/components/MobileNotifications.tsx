@@ -39,6 +39,7 @@ const MobileNotifications = () => {
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
     const unread = notifications.filter(n => !n.read).length;
@@ -90,15 +91,23 @@ const MobileNotifications = () => {
     console.log('[MobileNotifications] Demo notifications loaded for testing');
   }, [notifications]);
 
-  // Auto-collapse notifications after 5 seconds
+  // Auto-collapse notifications after 5 seconds with countdown
   useEffect(() => {
     if (showNotifications) {
-      const timer = setTimeout(() => {
-        setShowNotifications(false);
-        console.log('[MobileNotifications] Auto-collapsed after 5 seconds');
-      }, 5000);
+      setCountdown(5);
+      
+      const countdownInterval = setInterval(() => {
+        setCountdown(prev => {
+          if (prev <= 1) {
+            setShowNotifications(false);
+            console.log('[MobileNotifications] Auto-collapsed after countdown');
+            return 5;
+          }
+          return prev - 1;
+        });
+      }, 1000);
 
-      return () => clearTimeout(timer);
+      return () => clearInterval(countdownInterval);
     }
   }, [showNotifications]);
 
@@ -106,133 +115,146 @@ const MobileNotifications = () => {
     <>
       {/* White Notification Bell - All devices */}
       <div className="fixed top-4 right-4 z-50">
-        <Button
-          variant="outline"
-          size="sm"
-          className="relative bg-white shadow-lg"
-          onClick={() => setShowNotifications(!showNotifications)}
-        >
-          <Bell className="h-4 w-4" />
-          {unreadCount > 0 && (
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-              {unreadCount}
-            </span>
-          )}
-        </Button>
+        <div className="relative">
+          <Button
+            variant="outline"
+            size="sm"
+            className="relative bg-white shadow-lg border-gray-200 hover:bg-gray-50 transition-colors duration-200"
+            onClick={() => setShowNotifications(!showNotifications)}
+          >
+            <Bell className="h-4 w-4 text-gray-600" />
+            {unreadCount > 0 && (
+              <div className="absolute -top-2 -right-2 bg-[#007144] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold shadow-sm">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </div>
+            )}
+          </Button>
+        </div>
       </div>
 
-      {/* White Notification Panel - All devices */}
+      {/* White Notification Panel - Card Format */}
       {showNotifications && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-40">
-          <div className="fixed top-0 right-0 w-full max-w-sm h-full bg-white shadow-xl">
-            <div className="flex items-center justify-between p-4 border-b">
-              <h2 className="text-lg font-semibold">Notifications</h2>
+        <div className="fixed top-16 right-4 z-40">
+          <div className="w-80 max-w-[90vw] bg-white shadow-2xl rounded-lg border border-gray-200">
+            {/* Card Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-100 bg-gradient-to-r from-[#007144] to-[#00a060] rounded-t-lg">
+              <div className="flex items-center gap-2">
+                <Bell className="h-4 w-4 text-white" />
+                <h2 className="text-lg font-semibold text-white">Notifications</h2>
+                {unreadCount > 0 && (
+                  <span className="bg-white/20 text-white text-xs px-2 py-1 rounded-full font-medium">
+                    {unreadCount} new
+                  </span>
+                )}
+              </div>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowNotifications(false)}
+                className="text-white hover:bg-white/20 h-8 w-8 p-0"
               >
                 <X className="h-4 w-4" />
               </Button>
             </div>
 
-            <div className="overflow-y-auto h-full pb-20">
+            {/* Auto-collapse timer indicator */}
+            <div className="bg-[#007144] h-1 relative overflow-hidden">
+              <div 
+                className="bg-gradient-to-r from-white/60 to-white/80 h-full transition-all duration-1000 ease-linear"
+                style={{ width: `${(countdown / 5) * 100}%` }}
+              ></div>
+            </div>
+
+            <div className="max-h-96 overflow-y-auto">
               {notifications.length === 0 ? (
                 <div className="p-8 text-center text-gray-500">
                   <Bell className="h-12 w-12 mx-auto mb-4 opacity-30" />
-                  <p>No notifications yet</p>
+                  <p className="text-sm">No notifications yet</p>
+                  <p className="text-xs text-gray-400 mt-1">You're all caught up!</p>
                 </div>
               ) : (
-                <div className="p-4 space-y-3">
+                <div className="p-3 space-y-2">
                   {notifications.map((notification) => (
-                    <Card 
+                    <div 
                       key={notification.id}
-                      className={`${!notification.read ? 'border-l-4 border-l-blue-500 bg-blue-50' : ''}`}
+                      className={`p-3 rounded-lg border transition-all duration-200 hover:shadow-md ${
+                        !notification.read 
+                          ? 'border-l-4 border-l-[#007144] bg-green-50/50 border-green-200' 
+                          : 'bg-gray-50/50 border-gray-200'
+                      }`}
                     >
-                      <CardContent className="p-3">
-                        <div className="flex items-start gap-3">
-                          {getIcon(notification.type)}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between">
-                              <h4 className="text-sm font-medium truncate">
-                                {notification.title}
-                              </h4>
+                      <div className="flex items-start gap-3">
+                        {getIcon(notification.type)}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <h4 className="text-sm font-medium truncate text-gray-900">
+                              {notification.title}
+                            </h4>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => dismissNotification(notification.id)}
+                              className="h-6 w-6 p-0 opacity-50 hover:opacity-100"
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {notification.message}
+                          </p>
+                          <div className="flex items-center justify-between mt-2">
+                            <span className="text-xs text-gray-500">
+                              {formatTime(notification.timestamp)}
+                            </span>
+                            {notification.actionLabel && (
                               <Button
-                                variant="ghost"
                                 size="sm"
-                                onClick={() => dismissNotification(notification.id)}
-                                className="h-6 w-6 p-0 opacity-50 hover:opacity-100"
+                                variant="link"
+                                className="h-auto p-0 text-xs text-[#007144] hover:text-[#00a060]"
+                                onClick={() => {
+                                  markAsRead(notification.id);
+                                  if (notification.actionUrl) {
+                                    window.location.href = notification.actionUrl;
+                                  }
+                                }}
                               >
-                                <X className="h-3 w-3" />
+                                {notification.actionLabel}
                               </Button>
-                            </div>
-                            <p className="text-sm text-gray-600 mt-1">
-                              {notification.message}
-                            </p>
-                            <div className="flex items-center justify-between mt-2">
-                              <span className="text-xs text-gray-500">
-                                {formatTime(notification.timestamp)}
-                              </span>
-                              {notification.actionLabel && (
-                                <Button
-                                  size="sm"
-                                  variant="link"
-                                  className="h-auto p-0 text-xs"
-                                  onClick={() => {
-                                    markAsRead(notification.id);
-                                    if (notification.actionUrl) {
-                                      window.location.href = notification.actionUrl;
-                                    }
-                                  }}
-                                >
-                                  {notification.actionLabel}
-                                </Button>
-                              )}
-                            </div>
+                            )}
                           </div>
                         </div>
-                      </CardContent>
-                    </Card>
+                      </div>
+                    </div>
                   ))}
+                </div>
+              )}
+              
+              {/* Card Footer */}
+              {notifications.length > 0 && (
+                <div className="p-3 border-t border-gray-100 bg-gray-50/50 rounded-b-lg">
+                  <div className="flex items-center justify-between">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setNotifications(notifications.map(n => ({ ...n, read: true })));
+                        setUnreadCount(0);
+                      }}
+                      className="text-xs text-gray-600 hover:text-gray-900"
+                    >
+                      Mark all read
+                    </Button>
+                    <span className="text-xs text-gray-500 flex items-center gap-1">
+                      <div className="w-2 h-2 rounded-full bg-[#007144] animate-pulse"></div>
+                      Auto-closes in {countdown}s
+                    </span>
+                  </div>
                 </div>
               )}
             </div>
           </div>
         </div>
       )}
-
-      {/* Desktop Notification Toast (for non-mobile) */}
-      <div className="hidden md:block fixed top-4 right-4 z-50">
-        {notifications
-          .filter(n => !n.read)
-          .slice(0, 3)
-          .map((notification) => (
-            <Card key={notification.id} className="mb-2 w-80 shadow-lg">
-              <CardContent className="p-3">
-                <div className="flex items-start gap-3">
-                  {getIcon(notification.type)}
-                  <div className="flex-1">
-                    <h4 className="text-sm font-medium">{notification.title}</h4>
-                    <p className="text-sm text-gray-600">{notification.message}</p>
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="text-xs text-gray-500">
-                        {formatTime(notification.timestamp)}
-                      </span>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => markAsRead(notification.id)}
-                        className="h-6 text-xs"
-                      >
-                        Dismiss
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-      </div>
     </>
   );
 };
