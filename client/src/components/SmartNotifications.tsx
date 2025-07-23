@@ -32,12 +32,15 @@ const SmartNotifications = () => {
   const [autoCollapseTimer, setAutoCollapseTimer] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    // Clear any existing persistent notifications per user request
-    localStorage.removeItem('lush-notifications');
-    setNotifications([]);
-    setUnreadCount(0);
-
-    console.log('[SmartNotifications] All notifications cleared per user request');
+    // Generate demo notifications for testing
+    const userRole = getCurrentUserRole();
+    const sampleNotifications = generateRoleBasedNotifications(userRole);
+    
+    if (sampleNotifications.length > 0) {
+      setNotifications(sampleNotifications);
+      setUnreadCount(sampleNotifications.filter(n => !n.read).length);
+      console.log('[SmartNotifications] Demo notifications loaded for testing');
+    }
   }, []);
 
   const getCurrentUserRole = () => {
@@ -52,7 +55,29 @@ const SmartNotifications = () => {
   const generateRoleBasedNotifications = (role: string): Notification[] => {
     const baseId = Date.now();
     
-    const notifications: Notification[] = [];
+    // Demo notifications for testing - consistent with mobile system
+    const notifications: Notification[] = [
+      {
+        id: `${baseId}-1`,
+        type: 'info',
+        title: 'Demo: New Project Update',
+        message: 'Luxury Villa - Toorak progress updated',
+        timestamp: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
+        priority: 'medium',
+        category: 'Projects',
+        read: false
+      },
+      {
+        id: `${baseId}-2`,
+        type: 'warning',
+        title: 'Demo: Review Required',
+        message: 'Progress claim needs approval',
+        timestamp: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
+        priority: 'high',
+        category: 'Claims',
+        read: false
+      }
+    ];
 
     if (role === 'admin') {
       notifications.push(
@@ -161,7 +186,7 @@ const SmartNotifications = () => {
 
   if (!isVisible) {
     return (
-      <div className="floating-button-base floating-button-5 hidden lg:block" style={{ zIndex: 30 }}>
+      <div className="floating-button-base floating-button-5" style={{ zIndex: 30 }}>
         <div className="relative">
           <Button
             onClick={() => handleVisibilityChange(true)}
@@ -182,7 +207,7 @@ const SmartNotifications = () => {
   }
 
   return (
-    <div className="floating-button-base floating-button-5 hidden lg:block" style={{ zIndex: 30 }}>
+    <div className="floating-button-base floating-button-5" style={{ zIndex: 30 }}>
       <Card className="w-80 shadow-xl border-2 bg-white max-h-96">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">

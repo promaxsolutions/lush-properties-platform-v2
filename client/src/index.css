@@ -424,6 +424,29 @@ textarea:focus-visible {
   .floating-button-5 { bottom: 352px; }  /* Notifications */
 }
 
+/* Mobile adjustments */
+@media (max-width: 767px) {
+  .floating-button-base {
+    right: 16px;
+  }
+  
+  .floating-button-base .floating-btn {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .floating-button-base .floating-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .floating-button-1 { bottom: 16px; }   /* QuickActions */
+  .floating-button-2 { bottom: 80px; }   /* Expanded QuickActions */
+  .floating-button-3 { bottom: 144px; }  /* AI Chat */
+  .floating-button-4 { bottom: 208px; }  /* Accessibility */
+  .floating-button-5 { bottom: 272px; }  /* Notifications */
+}
+
 /* Tablet adjustments */
 @media (min-width: 768px) and (max-width: 1023px) {
   .floating-button-base {
