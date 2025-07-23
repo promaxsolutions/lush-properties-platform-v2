@@ -45,7 +45,7 @@ import PolishedDashboard from "./components/PolishedDashboard";
 import EnhancedReceiptUpload from "./components/EnhancedReceiptUpload";
 import RoleLoginTester from "./components/RoleLoginTester";
 import WorkingLogin from "./components/WorkingLogin";
-import ResponsiveLayout from "./components/ResponsiveLayout";
+import MobileOptimizedLayout from "./components/MobileOptimizedLayout";
 import PolishedBuilderPortal from "./components/PolishedBuilderPortal";
 import PolishedClientPortal from "./components/PolishedClientPortal";
 import FloatingAIChat from "./components/FloatingAIChat";
@@ -172,7 +172,7 @@ function App() {
                     path="/*"
                     element={
                       <AuthProtectedRoute>
-                        <ResponsiveLayout>
+                        <MobileOptimizedLayout>
                           <Routes>
                             <Route path="dashboard" element={
                               <RouteGuard allowedRoles={['admin', 'superadmin']} userRole={currentUser?.role}>
@@ -574,7 +574,7 @@ function App() {
                           />
                           <SystemHealthMonitor />
                           <ImpersonationBanner />
-                        </ResponsiveLayout>
+                        </MobileOptimizedLayout>
                       </AuthProtectedRoute>
                     }
                   />

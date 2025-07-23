@@ -24,8 +24,11 @@ interface NavigationItem {
 }
 
 interface RoleBasedNavigationProps {
-  userRole: string;
+  userRole?: string;
+  role?: string;
   isCollapsed?: boolean;
+  mobile?: boolean;
+  onNavigate?: () => void;
 }
 
 const getNavigationItems = (userRole: string): NavigationItem[] => {
@@ -188,12 +191,19 @@ const getNavigationItems = (userRole: string): NavigationItem[] => {
   return [];
 };
 
-const RoleBasedNavigation = ({ userRole, isCollapsed = false }: RoleBasedNavigationProps) => {
+const RoleBasedNavigation = ({ 
+  userRole, 
+  role, 
+  isCollapsed = false, 
+  mobile = false, 
+  onNavigate 
+}: RoleBasedNavigationProps) => {
   const location = useLocation();
+  const currentRole = userRole || role || 'client';
 
   // Get navigation items based on user role with proper filtering
-  const navigationItems = getNavigationItems(userRole);
-  const allowedItems = navigationItems.filter(item => item.roles.includes(userRole));
+  const navigationItems = getNavigationItems(currentRole);
+  const allowedItems = navigationItems.filter(item => item.roles.includes(currentRole));
   
   console.log('[NAV] Rendering navigation for role:', userRole, 'Items:', allowedItems.length, 'Current location:', location);
 
@@ -214,10 +224,14 @@ const RoleBasedNavigation = ({ userRole, isCollapsed = false }: RoleBasedNavigat
           <Link 
             key={item.path} 
             to={item.path}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 cursor-pointer transform hover:scale-[1.02] active:scale-[0.98] mobile-nav-item ${
+            className={`flex items-center gap-3 px-3 py-3 rounded-lg font-medium transition-all duration-300 cursor-pointer transform hover:scale-[1.02] active:scale-[0.98] ${
+              mobile ? 'min-h-[48px] text-base' : 'text-sm'
+            } ${
               isActive
-                ? 'bg-lush-primary text-white shadow-sm'
-                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                ? 'bg-[#007144] text-white shadow-sm'
+                : mobile 
+                  ? 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
             }`}
             data-nav-item={item.path}
             data-nav-role={userRole}
@@ -226,10 +240,15 @@ const RoleBasedNavigation = ({ userRole, isCollapsed = false }: RoleBasedNavigat
               console.log(`[NAV-CLICK] Navigation triggered:`, {
                 path: item.path,
                 label: item.label,
-                userRole: userRole,
+                userRole: currentRole,
                 timestamp: new Date().toISOString(),
                 isHashLink: item.path.includes('#')
               });
+              
+              // Call mobile onNavigate if provided
+              if (mobile && onNavigate) {
+                onNavigate();
+              }
               
               // Check if this is a hash link
               if (item.path.includes('#')) {
