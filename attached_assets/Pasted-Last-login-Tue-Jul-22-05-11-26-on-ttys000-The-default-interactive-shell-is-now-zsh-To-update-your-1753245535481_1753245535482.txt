@@ -1,0 +1,54 @@
+Last login: Tue Jul 22 05:11:26 on ttys000
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+MacBook-Air-2:~ alukojoshfx$ #!/bin/bash
+MacBook-Air-2:~ alukojoshfx$ # One-command deployment for Lush Properties Platform
+MacBook-Air-2:~ alukojoshfx$ # Copy and paste this entire block into your Mac terminal
+MacBook-Air-2:~ alukojoshfx$ 
+MacBook-Air-2:~ alukojoshfx$ echo "🚀 Starting one-command deployment..." && \
+> cd ~/Downloads && \
+> echo "📂 Current directory: $(pwd)" && \
+> echo "📁 Looking for downloaded project in Downloads..." && \
+> if [ -d "lush-properties-platform" ] || [ -d "lush-properties-updated" ] || [ -d "workspace" ] || [ -d "lush-properties-platform-v2" ]; then \
+>     echo "✅ Found downloaded project" && \
+>     PROJECT_DIR=$(find . -maxdepth 1 -type d -name "*lush*" -o -name "workspace" | head -1) && \
+>     echo "📦 Using project directory: $PROJECT_DIR" && \
+>     if [ -d "$HOME/lush-properties-platform-v2" ]; then \
+>         echo "🔄 Updating existing repository..." && \
+>         cd "$HOME/lush-properties-platform-v2" && \
+>         rsync -av --exclude='.git' --exclude='node_modules' "$HOME/Downloads/$PROJECT_DIR/" . && \
+>         git add . && \
+>         git commit -m "feat: Advanced UI/UX Polish & Infrastructure Suite
+> 
+> ✨ Professional-Grade Enhancements Complete:
+> - Comprehensive error handling with LoadingSpinner, ErrorBoundary, Toast system
+> - PerformanceOptimizer with debouncing, throttling, virtualized lists
+> - AccessibilityEnhancer with keyboard shortcuts (Alt+A/C/T) and ARIA compliance
+> - PWAInstaller for seamless iOS/Android app installation
+> - QuickActions floating panel with role-based shortcuts
+> - SmartNotifications system with intelligent alerts and priority filtering
+> - SystemHealthMonitor for real-time system metrics and health checks
+> - OptimizedImage component with lazy loading and fallback support
+> - Fixed all TypeScript LSP errors and improved code reliability
+> - Comprehensive accessibility styles and mobile-first optimizations
+> - Enterprise-grade UI/UX polish ready for production deployment" && \
+>         git push origin main && \
+>         echo "🎉 SUCCESS! Deployment complete!" && \
+>         echo "🌐 Your updates are deploying to: https://lush-properties-platform-v2-g9x5-5z4w8bulh.vercel.app/" && \
+>         echo "⏰ Allow 2-3 minutes for Vercel to build and deploy" && \
+>         echo "✨ New features include: Accessibility panel, PWA installer, Smart notifications, Quick actions, System health monitor"; \
+>     else \
+>         echo "❌ Repository not found at ~/lush-properties-platform-v2" && \
+>         echo "📍 Available options:" && \
+>         echo "   1. If you have the repo elsewhere: cd /path/to/your/repo && git status" && \
+>         echo "   2. Or clone fresh: cd ~/Downloads/$PROJECT_DIR && git init && git remote add origin YOUR_GITHUB_URL"; \
+>     fi; \
+> else \
+>     echo "❌ No Replit project found in Downloads" && \
+>     echo "📂 Contents of Downloads:" && \
+>     ls -la && \
+>     echo "📥 Please download from Replit first: Three dots menu → Download as zip → Extract to Downloads"; \
+> fi
+> 

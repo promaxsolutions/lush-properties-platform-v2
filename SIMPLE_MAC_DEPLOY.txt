@@ -1,0 +1,22 @@
+# Simple Mac Deployment Commands
+# Run these commands one by one in your terminal
+
+# First, download the Replit project:
+# 1. In Replit: Click three dots menu → "Download as zip" 
+# 2. Extract the zip file to your Downloads folder
+
+# Then run these commands:
+
+cd ~/Downloads
+ls -la | grep -i lush
+
+# If you see a folder with "lush" or "workspace", use that name in the next commands:
+# Replace "FOLDER_NAME" with the actual folder name you see
+
+cd ~/lush-properties-platform-v2
+rsync -av --exclude='.git' --exclude='node_modules' ~/Downloads/FOLDER_NAME/ .
+git add .
+git commit -m "feat: Advanced UI/UX Polish & Infrastructure Suite - Professional-grade accessibility, performance optimization, PWA installation, smart notifications, and system health monitoring"
+git push origin main
+
+# After pushing, your updates will deploy automatically to Vercel!
