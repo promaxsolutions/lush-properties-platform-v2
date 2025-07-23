@@ -201,14 +201,14 @@ const SmartNotifications = () => {
         <div className="relative">
           <Button
             onClick={() => handleVisibilityChange(true)}
-            className="w-12 h-12 rounded-full bg-orange-600 hover:bg-orange-700 text-white shadow-lg transition-all duration-200 flex items-center justify-center"
+            className="w-12 h-12 rounded-full bg-orange-600 hover:bg-orange-700 text-white shadow-lg transition-all duration-200 flex items-center justify-center lg:w-14 lg:h-14"
             aria-label={`Notifications (${unreadCount} unread)`}
             title={`Notifications (${unreadCount} unread)`}
           >
-            <Bell className="h-5 w-5" />
+            <Bell className="h-5 w-5 lg:h-6 lg:w-6" />
           </Button>
           {unreadCount > 0 && (
-            <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold">
+            <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold lg:w-7 lg:h-7">
               {unreadCount > 9 ? '9+' : unreadCount}
             </div>
           )}
@@ -218,7 +218,7 @@ const SmartNotifications = () => {
   }
 
   return (
-    <div className="floating-button-base floating-button-5" style={{ zIndex: 30, bottom: '456px' }}>
+    <div className="floating-button-base floating-button-5" style={{ zIndex: 30 }}>
       <Card className="w-80 shadow-xl border-2 bg-white max-h-96">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">

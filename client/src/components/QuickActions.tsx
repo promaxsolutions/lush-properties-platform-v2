@@ -164,11 +164,11 @@ const QuickActions: React.FC<QuickActionsProps> = ({ userRole, onAction }) => {
       <div className="floating-button-base floating-button-1" style={{ zIndex: 40 }}>
         <Button
           onClick={() => setIsVisible(true)}
-          className="bg-[#007144] hover:bg-[#00a060] text-white p-3 rounded-full shadow-lg transition-all duration-200"
+          className="w-12 h-12 bg-[#007144] hover:bg-[#00a060] text-white rounded-full shadow-lg transition-all duration-200 flex items-center justify-center lg:w-14 lg:h-14"
           aria-label="Show quick actions"
           title={`Quick Actions (${allowedActions.length} available)`}
         >
-          <Zap className="w-5 h-5" />
+          <Zap className="w-5 h-5 lg:w-6 lg:h-6" />
         </Button>
       </div>
     );

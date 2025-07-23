@@ -367,17 +367,24 @@ textarea:focus-visible {
   .floating-button-5 { bottom: 304px; }
 }
 
-/* Large screen adjustments */
+/* Large screen adjustments - Desktop with sidebar layout */
 @media (min-width: 1024px) {
   .floating-button-base {
     right: 32px;
+    z-index: 40; /* Below profile dropdown but above content */
   }
   
-  .floating-button-1 { bottom: 32px; }
-  .floating-button-2 { bottom: 104px; }
-  .floating-button-3 { bottom: 176px; }
-  .floating-button-4 { bottom: 248px; }
-  .floating-button-5 { bottom: 320px; }
+  .floating-button-1 { bottom: 32px; }   /* QuickActions */
+  .floating-button-2 { bottom: 104px; }  /* Expanded QuickActions */
+  .floating-button-3 { bottom: 176px; }  /* AI Chat */
+  .floating-button-4 { bottom: 248px; }  /* Accessibility */
+  .floating-button-5 { bottom: 320px; }  /* Notifications */
+  
+  /* Ensure no overlap with profile dropdown (z-index 50) */
+  .floating-button-profile-safe {
+    right: 32px;
+    max-width: calc(100vw - 320px); /* Account for sidebar width */
+  }
 }
 
 /* Tablet adjustments */

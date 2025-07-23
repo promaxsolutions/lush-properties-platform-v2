@@ -34,30 +34,8 @@ const ResponsiveDashboard = () => {
 
   const currentMode = isMobile ? 'Mobile' : 'Desktop';
 
-  return (
-    <div>
-      {/* View Toggle for Testing */}
-      <div className="fixed top-4 left-4 z-50 bg-white rounded-lg shadow-lg p-2 border">
-        <div className="flex items-center gap-2 text-xs">
-          <span className="text-gray-600">
-            {screenWidth}px - {currentMode}
-          </span>
-          <Button
-            size="sm"
-            variant={forceDesktop ? "default" : "outline"}
-            onClick={() => setForceDesktop(!forceDesktop)}
-            className="h-8 px-2 text-xs"
-          >
-            {forceDesktop ? <Monitor className="h-3 w-3 mr-1" /> : <Smartphone className="h-3 w-3 mr-1" />}
-            {forceDesktop ? 'Desktop' : 'Auto'}
-          </Button>
-        </div>
-      </div>
-
-      {/* Return the appropriate dashboard */}
-      {isMobile ? <MobileDashboard /> : <Dashboard />}
-    </div>
-  );
+  // Return the appropriate dashboard based on screen size
+  return isMobile ? <MobileDashboard /> : <Dashboard />;
 };
 
 export default ResponsiveDashboard;

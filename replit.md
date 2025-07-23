@@ -110,6 +110,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- **Desktop Layout Cleanup & Floating Button Optimization (July 23, 2025)**: Fixed desktop-specific layout issues identified from user Mac screenshot:
+  * **Resolved Floating Button Alignment**: Updated CSS positioning system with proper z-index hierarchy (Profile=50, QuickActions=40, AI Chat=45, Accessibility=35, Notifications=30)
+  * **Fixed Profile Dropdown Overlap**: Ensured UserProfileDropdown at top-right doesn't conflict with other elements by removing SmoothRoleSwitcher from desktop view
+  * **Enhanced Notification Auto-Collapse**: Verified 5-second auto-close timer works on both mobile and desktop views for SmartNotifications component
+  * **Improved Desktop Responsiveness**: Added larger touch targets (14x14px) for desktop floating buttons vs mobile (12x12px) with proper icon scaling
+  * **Profile Sticky Positioning**: Confirmed UserProfileDropdown stays fixed at top-right corner during scrolling with proper z-index layering
+  * **Removed Debug Toggle**: Cleaned up temporary view toggle button, restored clean desktop layout without extra UI elements
+  * **Verified Component Hierarchy**: Confirmed SmoothRoleSwitcher component exists but is properly excluded from desktop layout per user requirements
+
 - **Comprehensive Code Audit & User Experience Cleanup (July 23, 2025)**: Conducted systematic codebase review and removed user interface discrepancies:
   * **Removed Role Display from QuickActions**: Eliminated confusing "Role: {userRole}" text that was mistaken for role switching functionality
   * **Enhanced User Profile Dropdown**: Created modern top-right profile dropdown with avatar, role badges, and professional logout access
