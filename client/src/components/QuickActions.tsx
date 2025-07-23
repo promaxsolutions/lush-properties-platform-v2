@@ -226,7 +226,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({ userRole, onAction }) => {
         
         <div className="mt-3 pt-3 border-t">
           <p className="text-xs text-gray-500 text-center">
-            Role: {userRole} • {allowedActions.length} actions available
+            {allowedActions.length} actions available
           </p>
         </div>
       </CardContent>
