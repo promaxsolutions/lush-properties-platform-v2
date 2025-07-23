@@ -742,6 +742,27 @@ Give me a brief insight into potential profitability, risk factors, and recommen
     }
   };
 
+  // Get time-based greeting
+  const getTimeOfDay = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'morning';
+    if (hour < 17) return 'afternoon';
+    return 'evening';
+  };
+
+  // Get current date and time with timezone
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    const options = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZoneName: 'short'
+    };
+    return now.toLocaleDateString(undefined, options);
+  };
+
   // Chart data for financial overview
   const chartData = {
     labels: filteredProjects.map(p => p.name),
@@ -795,11 +816,25 @@ Give me a brief insight into potential profitability, risk factors, and recommen
             </span>
           )}
         </div>
-        <div className="flex items-center gap-4">
-          {/* Header Layout like screenshot */}
+        <div className="flex items-center justify-between w-full">
+          {/* Beautiful Welcome Section */}
+          <div className="flex items-center gap-4">
+            <div className="bg-gradient-to-r from-green-50 to-blue-50 px-4 py-2 rounded-lg border border-green-100">
+              <div className="text-lg font-semibold text-gray-800">
+                Good {getTimeOfDay()}, {userRole === 'admin' ? 'Alex' : 
+                                        userRole === 'builder' ? 'Mike' :
+                                        userRole === 'client' ? 'Jennifer' :
+                                        userRole === 'investor' ? 'David' :
+                                        userRole === 'accountant' ? 'Emma' : 'User'}! 👋
+              </div>
+              <div className="text-sm text-gray-600">{getCurrentDateTime()}</div>
+            </div>
+          </div>
+
+          {/* User Profile Section */}
           <div className="flex items-center gap-3">
             {/* User Avatar */}
-            <div className="w-8 h-8 bg-[#007144] rounded-full flex items-center justify-center">
+            <div className="w-9 h-9 bg-[#007144] rounded-full flex items-center justify-center shadow-md">
               <span className="text-sm font-bold text-white">
                 {userRole === 'admin' ? 'A' : 
                  userRole === 'builder' ? 'M' :
@@ -810,7 +845,7 @@ Give me a brief insight into potential profitability, risk factors, and recommen
             </div>
             
             {/* User Info */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <div>
                 <div className="text-sm font-medium text-gray-900">
                   {userRole === 'admin' && 'Administrator'}
@@ -835,25 +870,13 @@ Give me a brief insight into potential profitability, risk factors, and recommen
                   sessionStorage.clear();
                   window.location.href = '/login';
                 }}
-                className="flex items-center gap-1 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors border"
+                className="flex items-center gap-1 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors border shadow-sm"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
                 <span>Logout</span>
               </button>
-              
-              {/* Time/User Display */}
-              <div className="text-right">
-                <div className="text-sm font-medium text-gray-900">
-                  Hi {userRole === 'admin' ? 'Alex' : 
-                      userRole === 'builder' ? 'Mike' :
-                      userRole === 'client' ? 'Jennifer' :
-                      userRole === 'investor' ? 'David' :
-                      userRole === 'accountant' ? 'Emma' : 'User'}
-                </div>
-                <div className="text-xs text-gray-500">{localTime}</div>
-              </div>
             </div>
           </div>
         </div>

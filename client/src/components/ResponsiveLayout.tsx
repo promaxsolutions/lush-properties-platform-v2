@@ -51,6 +51,14 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
   const [user, setUser] = useState(getCurrentUser());
   const userRole = user?.role || 'client';
 
+  // Get time-based greeting
+  const getTimeOfDay = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'morning';
+    if (hour < 17) return 'afternoon';
+    return 'evening';
+  };
+
   // Listen for user changes to refresh layout and reset sidebar state
   useEffect(() => {
     const handleUserChange = () => {
@@ -166,34 +174,28 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
       {/* Mobile Header */}
       <div className="lg:hidden bg-white border-b sticky top-0 z-40">
         <div className="flex items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-3">
-            {/* User Avatar */}
-            <div className="w-8 h-8 bg-[#007144] rounded-full flex items-center justify-center">
-              <span className="text-sm font-bold text-white">
-                {userRole === 'admin' ? 'A' : 
-                 userRole === 'builder' ? 'M' :
-                 userRole === 'client' ? 'J' :
-                 userRole === 'investor' ? 'D' :
-                 userRole === 'accountant' ? 'E' : 'U'}
-              </span>
+          <div className="flex items-center justify-between w-full">
+            {/* Beautiful Welcome for Mobile */}
+            <div className="bg-gradient-to-r from-green-50 to-blue-50 px-3 py-1.5 rounded-lg border border-green-100">
+              <div className="text-sm font-semibold text-gray-800">
+                Good {getTimeOfDay()}, {userRole === 'admin' ? 'Alex' : 
+                                        userRole === 'builder' ? 'Mike' :
+                                        userRole === 'client' ? 'Jennifer' :
+                                        userRole === 'investor' ? 'David' :
+                                        userRole === 'accountant' ? 'Emma' : 'User'}! 👋
+              </div>
             </div>
-            
-            <div className="flex items-center gap-3">
-              <div className="text-sm">
-                <div className="font-medium text-gray-900">
-                  {userRole === 'admin' && 'Administrator'}
-                  {userRole === 'builder' && 'Builder'}
-                  {userRole === 'client' && 'Client'}
-                  {userRole === 'investor' && 'Investor'}
-                  {userRole === 'accountant' && 'Accountant'}
-                </div>
-                <div className="text-xs text-gray-500">
-                  {userRole === 'admin' && 'admin@lush.com'}
-                  {userRole === 'builder' && 'builder@lush.com'}
-                  {userRole === 'client' && 'client@lush.com'}
-                  {userRole === 'investor' && 'investor@lush.com'}
-                  {userRole === 'accountant' && 'accountant@lush.com'}
-                </div>
+
+            <div className="flex items-center gap-2">
+              {/* User Avatar */}
+              <div className="w-8 h-8 bg-[#007144] rounded-full flex items-center justify-center">
+                <span className="text-sm font-bold text-white">
+                  {userRole === 'admin' ? 'A' : 
+                   userRole === 'builder' ? 'M' :
+                   userRole === 'client' ? 'J' :
+                   userRole === 'investor' ? 'D' :
+                   userRole === 'accountant' ? 'E' : 'U'}
+                </span>
               </div>
               
               {/* Logout Button */}
@@ -210,14 +212,6 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
                 </svg>
                 <span>Logout</span>
               </button>
-              
-              <div className="text-xs text-gray-900">
-                Hi {userRole === 'admin' ? 'Alex' : 
-                    userRole === 'builder' ? 'Mike' :
-                    userRole === 'client' ? 'Jennifer' :
-                    userRole === 'investor' ? 'David' :
-                    userRole === 'accountant' ? 'Emma' : 'User'}
-              </div>
             </div>
           </div>
           
