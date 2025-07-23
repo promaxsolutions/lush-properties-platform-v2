@@ -67,11 +67,11 @@ const AccessibilityEnhancer = () => {
       <div className="floating-button-base floating-button-4" style={{ zIndex: 35 }}>
         <Button
           onClick={() => setIsVisible(true)}
-          className="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg transition-all duration-200 flex items-center justify-center"
+          className="floating-btn bg-blue-600 hover:bg-blue-700 text-white"
           aria-label="Accessibility Options"
           title="Accessibility Options"
         >
-          <Eye className="h-5 w-5" />
+          <Eye />
         </Button>
       </div>
     );

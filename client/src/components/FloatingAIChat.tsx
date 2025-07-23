@@ -220,10 +220,10 @@ const FloatingAIChat = () => {
         <div className="relative">
           <Button
             onClick={() => setIsOpen(true)}
-            className="w-12 h-12 rounded-full bg-[#007144] hover:bg-[#00a060] text-white shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center lg:w-14 lg:h-14"
+            className="floating-btn bg-[#007144] hover:bg-[#00a060] text-white"
             title="AI Assistant"
           >
-            <MessageCircle className="h-5 w-5 lg:h-6 lg:w-6" />
+            <MessageCircle />
           </Button>
           {/* Only show notification dot if there are unread messages or AI suggestions */}
           {messages.length === 0 && (

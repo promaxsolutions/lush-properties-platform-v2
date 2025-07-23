@@ -341,18 +341,41 @@ textarea:focus-visible {
 }
 
 /* Floating Button Spacing System */
-/* Perfect 72px spacing for all devices */
+/* Consistent sizing and perfect 80px spacing for all devices */
 .floating-button-base {
   position: fixed;
   right: 24px;
   transition: all 0.3s ease;
 }
 
+/* Standardized button sizing */
+.floating-button-base .floating-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.floating-button-base .floating-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.floating-button-base .floating-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Consistent 80px spacing between buttons */
 .floating-button-1 { bottom: 24px; }    /* QuickActions */
-.floating-button-2 { bottom: 96px; }    /* Expanded QuickActions */
-.floating-button-3 { bottom: 168px; }   /* AI Chat */
-.floating-button-4 { bottom: 240px; }   /* Accessibility */
-.floating-button-5 { bottom: 312px; }   /* Notifications */
+.floating-button-2 { bottom: 104px; }   /* Expanded QuickActions */
+.floating-button-3 { bottom: 184px; }   /* AI Chat */
+.floating-button-4 { bottom: 264px; }   /* Accessibility */
+.floating-button-5 { bottom: 344px; }   /* Notifications */
 
 /* Mobile responsive adjustments */
 @media (max-width: 768px) {
@@ -360,31 +383,45 @@ textarea:focus-visible {
     right: 16px;
   }
   
+  .floating-button-base .floating-btn {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .floating-button-base .floating-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+  
   .floating-button-1 { bottom: 16px; }
-  .floating-button-2 { bottom: 88px; }
-  .floating-button-3 { bottom: 160px; }
-  .floating-button-4 { bottom: 232px; }
-  .floating-button-5 { bottom: 304px; }
+  .floating-button-2 { bottom: 96px; }
+  .floating-button-3 { bottom: 176px; }
+  .floating-button-4 { bottom: 256px; }
+  .floating-button-5 { bottom: 336px; }
 }
 
-/* Large screen adjustments - Desktop with sidebar layout */
+/* Desktop adjustments - larger buttons with consistent spacing */
 @media (min-width: 1024px) {
   .floating-button-base {
     right: 32px;
     z-index: 40; /* Below profile dropdown but above content */
   }
   
-  .floating-button-1 { bottom: 32px; }   /* QuickActions */
-  .floating-button-2 { bottom: 104px; }  /* Expanded QuickActions */
-  .floating-button-3 { bottom: 176px; }  /* AI Chat */
-  .floating-button-4 { bottom: 248px; }  /* Accessibility */
-  .floating-button-5 { bottom: 320px; }  /* Notifications */
-  
-  /* Ensure no overlap with profile dropdown (z-index 50) */
-  .floating-button-profile-safe {
-    right: 32px;
-    max-width: calc(100vw - 320px); /* Account for sidebar width */
+  .floating-button-base .floating-btn {
+    width: 60px;
+    height: 60px;
   }
+  
+  .floating-button-base .floating-btn svg {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .floating-button-1 { bottom: 32px; }   /* QuickActions */
+  .floating-button-2 { bottom: 112px; }  /* Expanded QuickActions */
+  .floating-button-3 { bottom: 192px; }  /* AI Chat */
+  .floating-button-4 { bottom: 272px; }  /* Accessibility */
+  .floating-button-5 { bottom: 352px; }  /* Notifications */
 }
 
 /* Tablet adjustments */
@@ -393,9 +430,19 @@ textarea:focus-visible {
     right: 20px;
   }
   
+  .floating-button-base .floating-btn {
+    width: 52px;
+    height: 52px;
+  }
+  
+  .floating-button-base .floating-btn svg {
+    width: 22px;
+    height: 22px;
+  }
+  
   .floating-button-1 { bottom: 20px; }
-  .floating-button-2 { bottom: 92px; }
-  .floating-button-3 { bottom: 164px; }
-  .floating-button-4 { bottom: 236px; }
-  .floating-button-5 { bottom: 308px; }
+  .floating-button-2 { bottom: 100px; }
+  .floating-button-3 { bottom: 180px; }
+  .floating-button-4 { bottom: 260px; }
+  .floating-button-5 { bottom: 340px; }
 }

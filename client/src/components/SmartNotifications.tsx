@@ -201,11 +201,11 @@ const SmartNotifications = () => {
         <div className="relative">
           <Button
             onClick={() => handleVisibilityChange(true)}
-            className="w-12 h-12 rounded-full bg-orange-600 hover:bg-orange-700 text-white shadow-lg transition-all duration-200 flex items-center justify-center lg:w-14 lg:h-14"
+            className="floating-btn bg-orange-600 hover:bg-orange-700 text-white"
             aria-label={`Notifications (${unreadCount} unread)`}
             title={`Notifications (${unreadCount} unread)`}
           >
-            <Bell className="h-5 w-5 lg:h-6 lg:w-6" />
+            <Bell />
           </Button>
           {unreadCount > 0 && (
             <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold lg:w-7 lg:h-7">
