@@ -29,6 +29,7 @@ const SmartNotifications = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [autoCollapseTimer, setAutoCollapseTimer] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     // Load saved notifications
@@ -140,6 +141,36 @@ const SmartNotifications = () => {
     localStorage.setItem('lush-notifications', JSON.stringify(updated));
   };
 
+  const handleVisibilityChange = (visible: boolean) => {
+    setIsVisible(visible);
+    
+    if (visible) {
+      // Auto-collapse after 5 seconds
+      if (autoCollapseTimer) {
+        clearTimeout(autoCollapseTimer);
+      }
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+      }, 5000);
+      setAutoCollapseTimer(timer);
+    } else {
+      // Clear timer if manually closed
+      if (autoCollapseTimer) {
+        clearTimeout(autoCollapseTimer);
+        setAutoCollapseTimer(null);
+      }
+    }
+  };
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (autoCollapseTimer) {
+        clearTimeout(autoCollapseTimer);
+      }
+    };
+  }, [autoCollapseTimer]);
+
   const deleteNotification = (id: string) => {
     const updated = notifications.filter(n => n.id !== id);
     setNotifications(updated);
@@ -169,7 +200,7 @@ const SmartNotifications = () => {
       <div className="floating-button-base floating-button-5" style={{ zIndex: 30 }}>
         <div className="relative">
           <Button
-            onClick={() => setIsVisible(true)}
+            onClick={() => handleVisibilityChange(true)}
             className="w-12 h-12 rounded-full bg-orange-600 hover:bg-orange-700 text-white shadow-lg transition-all duration-200 flex items-center justify-center"
             aria-label={`Notifications (${unreadCount} unread)`}
             title={`Notifications (${unreadCount} unread)`}
@@ -207,7 +238,7 @@ const SmartNotifications = () => {
                 </Button>
               )}
               <Button
-                onClick={() => setIsVisible(false)}
+                onClick={() => handleVisibilityChange(false)}
                 variant="ghost"
                 size="sm"
                 className="p-1 h-auto"

@@ -12,6 +12,7 @@ import {
   Home,
   Settings
 } from "lucide-react";
+import UserProfileDropdown from "./UserProfileDropdown";
 
 interface MobileOptimizedLayoutProps {
   children: ReactNode;
@@ -85,11 +86,8 @@ const MobileOptimizedLayout = ({ children }: MobileOptimizedLayoutProps) => {
               </div>
             </div>
             
-            {/* Role Badge and Menu */}
+            {/* Profile and Menu */}
             <div className="flex items-center gap-2">
-              <div className="text-xs bg-[#007144]/10 text-[#007144] px-3 py-1.5 rounded-full font-medium border border-[#007144]/20">
-                {userRole}
-              </div>
               <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
                 <SheetTrigger asChild>
                   <Button 
@@ -136,12 +134,25 @@ const MobileOptimizedLayout = ({ children }: MobileOptimizedLayoutProps) => {
                     {/* User Info and Logout */}
                     <div className="border-t p-4 bg-gray-50">
                       <div className="flex items-center gap-3 mb-4 p-3 bg-white rounded-lg border">
-                        <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                          <User className="h-5 w-5 text-gray-600" />
+                        <div className="w-10 h-10 bg-[#007144] rounded-full flex items-center justify-center">
+                          <span className="text-white font-semibold text-sm">
+                            {user?.email ? user.email[0].toUpperCase() : 'U'}
+                          </span>
                         </div>
                         <div className="flex-1">
                           <p className="text-sm font-medium text-gray-900">{user?.email || 'User'}</p>
-                          <p className="text-xs text-gray-500 capitalize">{userRole} Access</p>
+                          <div className="flex items-center gap-1 mt-1">
+                            <div className={`text-xs px-2 py-0.5 rounded-full font-medium border ${
+                              userRole === 'admin' || userRole === 'superadmin' ? 'bg-red-100 text-red-800 border-red-200' :
+                              userRole === 'builder' ? 'bg-orange-100 text-orange-800 border-orange-200' :
+                              userRole === 'client' ? 'bg-blue-100 text-blue-800 border-blue-200' :
+                              userRole === 'investor' ? 'bg-green-100 text-green-800 border-green-200' :
+                              userRole === 'accountant' ? 'bg-purple-100 text-purple-800 border-purple-200' :
+                              'bg-gray-100 text-gray-800 border-gray-200'
+                            }`}>
+                              {userRole}
+                            </div>
+                          </div>
                         </div>
                       </div>
                       <SecureLogout className="w-full justify-center min-h-[44px] text-base font-medium" />
@@ -173,23 +184,15 @@ const MobileOptimizedLayout = ({ children }: MobileOptimizedLayoutProps) => {
             </div>
             <nav className="p-4">
               <RoleBasedNavigation role={userRole} />
-              <div className="mt-8 pt-6 border-t">
-                <div className="flex items-center gap-3 mb-4 px-3 py-2">
-                  <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                    <User className="h-4 w-4 text-gray-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">{user?.email || 'User'}</p>
-                    <p className="text-xs text-gray-500 capitalize">{userRole}</p>
-                  </div>
-                </div>
-                <SecureLogout className="w-full" />
-              </div>
             </nav>
           </aside>
           
           {/* Desktop Main Content */}
           <main className="flex-1 overflow-auto bg-gray-50 relative">
+            {/* Desktop User Profile Dropdown - Top Right */}
+            <div className="absolute top-6 right-6 z-50">
+              <UserProfileDropdown />
+            </div>
             <div className="p-6 lg:p-8 min-h-full">
               {children}
             </div>
