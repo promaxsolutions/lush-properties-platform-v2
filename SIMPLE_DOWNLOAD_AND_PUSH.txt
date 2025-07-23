@@ -1,0 +1,18 @@
+# Press Ctrl+C first to exit the current command, then:
+
+# Step 1: Download the current Replit project
+# Go to Replit → Three dots menu → "Download as zip" → Extract to Downloads
+
+# Step 2: Copy these commands one by one (do NOT copy as a block):
+
+rsync -av --exclude='.git' --exclude='node_modules' ~/Downloads/workspace/ .
+
+git status
+
+git add .
+
+git commit -m "feat: Advanced UI/UX Polish & Infrastructure Suite"
+
+git push origin main
+
+echo "Deployment complete!"
