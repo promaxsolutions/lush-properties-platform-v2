@@ -1,0 +1,31 @@
+# Direct Vercel Fix Commands
+
+# Since the files are already synced, let's manually verify and fix the vercel.json:
+
+cat vercel.json
+
+# If it still shows the old configuration, update it directly:
+cat > vercel.json << 'EOF'
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist/public"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/dist/public/$1"
+    }
+  ]
+}
+EOF
+
+git add vercel.json
+git commit -m "fix: Correct Vercel build configuration"
+git push origin main
