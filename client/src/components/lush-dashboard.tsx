@@ -796,15 +796,16 @@ Give me a brief insight into potential profitability, risk factors, and recommen
           )}
         </div>
         <div className="flex items-center gap-4">
-          {/* User Profile Section */}
+          {/* Header Layout like screenshot */}
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-[#007144] rounded-full flex items-center justify-center">
-                <span className="text-sm font-bold text-white">
-                  {userRole?.charAt(0).toUpperCase() || 'U'}
-                </span>
-              </div>
-              <div className="hidden sm:block">
+            {/* User Avatar */}
+            <div className="w-8 h-8 bg-[#007144] rounded-full flex items-center justify-center">
+              <span className="text-sm font-bold text-white">A</span>
+            </div>
+            
+            {/* User Info */}
+            <div className="flex items-center gap-4">
+              <div>
                 <div className="text-sm font-medium text-gray-900">
                   {userRole === 'admin' && 'Administrator'}
                   {userRole === 'builder' && 'Builder'}
@@ -820,47 +821,35 @@ Give me a brief insight into potential profitability, risk factors, and recommen
                   {userRole === 'accountant' && 'accountant@lush.com'}
                 </div>
               </div>
-            </div>
-            
-            {/* Logout Button */}
-            <button
-              onClick={() => {
-                localStorage.clear();
-                sessionStorage.clear();
-                window.location.href = '/login';
-              }}
-              className="flex items-center gap-1 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-              <span className="hidden sm:inline">Logout</span>
-            </button>
-          </div>
-
-          {/* Role Switcher */}
-          <div className="hidden md:flex items-center gap-2">
-            <label className="text-xs text-gray-600">Role:</label>
-            <select
-              className="border border-gray-300 px-2 py-1 rounded text-xs bg-white"
-              value={localRole}
-              onChange={(e) => setLocalRole(e.target.value)}
-            >
-              <option value="admin">👑 Admin</option>
-              <option value="builder">🔨 Builder</option>
-              <option value="client">🏠 Client</option>
-              <option value="investor">💼 Investor</option>
-            </select>
-          </div>
-
-          {/* Time Display */}
-          <div className="text-right">
-            <div className="text-xs sm:text-sm font-medium text-gray-900">Hi {firstName}</div>
-            <div className="text-xs text-gray-500">{localTime}</div>
-            <div className="sm:hidden text-xs">
-              {syncStatus === 'online' && <span className="text-green-600">🌐</span>}
-              {syncStatus === 'offline' && <span className="text-orange-600">📱</span>}
-              {syncStatus === 'syncing' && <span className="text-blue-600">🔄</span>}
+              
+              {/* Logout Button */}
+              <button
+                onClick={() => {
+                  localStorage.clear();
+                  sessionStorage.clear();
+                  window.location.href = '/login';
+                }}
+                className="flex items-center gap-1 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors border"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                <span>Logout</span>
+              </button>
+              
+              {/* Role Display */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">Role:</span>
+                <span className="text-sm font-medium text-gray-900 bg-yellow-100 px-2 py-1 rounded border">
+                  👑 {userRole === 'admin' ? 'Admin' : userRole?.charAt(0).toUpperCase() + userRole?.slice(1)}
+                </span>
+              </div>
+              
+              {/* Time/User Display */}
+              <div className="text-right">
+                <div className="text-sm font-medium text-gray-900">Hi Alex</div>
+                <div className="text-xs text-gray-500">{localTime}</div>
+              </div>
             </div>
           </div>
         </div>
