@@ -68,27 +68,17 @@ import ImpersonationBanner from "./components/ImpersonationBanner";
 import PortalPreview from "./components/PortalPreview";
 import ImpersonateUser from "./components/ImpersonateUser";
 import AdminAuditPanel from "./components/AdminAuditPanel";
-import NavigationTester from "./components/NavigationTester";
-import ComprehensiveNavigationValidator from "./components/ComprehensiveNavigationValidator";
-import CredentialValidator from "./components/CredentialValidator";
+
 import ClientDashboard from "./components/ClientDashboard";
 import FinanceDashboard from "./components/FinanceDashboard";
 import InvestorDashboard from "./components/InvestorDashboard";
-import RoleFlowTester from "./components/RoleFlowTester";
-import ManualRoleTester from "./components/ManualRoleTester";
-import LoginTester from "./components/LoginTester";
-import ComprehensiveRoleTester from "./components/ComprehensiveRoleTester";
-import EnhancedRouteHandler from "./components/EnhancedRouteHandler";
-import RouteTestingUtility from "./components/RouteTestingUtility";
-import BuilderDebugTest from "./components/BuilderDebugTest";
-import RoleSystemTester from "./components/RoleSystemTester";
-import ErrorDiagnostics from "./components/ErrorDiagnostics";
-import QuickRoleFixer from "./components/QuickRoleFixer";
+
+
 import AuthSyncHandler from "./components/AuthSyncHandler";
 import InvestorRoleFixer from "./components/InvestorRoleFixer";
 
 import MobilePWAInstaller from "./components/MobilePWAInstaller";
-import MobileTestingGuide from "./components/MobileTestingGuide";
+
 import PWAInstaller from "./components/PWAInstaller";
 import EnhancedDashboard from "./components/EnhancedDashboard";
 
@@ -452,56 +442,13 @@ function App() {
                                 <HeatmapVisualizer />
                               </RouteGuard>
                             } />
-                            <Route path="role-flow-tester" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
-                                <RoleFlowTester />
-                              </RouteGuard>
-                            } />
-                            <Route path="manual-role-tester" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
-                                <ManualRoleTester />
-                              </RouteGuard>
-                            } />
-                            <Route path="login-tester" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
-                                <LoginTester />
-                              </RouteGuard>
-                            } />
-                            <Route path="comprehensive-test" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
-                                <ComprehensiveRoleTester />
-                              </RouteGuard>
-                            } />
-                            <Route path="route-test" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
-                                <RouteTestingUtility />
-                              </RouteGuard>
-                            } />
-                            <Route path="builder-debug" element={<BuilderDebugTest />} />
-                            <Route path="role-system-test" element={<RoleSystemTester />} />
-                            <Route path="error-diagnostics" element={<ErrorDiagnostics />} />
-                            <Route path="quick-role-fix" element={<QuickRoleFixer />} />
-                            <Route path="mobile-test" element={<MobileTestingGuide />} />
+
                             <Route path="audit" element={
                               <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
                                 <AdminAuditPanel />
                               </RouteGuard>
                             } />
-                            <Route path="nav-test" element={
-                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
-                                <NavigationTester />
-                              </RouteGuard>
-                            } />
-                            <Route path="nav-validator" element={
-                              <RouteGuard allowedRoles={['admin', 'superadmin']} userRole={currentUser?.role}>
-                                <ComprehensiveNavigationValidator />
-                              </RouteGuard>
-                            } />
-                            <Route path="credential-test" element={
-                              <RouteGuard allowedRoles={['admin', 'superadmin']} userRole={currentUser?.role}>
-                                <CredentialValidator />
-                              </RouteGuard>
-                            } />
+
                             {/* Missing routes - add all navigation paths */}
                             <Route path="uploads" element={
                               <RouteGuard allowedRoles={['builder', 'client', 'admin']} userRole={currentUser?.role}>
@@ -561,7 +508,6 @@ function App() {
                             } />
                           </Routes>
                           <AuthSyncHandler />
-                          <EnhancedRouteHandler userRole={currentUser?.role} />
 
 
                           <FloatingAIChat />

@@ -315,7 +315,7 @@ const MobileDashboard = () => {
       <header className="bg-white shadow-sm border-b px-3 py-2 sticky top-0 z-10">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="text-lg font-bold text-blue-600">🏠 Lush OS</div>
+            <div className="text-lg font-bold text-green-600">🏠 Lush Properties</div>
             {syncStatus === 'online' && <span className="text-xs text-green-600">🌐</span>}
             {syncStatus === 'offline' && <span className="text-xs text-orange-600">📱</span>}
             {syncStatus === 'syncing' && <span className="text-xs text-blue-600">🔄</span>}
@@ -326,35 +326,10 @@ const MobileDashboard = () => {
           </div>
         </div>
         
-        {/* Role Switcher for Testing */}
-        <div className="mt-2 flex items-center justify-center">
-          <select
-            className="border px-2 py-1 rounded text-xs bg-gray-100 text-gray-700"
-            value={localRole}
-            onChange={(e) => {
-              setLocalRole(e.target.value);
-              logAuditAction("Role switched", `Changed to ${e.target.value} role for testing`);
-            }}
-          >
-            <option value="admin">👑 Admin</option>
-            <option value="builder">🔨 Builder</option>
-            <option value="client">🏠 Client</option>
-            <option value="investor">💼 Investor</option>
-          </select>
-        </div>
+
       </header>
 
-      {/* Mobile Navigation Helper */}
-      {showNav && (
-        <div className="sm:hidden bg-blue-50 border-b border-blue-200 p-2 text-center">
-          <button 
-            onClick={() => setShowNav(false)}
-            className="text-xs text-blue-700"
-          >
-            📱 Optimized for mobile • Tap to hide
-          </button>
-        </div>
-      )}
+
 
       <main className="p-3 space-y-4">
         {/* Welcome Section */}
@@ -366,9 +341,7 @@ const MobileDashboard = () => {
              localRole === "client" ? "Your development progress" :
              "Investment portfolio overview"} • {projects.length} Active Project{projects.length !== 1 ? 's' : ''}
           </p>
-          <div className="text-xs text-blue-600 mt-1">
-            Currently viewing as: <span className="font-bold">{localRole.toUpperCase()}</span>
-          </div>
+
         </div>
 
         {/* Mobile-Optimized Summary Cards */}
