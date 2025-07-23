@@ -68,6 +68,7 @@ import ImpersonationBanner from "./components/ImpersonationBanner";
 import PortalPreview from "./components/PortalPreview";
 import ImpersonateUser from "./components/ImpersonateUser";
 import AdminAuditPanel from "./components/AdminAuditPanel";
+import ComprehensiveTestSuite from "./components/ComprehensiveTestSuite";
 
 import ClientDashboard from "./components/ClientDashboard";
 import FinanceDashboard from "./components/FinanceDashboard";
@@ -500,6 +501,11 @@ function App() {
                             <Route path="impersonate/:userId" element={
                               <RouteGuard allowedRoles={['admin', 'superadmin']} userRole={currentUser?.role}>
                                 <ImpersonateUser />
+                              </RouteGuard>
+                            } />
+                            <Route path="production-tests" element={
+                              <RouteGuard allowedRoles={['admin']} userRole={currentUser?.role}>
+                                <ComprehensiveTestSuite />
                               </RouteGuard>
                             } />
                             {/* Fallback routing based on user role */}
