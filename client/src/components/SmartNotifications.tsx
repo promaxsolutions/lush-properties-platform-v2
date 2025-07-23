@@ -52,6 +52,15 @@ const SmartNotifications = () => {
       setNotifications(sampleNotifications);
       setUnreadCount(sampleNotifications.filter(n => !n.read).length);
       localStorage.setItem('lush-notifications', JSON.stringify(sampleNotifications));
+      
+      // Auto-show notifications initially, then auto-collapse after 5 seconds
+      setIsVisible(true);
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+        console.log('[SmartNotifications] Auto-collapsed initial notifications after 5 seconds');
+      }, 5000);
+      setAutoCollapseTimer(timer);
+      console.log('[SmartNotifications] Initial notifications shown, auto-collapse timer started');
     }
   }, []);
 
@@ -151,14 +160,17 @@ const SmartNotifications = () => {
       }
       const timer = setTimeout(() => {
         setIsVisible(false);
+        console.log('[SmartNotifications] Auto-collapsed after 5 seconds');
       }, 5000);
       setAutoCollapseTimer(timer);
+      console.log('[SmartNotifications] Auto-collapse timer started (5 seconds)');
     } else {
       // Clear timer if manually closed
       if (autoCollapseTimer) {
         clearTimeout(autoCollapseTimer);
         setAutoCollapseTimer(null);
       }
+      console.log('[SmartNotifications] Panel closed');
     }
   };
 

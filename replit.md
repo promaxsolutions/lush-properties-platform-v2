@@ -110,13 +110,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
-- **Floating Button Standardization & Desktop Layout Optimization (July 23, 2025)**: Complete floating button consistency fix based on user Mac screenshot feedback:
+- **Floating Button Standardization & Notification Auto-Collapse Fix (July 23, 2025)**: Complete floating button consistency and notification behavior fix based on user Mac screenshot feedback:
   * **Standardized Button Sizing**: Implemented unified `floating-btn` CSS class with consistent sizing across all devices (Mobile: 48px, Tablet: 52px, Desktop: 60px)
   * **Perfect Spacing System**: Achieved uniform 80px spacing intervals between all floating buttons with responsive adjustments for different screen sizes
   * **Updated All Components**: Applied consistent styling to QuickActions, SmartNotifications, FloatingAIChat, and AccessibilityEnhancer buttons
+  * **Fixed Notification Auto-Collapse**: Resolved persistent "Milestone Detected" and "Missing Receipts" alerts by hiding MobileNotifications component on desktop and adding 5-second auto-collapse timer
   * **Enhanced Responsive Design**: Progressive sizing - icons scale from 20px (mobile) to 22px (tablet) to 28px (desktop) for optimal touch targets
   * **Improved CSS Architecture**: Created floating-button-base system with standardized hover effects, shadows, and transitions
-  * **Verified Desktop Layout**: Confirmed all floating buttons appear with identical sizes and perfect alignment as shown in user's Replit preview
+  * **Desktop-Only SmartNotifications**: Ensured only desktop-appropriate notification system shows on large screens while mobile notifications are properly hidden
   * **Cross-Device Consistency**: Ensured floating buttons maintain proper proportions and spacing across mobile (768px), tablet (768-1024px), and desktop (1024px+) viewports
 
 - **Comprehensive Code Audit & User Experience Cleanup (July 23, 2025)**: Conducted systematic codebase review and removed user interface discrepancies:
