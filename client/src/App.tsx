@@ -11,6 +11,7 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Dashboard from "./components/lush-dashboard";
 import MobileDashboard from "./components/MobileDashboard";
+import ResponsiveDashboard from "./components/ResponsiveDashboard";
 import SidebarLayout from "./components/SidebarLayout";
 import { AuthProvider, useAuth } from "./components/AuthContext";
 import Upload from "./components/Upload";
@@ -177,7 +178,7 @@ function App() {
                           <Routes>
                             <Route path="dashboard" element={
                               <RouteGuard allowedRoles={['admin', 'superadmin']} userRole={currentUser?.role}>
-                                {window.innerWidth < 768 ? <MobileDashboard /> : <Dashboard />}
+                                <ResponsiveDashboard />
                               </RouteGuard>
                             } />
                             <Route path="builder" element={
