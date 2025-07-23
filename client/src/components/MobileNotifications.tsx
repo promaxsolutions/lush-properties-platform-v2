@@ -15,34 +15,8 @@ interface Notification {
 }
 
 const MobileNotifications = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: '1',
-      type: 'milestone',
-      title: 'Milestone Detected',
-      message: 'Foundation work milestone found in uploaded receipt',
-      timestamp: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
-      actionLabel: 'View Details',
-      actionUrl: '/smart-upload'
-    },
-    {
-      id: '2',
-      type: 'upload',
-      title: 'Receipt Processed',
-      message: 'OCR extraction completed for construction materials receipt',
-      timestamp: new Date(Date.now() - 15 * 60 * 1000), // 15 minutes ago
-      read: true
-    },
-    {
-      id: '3',
-      type: 'warning',
-      title: 'Missing Receipts',
-      message: 'Roofing and lockup milestone receipts still needed',
-      timestamp: new Date(Date.now() - 60 * 60 * 1000), // 1 hour ago
-      actionLabel: 'Upload Now',
-      actionUrl: '/smart-upload'
-    }
-  ]);
+  // Notifications cleared per user request - no persistent mobile alerts
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -90,65 +64,9 @@ const MobileNotifications = () => {
     return `${days}d ago`;
   };
 
-  // Mobile notification system
+  // Mobile notification system disabled per user request
   useEffect(() => {
-    // Request notification permission on mobile
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission();
-    }
-
-    // Listen for new upload completions
-    const handleUploadComplete = (event: CustomEvent) => {
-      const newNotification: Notification = {
-        id: Date.now().toString(),
-        type: 'success',
-        title: 'Upload Complete',
-        message: event.detail.message || 'File uploaded successfully',
-        timestamp: new Date(),
-      };
-
-      setNotifications(prev => [newNotification, ...prev]);
-
-      // Show browser notification if permitted
-      if (Notification.permission === 'granted') {
-        new Notification(newNotification.title, {
-          body: newNotification.message,
-          icon: '/icon-192.png',
-          badge: '/icon-192.png'
-        });
-      }
-    };
-
-    // Listen for milestone detections
-    const handleMilestoneDetected = (event: CustomEvent) => {
-      const newNotification: Notification = {
-        id: Date.now().toString(),
-        type: 'milestone',
-        title: 'Milestone Detected',
-        message: `${event.detail.milestone} milestone found in receipt`,
-        timestamp: new Date(),
-        actionLabel: 'View Details',
-        actionUrl: '/smart-upload'
-      };
-
-      setNotifications(prev => [newNotification, ...prev]);
-
-      if (Notification.permission === 'granted') {
-        new Notification(newNotification.title, {
-          body: newNotification.message,
-          icon: '/icon-192.png'
-        });
-      }
-    };
-
-    // Add event listeners
-    window.addEventListener('uploadComplete', handleUploadComplete as EventListener);
-    window.addEventListener('milestoneDetected', handleMilestoneDetected as EventListener);
-
-    return () => {
-      window.removeEventListener('uploadComplete', handleUploadComplete as EventListener);
-      window.removeEventListener('milestoneDetected', handleMilestoneDetected as EventListener);
-    };
+    console.log('[MobileNotifications] All notification listeners disabled per user request');
   }, []);
 
   // Auto-collapse notifications after 5 seconds
