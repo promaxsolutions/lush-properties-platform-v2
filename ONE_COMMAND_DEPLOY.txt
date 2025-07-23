@@ -3,19 +3,17 @@
 # Copy and paste this entire block into your Mac terminal
 
 echo "🚀 Starting one-command deployment..." && \
-cd ~/Desktop && \
+cd ~/Downloads && \
 echo "📂 Current directory: $(pwd)" && \
-echo "📥 Please download the Replit project as ZIP first, then press Enter to continue..." && \
-read -p "Press Enter after downloading and extracting the ZIP file..." && \
-echo "📁 Looking for downloaded project..." && \
-if [ -d "lush-properties-platform" ] || [ -d "lush-properties-updated" ] || [ -d "workspace" ]; then \
+echo "📁 Looking for downloaded project in Downloads..." && \
+if [ -d "lush-properties-platform" ] || [ -d "lush-properties-updated" ] || [ -d "workspace" ] || [ -d "lush-properties-platform-v2" ]; then \
     echo "✅ Found downloaded project" && \
     PROJECT_DIR=$(find . -maxdepth 1 -type d -name "*lush*" -o -name "workspace" | head -1) && \
     echo "📦 Using project directory: $PROJECT_DIR" && \
     if [ -d "$HOME/lush-properties-platform-v2" ]; then \
         echo "🔄 Updating existing repository..." && \
         cd "$HOME/lush-properties-platform-v2" && \
-        rsync -av --exclude='.git' --exclude='node_modules' "$HOME/Desktop/$PROJECT_DIR/" . && \
+        rsync -av --exclude='.git' --exclude='node_modules' "$HOME/Downloads/$PROJECT_DIR/" . && \
         git add . && \
         git commit -m "feat: Advanced UI/UX Polish & Infrastructure Suite
 
@@ -38,9 +36,13 @@ if [ -d "lush-properties-platform" ] || [ -d "lush-properties-updated" ] || [ -d
         echo "✨ New features include: Accessibility panel, PWA installer, Smart notifications, Quick actions, System health monitor"; \
     else \
         echo "❌ Repository not found at ~/lush-properties-platform-v2" && \
-        echo "📍 Please navigate to your repository first with: cd /path/to/your/repo && git status"; \
+        echo "📍 Available options:" && \
+        echo "   1. If you have the repo elsewhere: cd /path/to/your/repo && git status" && \
+        echo "   2. Or clone fresh: cd ~/Downloads/$PROJECT_DIR && git init && git remote add origin YOUR_GITHUB_URL"; \
     fi; \
 else \
-    echo "❌ No Replit project found on Desktop" && \
-    echo "📥 Please download from Replit first: Three dots menu → Download as zip → Extract to Desktop"; \
+    echo "❌ No Replit project found in Downloads" && \
+    echo "📂 Contents of Downloads:" && \
+    ls -la && \
+    echo "📥 Please download from Replit first: Three dots menu → Download as zip → Extract to Downloads"; \
 fi
