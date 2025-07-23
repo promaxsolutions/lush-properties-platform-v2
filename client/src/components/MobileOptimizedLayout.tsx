@@ -12,7 +12,7 @@ import {
   Home,
   Settings
 } from "lucide-react";
-import UserProfileDropdown from "./UserProfileDropdown";
+// UserProfileDropdown removed per user request
 
 interface MobileOptimizedLayoutProps {
   children: ReactNode;
@@ -191,10 +191,7 @@ const MobileOptimizedLayout = ({ children }: MobileOptimizedLayoutProps) => {
           
           {/* Desktop Main Content */}
           <main className="flex-1 overflow-auto bg-gray-50 relative">
-            {/* Desktop User Profile Dropdown - Fixed Top Right, Sticky during scroll */}
-            <div className="fixed top-6 right-6 z-50">
-              <UserProfileDropdown />
-            </div>
+            {/* User profile dropdown removed per user request */}
             <div className="p-6 lg:p-8 min-h-full">
               {children}
             </div>

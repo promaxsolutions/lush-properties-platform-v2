@@ -104,8 +104,8 @@ const MobileNotifications = () => {
 
   return (
     <>
-      {/* Mobile Notification Bell - Only on mobile */}
-      <div className="fixed top-4 right-4 z-50 lg:hidden">
+      {/* White Notification Bell - All devices */}
+      <div className="fixed top-4 right-4 z-50">
         <Button
           variant="outline"
           size="sm"
@@ -121,9 +121,9 @@ const MobileNotifications = () => {
         </Button>
       </div>
 
-      {/* Mobile Notification Panel - Only on mobile */}
+      {/* White Notification Panel - All devices */}
       {showNotifications && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40">
           <div className="fixed top-0 right-0 w-full max-w-sm h-full bg-white shadow-xl">
             <div className="flex items-center justify-between p-4 border-b">
               <h2 className="text-lg font-semibold">Notifications</h2>

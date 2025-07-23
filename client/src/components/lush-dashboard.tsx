@@ -784,7 +784,7 @@ Give me a brief insight into potential profitability, risk factors, and recommen
       {/* Mobile-Optimized Header */}
       <header className="bg-white shadow-sm border-b px-3 py-2 flex justify-between items-center sticky top-0 z-10">
         <div className="flex items-center gap-2">
-          <div className="text-lg sm:text-xl font-bold text-blue-600">🏠 Lush OS</div>
+          <div className="text-lg sm:text-xl font-bold text-[#007144]">🏠 Lush Properties</div>
           <div className="hidden sm:flex items-center gap-2">
             {syncStatus === 'online' && <span className="text-xs text-green-600">🌐 Online</span>}
             {syncStatus === 'offline' && <span className="text-xs text-orange-600">📱 Offline</span>}

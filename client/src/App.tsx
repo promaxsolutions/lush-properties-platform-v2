@@ -92,7 +92,7 @@ import MobileTestingGuide from "./components/MobileTestingGuide";
 import PWAInstaller from "./components/PWAInstaller";
 import EnhancedDashboard from "./components/EnhancedDashboard";
 
-import SmartNotifications from "./components/SmartNotifications";
+// SmartNotifications removed per user request - using white notifications only
 import SystemHealthMonitor from "./components/SystemHealthMonitor";
 import QuickActions from "./components/QuickActions";
 
@@ -567,7 +567,7 @@ function App() {
                           <FloatingAIChat />
                           <QuickActions userRole={currentUser?.role || 'client'} />
                           <AccessibilityEnhancer />
-                          <SmartNotifications />
+                          {/* SmartNotifications removed per user request - using white notifications only */}
                           <MobileNotifications />
                           <MobilePWAInstaller />
                           <PWAInstaller />
