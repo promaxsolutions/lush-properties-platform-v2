@@ -418,6 +418,8 @@ Give me a brief insight into potential profitability, risk factors, and recommen
         }
       }
     },
+    barPercentage: 0.6,
+    categoryPercentage: 0.8
   };
 
   const timelineOptions = {
@@ -1701,7 +1703,7 @@ Give me a brief insight into potential profitability, risk factors, and recommen
           </CardHeader>
           <CardContent>
             <div className="h-40 sm:h-48 lg:h-56">
-              <Bar data={chartData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } } }} />
+              <Bar data={chartData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, barPercentage: 0.6, categoryPercentage: 0.8 }} />
             </div>
           </CardContent>
         </Card>

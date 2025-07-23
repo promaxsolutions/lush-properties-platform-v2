@@ -343,7 +343,9 @@ const MobileDashboard = () => {
         left: 5,
         right: 5
       }
-    }
+    },
+    barPercentage: 0.6,
+    categoryPercentage: 0.8
   };
 
   return (
