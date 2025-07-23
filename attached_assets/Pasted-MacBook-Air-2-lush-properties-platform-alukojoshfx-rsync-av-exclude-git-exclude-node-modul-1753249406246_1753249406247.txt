@@ -1,0 +1,164 @@
+MacBook-Air-2:lush-properties-platform alukojoshfx$ rsync -av --exclude='.git' --exclude='node_modules' ~/Downloads/"lush-properties-platform 2"/ .
+Transfer starting: 335 files
+./
+.env.example
+.gitignore
+CLIENT_ONLY_DEPLOYMENT.md
+COMPLETE_DEPLOYMENT_COMMANDS.txt
+DEPLOYMENT.md
+DEPLOYMENT_TRIGGER.md
+DEPLOY_TO_VERCEL.md
+FINAL_VERCEL_FIX.md
+GITHUB_FIX.md
+GITHUB_PUSH_COMMANDS.md
+GITHUB_TERMINAL_COMMANDS.md
+LOCAL_VERCEL_FIX.md
+MAC_TERMINAL_DEPLOYMENT.md
+MANUAL_DEPLOYMENT_STEPS.md
+MANUAL_VERCEL_FIX.md
+NAVIGATION_FIX_DEPLOYMENT.md
+ONE_COMMAND_DEPLOY.txt
+QUICK_FIX_COMMANDS.txt
+README.md
+ROUTE_FALLBACK_IMPLEMENTATION.md
+SIMPLE_MAC_DEPLOY.txt
+SIMPLE_VERCEL_FIX.md
+VERCEL_BLANK_PAGE_FIX.md
+VERCEL_BUILD_FIX.md
+VERCEL_CONFIG_FIX.md
+VERCEL_DASHBOARD_STEPS.md
+VERCEL_DEPLOYMENT.md
+VERCEL_DEPLOYMENT_FINAL.md
+VERCEL_ENV_TEMPLATE.txt
+VERCEL_FINAL_FIX.md
+VERCEL_FIX.md
+VERCEL_MIME_TYPE_FIX.md
+VERCEL_QUICK_FIX.md
+netlify.toml
+quick-deploy.sh
+replit.md
+vercel-config-fix.json
+vercel-manual-config.txt
+vercel.json
+api/
+api/index.js
+attached_assets/
+attached_assets/Pasted-Last-login-Tue-Jul-22-05-11-26-on-ttys000-The-default-interactive-shell-is-now-zsh-To-update-your-1753245535481_1753245535482.txt
+attached_assets/Pasted-Last-login-Tue-Jul-22-05-11-26-on-ttys000-The-default-interactive-shell-is-now-zsh-To-update-your-1753245723995_1753245723996.txt
+attached_assets/Pasted-MacBook-Air-2-alukojoshfx-ls-la-total-64-drwxr-xr-x-29-alukojoshfx-staff-928-22-Jul-05-12-1753126603675_1753126603677.txt
+client/src/
+client/src/App.tsx
+client/src/index.css
+client/src/components/
+client/src/components/AccessibilityEnhancer.tsx
+client/src/components/AppWrapper.tsx
+client/src/components/AuthSyncHandler.tsx
+client/src/components/EnhancedDashboard.tsx
+client/src/components/ErrorBoundary.tsx
+client/src/components/LoadingSpinner.tsx
+client/src/components/OptimizedImage.tsx
+client/src/components/PWAInstaller.tsx
+client/src/components/PerformanceOptimizer.tsx
+client/src/components/QuickActions.tsx
+client/src/components/RoleBasedNavigation.tsx
+client/src/components/SmartNotifications.tsx
+client/src/components/SystemHealthMonitor.tsx
+client/src/components/Toast.tsx
+client/src/components/ui/
+client/src/components/ui/toaster.tsx
+client/src/hooks/
+client/src/hooks/useLocalStorage.ts
+client/src/hooks/useToast.ts
+client/src/styles/
+client/src/styles/accessibility.css
+client/src/utils/
+client/src/utils/performanceUtils.ts
+dist/
+dist/index.js
+dist/public/
+dist/public/index.html
+dist/public/assets/
+dist/public/assets/index--Ry9gK6O.css
+dist/public/assets/index-D55hosAL.js
+server/
+
+sent 1722691 bytes  received 1594 bytes  40006612 bytes/sec
+total size is 3703110  speedup is 2.15
+MacBook-Air-2:lush-properties-platform alukojoshfx$ git add .
+MacBook-Air-2:lush-properties-platform alukojoshfx$ git commit -m "feat: Advanced UI/UX Polish & Infrastructure Suite"
+[main 5070c50] feat: Advanced UI/UX Polish & Infrastructure Suite
+ Committer: Joshua Aluko <alukojoshfx@MacBook-Air-2.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 66 files changed, 5260 insertions(+), 596 deletions(-)
+ create mode 100644 .env.example
+ create mode 100644 CLIENT_ONLY_DEPLOYMENT.md
+ create mode 100644 COMPLETE_DEPLOYMENT_COMMANDS.txt
+ create mode 100644 DEPLOYMENT_TRIGGER.md
+ create mode 100644 DEPLOY_TO_VERCEL.md
+ create mode 100644 FINAL_VERCEL_FIX.md
+ create mode 100644 GITHUB_PUSH_COMMANDS.md
+ create mode 100644 GITHUB_TERMINAL_COMMANDS.md
+ create mode 100644 LOCAL_VERCEL_FIX.md
+ create mode 100644 MAC_TERMINAL_DEPLOYMENT.md
+ create mode 100644 MANUAL_VERCEL_FIX.md
+ create mode 100644 NAVIGATION_FIX_DEPLOYMENT.md
+ create mode 100644 ONE_COMMAND_DEPLOY.txt
+ create mode 100644 QUICK_FIX_COMMANDS.txt
+ create mode 100644 SIMPLE_MAC_DEPLOY.txt
+ create mode 100644 SIMPLE_VERCEL_FIX.md
+ create mode 100644 VERCEL_BLANK_PAGE_FIX.md
+ create mode 100644 VERCEL_BUILD_FIX.md
+ create mode 100644 VERCEL_CONFIG_FIX.md
+ create mode 100644 VERCEL_DASHBOARD_STEPS.md
+ create mode 100644 VERCEL_DEPLOYMENT.md
+ create mode 100644 VERCEL_DEPLOYMENT_FINAL.md
+ create mode 100644 VERCEL_ENV_TEMPLATE.txt
+ create mode 100644 VERCEL_FINAL_FIX.md
+ create mode 100644 VERCEL_FIX.md
+ create mode 100644 VERCEL_MIME_TYPE_FIX.md
+ create mode 100644 VERCEL_QUICK_FIX.md
+ create mode 100644 api/index.js
+ create mode 100644 attached_assets/Pasted-Last-login-Tue-Jul-22-05-11-26-on-ttys000-The-default-interactive-shell-is-now-zsh-To-update-your-1753245535481_1753245535482.txt
+ create mode 100644 attached_assets/Pasted-Last-login-Tue-Jul-22-05-11-26-on-ttys000-The-default-interactive-shell-is-now-zsh-To-update-your-1753245723995_1753245723996.txt
+ create mode 100644 attached_assets/Pasted-MacBook-Air-2-alukojoshfx-ls-la-total-64-drwxr-xr-x-29-alukojoshfx-staff-928-22-Jul-05-12-1753126603675_1753126603677.txt
+ create mode 100644 client/src/components/AccessibilityEnhancer.tsx
+ create mode 100644 client/src/components/AppWrapper.tsx
+ create mode 100644 client/src/components/EnhancedDashboard.tsx
+ create mode 100644 client/src/components/ErrorBoundary.tsx
+ create mode 100644 client/src/components/OptimizedImage.tsx
+ create mode 100644 client/src/components/PWAInstaller.tsx
+ create mode 100644 client/src/components/PerformanceOptimizer.tsx
+ create mode 100644 client/src/components/QuickActions.tsx
+ create mode 100644 client/src/components/SmartNotifications.tsx
+ create mode 100644 client/src/components/SystemHealthMonitor.tsx
+ create mode 100644 client/src/components/Toast.tsx
+ create mode 100644 client/src/hooks/useLocalStorage.ts
+ create mode 100644 client/src/hooks/useToast.ts
+ create mode 100644 client/src/styles/accessibility.css
+ create mode 100644 client/src/utils/performanceUtils.ts
+ create mode 100644 netlify.toml
+ create mode 100755 quick-deploy.sh
+ create mode 100644 vercel-config-fix.json
+ create mode 100644 vercel-manual-config.txt
+MacBook-Air-2:lush-properties-platform alukojoshfx$ git push origin main
+Enumerating objects: 104, done.
+Counting objects: 100% (104/104), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (76/76), done.
+Writing objects: 100% (78/78), 64.13 KiB | 10.69 MiB/s, done.
+Total 78 (delta 17), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (17/17), completed with 16 local objects.
+To https://github.com/promaxsolutions/lush-properties-platform-v2.git
+   55e36e7..5070c50  main -> main
+MacBook-Air-2:lush-properties-platform alukojoshfx$ 
