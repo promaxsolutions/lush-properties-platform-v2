@@ -1,0 +1,21 @@
+# Quick Fix - Run these commands one by one in your Mac terminal
+
+# First, cancel the current command (press Ctrl+C)
+
+# Then run these commands:
+
+cd ~/Downloads
+ls -la
+
+# Look for a folder that contains your Replit download (workspace, lush-properties-platform, etc.)
+# Once you see the folder name, replace "ACTUAL_FOLDER_NAME" below with that name
+
+cd ~/lush-properties-platform-v2
+
+# Copy the files (replace ACTUAL_FOLDER_NAME with the real folder name you saw)
+rsync -av --exclude='.git' --exclude='node_modules' ~/Downloads/ACTUAL_FOLDER_NAME/ .
+
+# Commit and push
+git add .
+git commit -m "feat: Advanced UI/UX Polish & Infrastructure Suite"
+git push origin main
