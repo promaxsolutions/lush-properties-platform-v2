@@ -73,6 +73,60 @@ const MobileOptimizedLayout = ({ children }: MobileOptimizedLayoutProps) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Mobile Header with User Profile */}
+      <div className="lg:hidden bg-white border-b sticky top-0 z-40">
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center gap-3">
+            {/* User Profile */}
+            <div className="w-8 h-8 bg-[#007144] rounded-full flex items-center justify-center">
+              <span className="text-sm font-bold text-white">
+                {userRole?.charAt(0).toUpperCase() || 'U'}
+              </span>
+            </div>
+            <div className="text-sm">
+              <div className="font-medium text-gray-900">
+                {userRole === 'admin' && 'Admin'}
+                {userRole === 'builder' && 'Builder'}
+                {userRole === 'client' && 'Client'}
+                {userRole === 'investor' && 'Investor'}
+                {userRole === 'accountant' && 'Accountant'}
+              </div>
+              <div className="text-xs text-gray-500">
+                {userRole === 'admin' && 'admin@lush.com'}
+                {userRole === 'builder' && 'builder@lush.com'}
+                {userRole === 'client' && 'client@lush.com'}
+                {userRole === 'investor' && 'investor@lush.com'}
+                {userRole === 'accountant' && 'accountant@lush.com'}
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            {/* Logout Button */}
+            <button
+              onClick={() => {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = '/login';
+              }}
+              className="flex items-center gap-1 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              <span className="text-xs">Logout</span>
+            </button>
+            
+            {/* Menu Button */}
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+            >
+              <Menu className="h-6 w-6" />
+            </button>
+          </div>
+        </div>
+      </div>
       {/* Mobile Header - Sticky with proper z-index */}
       {isMobile && (
         <header className="bg-white border-b sticky top-0 z-50 shadow-sm">
@@ -172,21 +226,54 @@ const MobileOptimizedLayout = ({ children }: MobileOptimizedLayoutProps) => {
         <div className="flex h-screen">
           {/* Desktop Sidebar */}
           <aside className="w-64 bg-white shadow-lg flex-shrink-0 overflow-y-auto border-r relative z-10">
+            {/* User Profile Section */}
             <div className="p-6 border-b">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 bg-gradient-to-br from-[#007144] to-[#00a060] rounded-xl flex items-center justify-center shadow-sm">
-                  <span className="text-xl font-bold text-white">L</span>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-[#007144] rounded-full flex items-center justify-center">
+                  <span className="text-lg font-bold text-white">
+                    {userRole?.charAt(0).toUpperCase() || 'U'}
+                  </span>
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">Lush Properties</h1>
-                  <p className="text-sm text-[#007144] font-medium">Pty Ltd</p>
+                  <div className="font-medium text-gray-900 text-sm">
+                    {userRole === 'admin' && 'Administrator'}
+                    {userRole === 'builder' && 'Builder'}
+                    {userRole === 'client' && 'Client'}
+                    {userRole === 'investor' && 'Investor'}
+                    {userRole === 'accountant' && 'Accountant'}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {userRole === 'admin' && 'admin@lush.com'}
+                    {userRole === 'builder' && 'builder@lush.com'}
+                    {userRole === 'client' && 'client@lush.com'}
+                    {userRole === 'investor' && 'investor@lush.com'}
+                    {userRole === 'accountant' && 'accountant@lush.com'}
+                  </div>
                 </div>
               </div>
-              <p className="text-sm text-gray-600 mt-2">Premium Projects. Powerful Returns.</p>
             </div>
-            <nav className="p-4">
+            
+            {/* Navigation */}
+            <nav className="flex-1 p-4">
               <RoleBasedNavigation role={userRole} />
             </nav>
+            
+            {/* Logout Button */}
+            <div className="p-4 border-t">
+              <button
+                onClick={() => {
+                  localStorage.clear();
+                  sessionStorage.clear();
+                  window.location.href = '/login';
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                <span>Logout</span>
+              </button>
+            </div>
           </aside>
           
           {/* Desktop Main Content */}
