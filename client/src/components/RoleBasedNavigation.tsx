@@ -216,7 +216,7 @@ const RoleBasedNavigation = ({
   }
 
   return (
-    <nav className="space-y-2 p-4">
+    <nav className={`space-y-2 ${mobile ? 'p-4' : 'p-0'}`}>
       {allowedItems.map((item) => {
         const isActive = location.pathname === item.path;
         
@@ -228,13 +228,15 @@ const RoleBasedNavigation = ({
               mobile ? 'min-h-[48px] text-base' : 'text-sm'
             } ${
               isActive
-                ? 'bg-[#007144] text-white shadow-sm'
+                ? mobile 
+                  ? 'bg-[#007144] text-white shadow-sm'
+                  : 'bg-white/20 text-white shadow-sm'
                 : mobile 
                   ? 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                  : 'text-green-100 hover:bg-white/10 hover:text-white'
             }`}
             data-nav-item={item.path}
-            data-nav-role={userRole}
+            data-nav-role={currentRole}
             data-nav-active={isActive}
             onClick={(e) => {
               console.log(`[NAV-CLICK] Navigation triggered:`, {
