@@ -1,20 +1,31 @@
-# Vercel Build Fix - July 23, 2025
+# Vercel Build Configuration Fix
 
-## Issue
-Vercel build failing with: `npm error Missing script: "build:frontend"`
-
-## Root Cause
-The vercel.json was referencing a non-existent build script.
+## Issue Fixed
+The Vercel build was failing with:
+```
+npm error Missing script: "build:frontend"
+```
 
 ## Solution Applied
-1. Updated vercel.json to use @vercel/static-build
-2. Configure to use existing "build" script from package.json
-3. Set correct output directory to dist/public
+Updated vercel.json to use the correct build configuration:
 
-## Fixed Configuration
-- Uses standard Vercel static build process
-- Points to correct build output directory
-- Removes dependency on custom build commands
+1. **Removed `@vercel/static-build`** - This was looking for a non-existent `build:frontend` script
+2. **Added direct `buildCommand`** - Now uses `vite build` directly
+3. **Set `outputDirectory`** - Points to `dist/public` where Vite builds the frontend
+4. **Kept `@vercel/node`** - For the serverless API backend
 
-## Expected Result
-Next deployment will succeed and app will be fully accessible.
+## New Configuration
+- **Build Command**: `vite build` (uses existing script)
+- **Output Directory**: `dist/public` (Vite's default output)
+- **API Routes**: `/api/*` handled by serverless function
+- **Static Files**: Everything else served from `dist/public`
+
+## Deployment Steps
+```bash
+# Commit the build fix
+git add vercel.json VERCEL_BUILD_FIX.md
+git commit -m "fix: Update Vercel build configuration to use correct build command"
+git push origin main
+```
+
+This will resolve the build failure and deploy your application successfully!
