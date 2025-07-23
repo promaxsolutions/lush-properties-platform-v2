@@ -158,7 +158,7 @@ const MobileOptimizedLayout = ({ children }: MobileOptimizedLayoutProps) => {
       {!isMobile && (
         <div className="flex h-screen">
           {/* Desktop Sidebar */}
-          <aside className="w-64 bg-white shadow-lg flex-shrink-0 overflow-y-auto border-r">
+          <aside className="w-64 bg-white shadow-lg flex-shrink-0 overflow-y-auto border-r relative z-10">
             <div className="p-6 border-b">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-12 h-12 bg-gradient-to-br from-[#007144] to-[#00a060] rounded-xl flex items-center justify-center shadow-sm">
@@ -189,7 +189,7 @@ const MobileOptimizedLayout = ({ children }: MobileOptimizedLayoutProps) => {
           </aside>
           
           {/* Desktop Main Content */}
-          <main className="flex-1 overflow-auto bg-gray-50">
+          <main className="flex-1 overflow-auto bg-gray-50 relative">
             <div className="p-6 lg:p-8 min-h-full">
               {children}
             </div>

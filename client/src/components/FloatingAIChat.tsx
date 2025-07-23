@@ -216,7 +216,7 @@ const FloatingAIChat = () => {
 
   if (!isOpen) {
     return (
-      <div className="fixed bottom-20 right-4 z-40 lg:bottom-6 lg:right-6">
+      <div style={{ position: 'fixed', bottom: '120px', right: '24px', zIndex: 45 }}>
         <Button
           onClick={() => setIsOpen(true)}
           className="w-12 h-12 rounded-full bg-[#007144] hover:bg-[#00a060] text-white shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center lg:w-14 lg:h-14"
@@ -233,7 +233,7 @@ const FloatingAIChat = () => {
   }
 
   return (
-    <div className="fixed bottom-20 right-4 z-40 lg:bottom-6 lg:right-6">
+    <div style={{ position: 'fixed', bottom: '120px', right: '24px', zIndex: 45 }}>
       <Card className={`w-80 shadow-2xl transition-all duration-300 lg:w-96 ${isMinimized ? 'h-16' : 'h-[450px] lg:h-[600px]'}`}>
         <CardHeader className="pb-3 border-b">
           <div className="flex items-center justify-between">

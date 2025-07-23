@@ -161,22 +161,25 @@ const QuickActions: React.FC<QuickActionsProps> = ({ userRole, onAction }) => {
 
   if (!isVisible || allowedActions.length === 0) {
     return (
-      <Button
-        onClick={() => setIsVisible(true)}
-        className="fixed bottom-4 right-4 z-50 bg-[#007144] hover:bg-[#00a060] text-white p-3 rounded-full shadow-lg lg:bottom-6 lg:right-6"
-        aria-label="Show quick actions"
-      >
-        <Zap className="w-5 h-5" />
-      </Button>
+      <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 50 }}>
+        <Button
+          onClick={() => setIsVisible(true)}
+          className="bg-[#007144] hover:bg-[#00a060] text-white p-3 rounded-full shadow-lg"
+          aria-label="Show quick actions"
+        >
+          <Zap className="w-5 h-5" />
+        </Button>
+      </div>
     );
   }
 
   return (
-    <Card className="fixed bottom-16 right-4 z-50 w-72 shadow-xl border-2 lg:bottom-20 lg:right-6">
-      <CardContent className="p-4">
+    <div style={{ position: 'fixed', bottom: '80px', right: '24px', zIndex: 50 }}>
+      <Card className="w-72 shadow-xl border-2">
+        <CardContent className="p-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-semibold text-sm flex items-center gap-2">
-            <Zap className="w-4 h-4 text-lush-primary" />
+            <Zap className="w-4 h-4 text-[#007144]" />
             Quick Actions
           </h3>
           <Button
@@ -197,7 +200,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({ userRole, onAction }) => {
               variant="outline"
               size="sm"
               disabled={action.disabled}
-              className="h-auto p-3 flex flex-col items-center gap-2 relative hover:bg-lush-primary/5 hover:border-lush-primary/20"
+              className="h-auto p-3 flex flex-col items-center gap-2 relative hover:bg-[#007144]/5 hover:border-[#007144]/20"
               title={action.description}
             >
               {action.badge && (
@@ -209,7 +212,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({ userRole, onAction }) => {
                 </Badge>
               )}
               
-              <div className="text-lush-primary">
+              <div className="text-[#007144]">
                 {action.icon}
               </div>
               
@@ -227,6 +230,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({ userRole, onAction }) => {
         </div>
       </CardContent>
     </Card>
+    </div>
   );
 };
 

@@ -231,7 +231,7 @@ const PWAInstaller: React.FC = () => {
   // Install Prompt (appears when installable)
   if (isInstallable) {
     return (
-      <Alert className="fixed bottom-4 left-4 right-4 md:left-auto md:w-96 z-40 border-2 border-lush-primary bg-white">
+      <Alert className="fixed bottom-4 left-4 right-20 md:left-auto md:w-96 md:right-96 z-40 border-2 border-[#007144] bg-white">
         <Download className="h-4 w-4" />
         <div className="flex-1">
           <AlertDescription>
@@ -244,7 +244,7 @@ const PWAInstaller: React.FC = () => {
                 <Button size="sm" variant="outline" onClick={handleDismiss}>
                   <X className="w-3 h-3" />
                 </Button>
-                <Button size="sm" onClick={handleInstallClick} className="bg-lush-primary hover:bg-lush-primary/90">
+                <Button size="sm" onClick={handleInstallClick} className="bg-[#007144] hover:bg-[#00a060]">
                   <Download className="w-3 h-3 mr-1" />
                   Install
                 </Button>

@@ -89,8 +89,8 @@ const MobilePWAInstaller = () => {
   }
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-50 md:hidden">
-      <Card className="bg-lush-primary text-white shadow-lg border-0">
+    <div className="fixed bottom-4 left-4 right-20 z-30 md:hidden">
+      <Card className="bg-[#007144] text-white shadow-lg border-0">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 flex-1">
@@ -109,7 +109,7 @@ const MobilePWAInstaller = () => {
                 onClick={handleInstallClick}
                 size="sm"
                 variant="secondary"
-                className="bg-white text-lush-primary hover:bg-white/90 h-8 px-3"
+                className="bg-white text-[#007144] hover:bg-white/90 h-8 px-3"
               >
                 <Download className="h-3 w-3 mr-1" />
                 Install
