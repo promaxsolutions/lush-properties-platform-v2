@@ -161,7 +161,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({ userRole, onAction }) => {
 
   if (!isVisible || allowedActions.length === 0) {
     return (
-      <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 40 }}>
+      <div className="floating-button-base floating-button-1" style={{ zIndex: 40 }}>
         <Button
           onClick={() => setIsVisible(true)}
           className="bg-[#007144] hover:bg-[#00a060] text-white p-3 rounded-full shadow-lg transition-all duration-200"
@@ -175,7 +175,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({ userRole, onAction }) => {
   }
 
   return (
-    <div style={{ position: 'fixed', bottom: '80px', right: '24px', zIndex: 40 }}>
+    <div className="floating-button-base floating-button-2" style={{ zIndex: 40 }}>
       <Card className="w-72 shadow-xl border-2 bg-white">
         <CardContent className="p-4">
         <div className="flex items-center justify-between mb-3">

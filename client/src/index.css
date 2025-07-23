@@ -339,3 +339,56 @@ textarea:focus-visible {
   outline: 3px solid #007144 !important;
   outline-offset: 2px !important;
 }
+
+/* Floating Button Spacing System */
+/* Perfect 72px spacing for all devices */
+.floating-button-base {
+  position: fixed;
+  right: 24px;
+  transition: all 0.3s ease;
+}
+
+.floating-button-1 { bottom: 24px; }    /* QuickActions */
+.floating-button-2 { bottom: 96px; }    /* Expanded QuickActions */
+.floating-button-3 { bottom: 168px; }   /* AI Chat */
+.floating-button-4 { bottom: 240px; }   /* Accessibility */
+.floating-button-5 { bottom: 312px; }   /* Notifications */
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .floating-button-base {
+    right: 16px;
+  }
+  
+  .floating-button-1 { bottom: 16px; }
+  .floating-button-2 { bottom: 88px; }
+  .floating-button-3 { bottom: 160px; }
+  .floating-button-4 { bottom: 232px; }
+  .floating-button-5 { bottom: 304px; }
+}
+
+/* Large screen adjustments */
+@media (min-width: 1024px) {
+  .floating-button-base {
+    right: 32px;
+  }
+  
+  .floating-button-1 { bottom: 32px; }
+  .floating-button-2 { bottom: 104px; }
+  .floating-button-3 { bottom: 176px; }
+  .floating-button-4 { bottom: 248px; }
+  .floating-button-5 { bottom: 320px; }
+}
+
+/* Tablet adjustments */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .floating-button-base {
+    right: 20px;
+  }
+  
+  .floating-button-1 { bottom: 20px; }
+  .floating-button-2 { bottom: 92px; }
+  .floating-button-3 { bottom: 164px; }
+  .floating-button-4 { bottom: 236px; }
+  .floating-button-5 { bottom: 308px; }
+}

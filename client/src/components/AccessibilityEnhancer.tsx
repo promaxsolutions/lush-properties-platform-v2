@@ -64,7 +64,7 @@ const AccessibilityEnhancer = () => {
 
   if (!isVisible) {
     return (
-      <div style={{ position: 'fixed', bottom: '180px', right: '24px', zIndex: 35 }}>
+      <div className="floating-button-base floating-button-4" style={{ zIndex: 35 }}>
         <Button
           onClick={() => setIsVisible(true)}
           className="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg transition-all duration-200 flex items-center justify-center"
@@ -78,7 +78,7 @@ const AccessibilityEnhancer = () => {
   }
 
   return (
-    <div style={{ position: 'fixed', bottom: '240px', right: '24px', zIndex: 35 }}>
+    <div className="floating-button-base floating-button-4" style={{ zIndex: 35, bottom: '384px' }}>
       <Card className="w-64 shadow-xl border-2 bg-white">
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-3">

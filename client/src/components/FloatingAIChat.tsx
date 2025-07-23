@@ -216,7 +216,7 @@ const FloatingAIChat = () => {
 
   if (!isOpen) {
     return (
-      <div style={{ position: 'fixed', bottom: '120px', right: '24px', zIndex: 45 }}>
+      <div className="floating-button-base floating-button-3" style={{ zIndex: 45 }}>
         <div className="relative">
           <Button
             onClick={() => setIsOpen(true)}
@@ -237,7 +237,7 @@ const FloatingAIChat = () => {
   }
 
   return (
-    <div style={{ position: 'fixed', bottom: '120px', right: '24px', zIndex: 45 }}>
+    <div className="floating-button-base floating-button-3" style={{ zIndex: 45 }}>
       <Card className={`w-80 shadow-2xl transition-all duration-300 lg:w-96 ${isMinimized ? 'h-16' : 'h-[450px] lg:h-[600px]'}`}>
         <CardHeader className="pb-3 border-b">
           <div className="flex items-center justify-between">
