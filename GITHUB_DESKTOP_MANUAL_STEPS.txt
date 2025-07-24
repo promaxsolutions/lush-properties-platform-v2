@@ -1,0 +1,49 @@
+GITHUB DESKTOP MANUAL DEPLOYMENT STEPS
+
+Instead of using terminal commands, you can create the files manually and use GitHub Desktop:
+
+STEP 1: CREATE FILES MANUALLY
+
+1. Navigate to: ~/Downloads/lush-properties-platform/
+
+2. Delete these files/folders if they exist:
+   - Delete: api folder
+   - Delete: vercel.json file
+   - Delete: .vercel folder
+
+3. Create new file: vercel.json
+   Content:
+   {
+     "version": 2,
+     "functions": {
+       "api/index.js": {
+         "runtime": "@vercel/node@2.15.10"
+       }
+     },
+     "rewrites": [
+       { "source": "/(.*)", "destination": "/api/index.js" }
+     ]
+   }
+
+4. Create new folder: api
+
+5. Create new file: api/index.js
+   Content: [Copy the entire Express app code from api-index-fix.js file I created earlier]
+
+STEP 2: GITHUB DESKTOP WORKFLOW
+
+1. Open GitHub Desktop
+2. Select your "lush-properties-platform" repository
+3. You'll see the changed files in the left sidebar:
+   - vercel.json (new/modified)
+   - api/index.js (new)
+4. Add commit message: "Fix homepage routing - manual deployment"
+5. Click "Commit to main"
+6. Click "Push origin"
+
+STEP 3: VERIFY DEPLOYMENT
+Wait 3-5 minutes then test:
+- https://lush-properties-platform-v2.vercel.app/
+- https://lush-properties-platform-v2.vercel.app/builder
+
+The benefit of using terminal commands is that they do everything automatically. But if you prefer the manual approach with GitHub Desktop interface, the steps above will work exactly the same way.
