@@ -1,0 +1,24 @@
+GITHUB DESKTOP DEPLOYMENT GUIDE
+
+Since you have GitHub Desktop, this is actually easier! Here's how to deploy:
+
+STEP 1: CREATE THE FILES
+First, we need to create/update these files in your Downloads folder:
+
+File 1: ~/Downloads/lush-properties-platform/vercel.json
+File 2: ~/Downloads/lush-properties-platform/api/index.js
+
+STEP 2: GITHUB DESKTOP PROCESS
+1. Open GitHub Desktop
+2. It should show your "lush-properties-platform" repository
+3. You'll see the changed files in the left sidebar
+4. Add a commit message like: "Fix homepage routing - final deployment"
+5. Click "Commit to main"
+6. Click "Push origin" to deploy to Vercel
+
+STEP 3: VERIFY DEPLOYMENT
+After pushing, wait 3-5 minutes then check:
+- https://lush-properties-platform-v2.vercel.app/
+- https://lush-properties-platform-v2.vercel.app/builder
+
+Let me create the exact files you need to copy into your project...
