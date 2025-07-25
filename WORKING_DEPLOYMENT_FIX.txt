@@ -1,172 +1,73 @@
-WORKING DEPLOYMENT FIX - Correct Runtime Version
+WORKING DEPLOYMENT FIX - Final Solution
 
-ISSUE: Node.js version @vercel/node@20.15.1 doesn't exist
-SOLUTION: Use correct Vercel Node.js runtime version
+PROBLEM: Git shows "up to date" meaning the api/index.js wasn't rewritten.
 
-STEP 1: Find your project files
-Run these commands to locate your project:
+SOLUTION: Run these commands one by one:
 
-# Check Downloads folder
-ls -la ~/Downloads/ | grep -i lush
-
-# Check Desktop folder  
-ls -la ~/Desktop/ | grep -i lush
-
-# Check current directory
-pwd
-ls -la | grep -i lush
-
-STEP 2: Use correct Vercel runtime (once you find the right folder)
-
+1. First, navigate to the directory:
+```bash
 cd ~/Downloads/lush-properties-platform
-# OR
-cd ~/Desktop/lush-properties-platform
-# OR wherever your files are located
+```
 
-# Create vercel.json with CORRECT runtime version
-cat > vercel.json << 'EOF'
-{
-  "version": 2,
-  "functions": {
-    "api/index.js": {
-      "runtime": "@vercel/node@18.x"
-    }
-  },
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/index.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/api/index.js"
-    }
-  ]
-}
-EOF
+2. Check current api/index.js content:
+```bash
+head -10 api/index.js
+```
 
-# Create simple working Express app
-mkdir -p api
+3. If it doesn't show the new homepage route, manually create it:
+```bash
 cat > api/index.js << 'EOF'
-const express = require("express");
+const express = require('express');
 const app = express();
 
-// API endpoints
-app.get("/api/health-check", (req, res) => {
-  res.json({ status: "healthy", timestamp: new Date().toISOString() });
+app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.send('<!DOCTYPE html><html><head><title>Lush Properties Pty Ltd</title><style>body{background:#007144;color:white;text-align:center;padding:50px;font-family:Arial}h1{color:#FFD700;margin:30px 0}a{color:#FFD700;margin:10px;padding:12px 24px;border:2px solid #FFD700;border-radius:8px;text-decoration:none;display:inline-block}a:hover{background:#FFD700;color:#007144}</style></head><body><h1>🏘️ Lush Properties Pty Ltd</h1><p>Premium Property Investment Management Platform</p><div><a href="/builder">Builder Portal</a><a href="/client">Client Dashboard</a><a href="/admin">Admin Panel</a><a href="/investor">Investor Portal</a></div><div style="margin-top:40px;color:#90EE90;font-size:18px">✅ HOMEPAGE WORKING</div></body></html>');
 });
 
-app.get("/api/projects", (req, res) => {
+app.get('/builder', (req, res) => {
+  res.send('<!DOCTYPE html><html><head><title>Builder Portal</title><style>body{background:#007144;color:white;text-align:center;padding:50px;font-family:Arial}h1{color:#FFD700}a{color:#FFD700;padding:12px 24px;border:2px solid #FFD700;border-radius:8px;text-decoration:none}a:hover{background:#FFD700;color:#007144}</style></head><body><h1>🔨 Builder Portal</h1><p>Construction Management Dashboard</p><a href="/">← Back to Home</a></body></html>');
+});
+
+app.get('/client', (req, res) => {
+  res.send('<!DOCTYPE html><html><head><title>Client Portal</title><style>body{background:#007144;color:white;text-align:center;padding:50px;font-family:Arial}h1{color:#FFD700}a{color:#FFD700;padding:12px 24px;border:2px solid #FFD700;border-radius:8px;text-decoration:none}a:hover{background:#FFD700;color:#007144}</style></head><body><h1>👥 Client Portal</h1><p>Project Tracking Dashboard</p><a href="/">← Back to Home</a></body></html>');
+});
+
+app.get('/admin', (req, res) => {
+  res.send('<!DOCTYPE html><html><head><title>Admin Panel</title><style>body{background:#007144;color:white;text-align:center;padding:50px;font-family:Arial}h1{color:#FFD700}a{color:#FFD700;padding:12px 24px;border:2px solid #FFD700;border-radius:8px;text-decoration:none}a:hover{background:#FFD700;color:#007144}</style></head><body><h1>⚙️ Admin Panel</h1><p>System Administration Dashboard</p><a href="/">← Back to Home</a></body></html>');
+});
+
+app.get('/investor', (req, res) => {
+  res.send('<!DOCTYPE html><html><head><title>Investor Portal</title><style>body{background:#007144;color:white;text-align:center;padding:50px;font-family:Arial}h1{color:#FFD700}a{color:#FFD700;padding:12px 24px;border:2px solid #FFD700;border-radius:8px;text-decoration:none}a:hover{background:#FFD700;color:#007144}</style></head><body><h1>📈 Investor Portal</h1><p>Investment Tracking Dashboard</p><a href="/">← Back to Home</a></body></html>');
+});
+
+app.get('/api/health-check', (req, res) => {
+  res.json({ status: 'healthy', timestamp: new Date().toISOString(), version: 'working' });
+});
+
+app.get('/api/projects', (req, res) => {
   res.json([
-    { id: 1, name: "Luxury Townhouse Development", status: "active" },
-    { id: 2, name: "Modern Apartment Complex", status: "planning" }
+    { id: 1, name: 'Luxury Townhouse Development', status: 'active' },
+    { id: 2, name: 'Modern Apartment Complex', status: 'planning' }
   ]);
-});
-
-// Homepage
-app.get("/", (req, res) => {
-  res.send(`<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lush Properties Pty Ltd</title>
-  <style>
-    body { 
-      background: #007144; 
-      color: white; 
-      text-align: center; 
-      padding: 50px; 
-      font-family: Arial, sans-serif; 
-      margin: 0;
-    }
-    h1 { color: #FFD700; margin-bottom: 20px; }
-    p { margin: 20px 0; }
-    a { 
-      color: #FFD700; 
-      text-decoration: none; 
-      margin: 0 15px; 
-      padding: 10px 20px;
-      border: 1px solid #FFD700;
-      border-radius: 5px;
-      display: inline-block;
-      margin: 10px;
-    }
-    a:hover { 
-      background: #FFD700; 
-      color: #007144; 
-    }
-  </style>
-</head>
-<body>
-  <h1>🏘️ Lush Properties Pty Ltd</h1>
-  <p>Premium Property Investment Management Platform</p>
-  <div>
-    <a href="/builder">Builder Portal</a>
-    <a href="/client">Client Dashboard</a>
-    <a href="/admin">Admin Panel</a>
-    <a href="/investor">Investor Portal</a>
-  </div>
-  <p style="margin-top: 40px; font-size: 14px;">Deployed successfully! ✅</p>
-</body>
-</html>`);
-});
-
-// All other routes
-app.get("*", (req, res) => {
-  const pageName = req.path.slice(1) || "home";
-  const pageTitle = pageName.charAt(0).toUpperCase() + pageName.slice(1);
-  
-  res.send(`<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${pageTitle} Portal - Lush Properties</title>
-  <style>
-    body { 
-      background: #007144; 
-      color: white; 
-      text-align: center; 
-      padding: 50px; 
-      font-family: Arial, sans-serif; 
-    }
-    h1 { color: #FFD700; }
-    a { 
-      color: #FFD700; 
-      text-decoration: none;
-      padding: 10px 20px;
-      border: 1px solid #FFD700;
-      border-radius: 5px;
-    }
-    a:hover { background: #FFD700; color: #007144; }
-  </style>
-</head>
-<body>
-  <h1>🏢 ${pageTitle} Portal</h1>
-  <p>Welcome to your ${pageName} dashboard</p>
-  <p>This portal is working correctly!</p>
-  <a href="/">← Back to Home</a>
-</body>
-</html>`);
 });
 
 module.exports = app;
 EOF
+```
 
-# Deploy with correct configuration
-git add . -A
-git commit -m "Fix runtime version to @vercel/node@18.x - $(date)"
+4. Force add and commit:
+```bash
+git add -A
+git status
+git commit -m "FORCE: Complete api/index.js rewrite with homepage"
 git push origin main
+```
 
-echo ""
-echo "✅ DEPLOYMENT FIXED!"
-echo "✅ Using correct Node.js runtime: @vercel/node@18.x"
-echo "✅ Wait 3-5 minutes for Vercel to rebuild"
-echo ""
+5. Wait 4 minutes, then test:
+```bash
+curl https://lush-properties-platform-v2.vercel.app/
+```
 
-WHAT CHANGED:
-- Fixed runtime from "@vercel/node@20.15.1" to "@vercel/node@18.x"
-- Added proper homepage with Lush Properties branding
-- Added working portal pages for all routes
-- Used correct Vercel configuration format
+This will definitively rewrite the file and deploy it.
