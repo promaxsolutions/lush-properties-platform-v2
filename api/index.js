@@ -6,16 +6,20 @@ app.get("/api/health-check", (req, res) => {
 });
 
 app.get("*", (req, res) => {
-  res.send(\`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head><meta charset="UTF-8"><title>Lush Properties</title></head>
-    <body style="font-family:sans-serif;text-align:center;padding:50px">
-      <h1>🌿 Lush Properties Pty Ltd</h1>
-      <p>Welcome to the platform.</p>
-    </body>
-    </html>
-  \`);
+  if (req.path === "/") {
+    res.send(`
+      <h1>Lush Properties Platform</h1>
+      <p>Welcome to the homepage!</p>
+    `);
+  } else {
+    res.send(`
+      <h1>${req.path.slice(1)} Page</h1>
+      <p>Welcome to the ${req.path.slice(1)} page</p>
+    `);
+  }
 });
 
-module.exports = app;
+// 💥 Vercel expects this:
+module.exports = (req, res) => {
+  app(req, res);
+};
