@@ -1,59 +1,53 @@
-EMERGENCY DEPLOYMENT ANALYSIS
+EMERGENCY DEPLOYMENT FIX
 
-You've run the commands twice but the deployment isn't working. This suggests one of these issues:
+The homepage is still broken after multiple deployment attempts. Let's try these emergency fixes:
 
-1. GITHUB SYNC ISSUE: Commands ran but GitHub didn't receive the push
-2. VERCEL CONFIG ISSUE: Deployment succeeded but routing is still broken
-3. CACHE ISSUE: Old deployment is cached and new one isn't active
-
-EMERGENCY SOLUTION - Try this ultra-simple approach:
-
+**STEP 1: Force rebuild by updating vercel.json**
+```bash
 cd ~/Downloads/lush-properties-platform
+cat > vercel.json << 'EOF'
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.js"
+    }
+  ]
+}
+EOF
+git add . && git commit -m "EMERGENCY: Fix vercel.json routing" && git push origin main
+```
 
-# Check what's actually in the repository
-ls -la
-cat vercel.json 2>/dev/null || echo "No vercel.json found"
+**STEP 2: If that doesn't work, check Vercel Dashboard manually:**
+1. Go to https://vercel.com/dashboard
+2. Find "lush-properties-platform-v2" project  
+3. Click "Deployments" tab
+4. Look at latest deployment - is it "Ready" or "Failed"?
+5. If failed, check build logs for errors
 
-# Force create minimal working version
-rm -f vercel.json
-echo '{
-  "functions": { "api/index.js": { "runtime": "@vercel/node" } },
-  "rewrites": [{ "source": "/(.*)", "destination": "/api/index.js" }]
-}' > vercel.json
+**STEP 3: Nuclear option - Redeploy via Vercel Dashboard:**
+1. In Vercel dashboard, find your project
+2. Go to "Deployments" tab
+3. Find latest deployment
+4. Click "..." menu → "Redeploy"
+5. Wait for new deployment
 
-# Create minimal Express that handles everything
-mkdir -p api
-echo 'const express = require("express");
-const app = express();
-app.get("*", (req, res) => {
-  if (req.path === "/") {
-    res.send(`<html><body style="background:#007144;color:white;text-align:center;padding:50px;font-family:Arial"><h1 style="color:#FFD700">Lush Properties Pty Ltd</h1><p>Property Investment Platform</p><a href="/builder" style="color:#FFD700">Builder Portal</a> | <a href="/client" style="color:#FFD700">Client Dashboard</a></body></html>`);
-  } else if (req.path.startsWith("/api/")) {
-    res.json({ status: "API working", endpoint: req.path });
-  } else {
-    res.send(`<html><body style="background:#007144;color:white;text-align:center;padding:50px;font-family:Arial"><h1 style="color:#FFD700">${req.path.slice(1)} Portal</h1><p>Route working!</p><a href="/" style="color:#FFD700">← Back</a></body></html>`);
-  }
-});
-module.exports = app;' > api/index.js
+**STEP 4: Alternative - Check if Node.js version issue:**
+```bash
+cd ~/Downloads/lush-properties-platform
+echo '{"engines": {"node": "18.x"}}' > .nvmrc
+git add . && git commit -m "Force Node 18.x" && git push origin main
+```
 
-# Force push with timestamp
-git add . -A
-git commit -m "EMERGENCY FIX $(date +%s)"
-git push origin main --force
-
-echo "Emergency deployment pushed. Wait 5 minutes then test."
-
-ALTERNATIVE APPROACH:
-If this still doesn't work, the issue might be:
-
-1. Wrong GitHub repository linked to Vercel
-2. Vercel project needs manual redeploy
-3. Domain/DNS issue
-
-Check these:
-1. Open https://vercel.com/dashboard
-2. Find your project "lush-properties-platform-v2"
-3. Click "Redeploy" manually
-4. Check if GitHub repository is correctly linked
-
-The API working but homepage failing indicates routing configuration isn't taking effect.
+The API endpoints work perfectly, so this is 100% a routing configuration issue with Vercel.
