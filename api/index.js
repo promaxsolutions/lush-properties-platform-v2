@@ -19,7 +19,5 @@ app.get("*", (req, res) => {
   }
 });
 
-// 💥 Vercel expects this:
-module.exports = (req, res) => {
-  app(req, res);
-};
+// ✅ Vercel-compatible export
+module.exports = app;
