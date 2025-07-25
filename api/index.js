@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
       color: #FFD700; 
       font-size: 2.5em;
     }
-    a { 
+    .portal-btn { 
       color: #FFD700; 
       margin: 10px; 
       padding: 15px 30px; 
@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
       display: inline-block;
       font-weight: bold;
     }
-    a:hover { 
+    .portal-btn:hover { 
       background: #FFD700; 
       color: #007144; 
     }
@@ -38,18 +38,22 @@ app.get('/', (req, res) => {
   <h1>🏘️ Lush Properties Pty Ltd</h1>
   <p>Premium Property Investment Management Platform</p>
   <div>
-    <a href="/builder">Builder Portal</a>
-    <a href="/client">Client Dashboard</a>
-    <a href="/admin">Admin Panel</a>
-    <a href="/investor">Investor Portal</a>
+    <a href="/builder" class="portal-btn">Builder Portal</a>
+    <a href="/client" class="portal-btn">Client Dashboard</a>
+    <a href="/admin" class="portal-btn">Admin Panel</a>
+    <a href="/investor" class="portal-btn">Investor Portal</a>
   </div>
-  <p style="color: #90EE90; font-weight: bold; margin-top: 40px;">✅ HOMEPAGE WORKING!</p>
+  <p style="color: #90EE90; margin-top: 40px;">✅ DEPLOYMENT SUCCESSFUL</p>
 </body>
 </html>`);
 });
 
 app.get('/api/health-check', (req, res) => {
-  res.json({ status: 'healthy', timestamp: new Date().toISOString() });
+  res.json({ status: 'healthy' });
+});
+
+app.get('*', (req, res) => {
+  res.send('Portal page: ' + req.path);
 });
 
 module.exports = app;
