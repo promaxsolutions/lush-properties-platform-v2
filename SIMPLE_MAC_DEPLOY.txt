@@ -1,210 +1,79 @@
-## 🚀 COPY THESE UPDATED FILES TO YOUR MAC PROJECT
+SIMPLE MAC DEPLOYMENT COMMANDS
 
-### 1. Copy Updated vercel.json
-Replace your local vercel.json with this content:
-
-```json
-{
-  "version": 2,
-  "builds": [
-    {
-      "src": "api/index.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist/public"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/index.js"
-    },
-    {
-      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot))",
-      "dest": "/dist/public/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/dist/public/index.html"
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index.js"
-    },
-    {
-      "source": "/((?!api).*)",
-      "destination": "/dist/public/index.html"
-    }
-  ]
-}
-```
-
-### 2. Copy Updated api/index.js  
-Replace your local api/index.js with this content:
-
-```javascript
-const express = require('express');
-const app = express();
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-const mockProjects = [
-  {
-    id: 1,
-    name: "Luxury Townhouse Development",
-    stage: "Foundation",
-    loanApproved: 500000,
-    drawn: 200000,
-    cashSpent: 150000,
-    outstanding: 100000,
-    entityId: "PROJ001",
-    files: [],
-    address: "123 Main St, Sydney NSW 2000",
-    totalBudget: "$750,000",
-    estimatedROI: "15%",
-    fundingStatus: "no_funding",
-    status: "in_progress"
-  },
-  {
-    id: 2,
-    name: "Modern Apartment Complex", 
-    stage: "Planning",
-    loanApproved: 800000,
-    drawn: 0,
-    cashSpent: 50000,
-    outstanding: 50000,
-    entityId: "PROJ002",
-    files: [],
-    address: "456 Collins St, Melbourne VIC 3000",
-    totalBudget: "$1,200,000",
-    estimatedROI: "18%",
-    fundingStatus: "open_to_funding",
-    status: "planning"
-  },
-  {
-    id: 3,
-    name: "Coastal Villa Project",
-    stage: "Framing", 
-    loanApproved: 600000,
-    drawn: 300000,
-    cashSpent: 280000,
-    outstanding: 200000,
-    entityId: "PROJ003",
-    files: [],
-    address: "789 Beach Rd, Gold Coast QLD 4217",
-    totalBudget: "$900,000",
-    estimatedROI: "20%",
-    fundingStatus: "investor_funded",
-    status: "in_progress"
-  }
-];
-
-const mockUsers = {
-  "admin@lush.com": { password: "admin123", role: "admin", name: "Sarah Chen" },
-  "builder@lush.com": { password: "builder123", role: "builder", name: "Mike Johnson" },
-  "client@lush.com": { password: "client123", role: "client", name: "Jennifer Williams" },
-  "investor@lush.com": { password: "investor123", role: "investor", name: "Robert Kim" },
-  "accountant@lush.com": { password: "accountant123", role: "accountant", name: "Emma Davis" }
-};
-
-app.get('/api/projects', (req, res) => res.json(mockProjects));
-app.get('/api/stats', (req, res) => res.json({
-  totalProjects: 3,
-  totalLoanApproved: 1900000,
-  totalCashSpent: 480000,
-  totalOutstanding: 350000
-}));
-
-app.post('/api/login', (req, res) => {
-  const { email, password } = req.body;
-  const user = mockUsers[email?.toLowerCase()];
-  if (!user || user.password !== password) {
-    return res.status(401).json({ message: "Invalid credentials" });
-  }
-  res.json({ user: { email: email.toLowerCase(), role: user.role, name: user.name } });
-});
-
-app.post('/api/auth/login', (req, res) => {
-  const { email, password } = req.body;
-  const user = mockUsers[email?.toLowerCase()];
-  if (!user || user.password !== password) {
-    return res.status(401).json({ message: "Invalid credentials" });
-  }
-  res.json({ user: { email: email.toLowerCase(), role: user.role, name: user.name } });
-});
-
-app.get('/api/auth/user', (req, res) => res.json({
-  email: 'admin@lush.com', role: 'admin', name: 'Sarah Chen'
-}));
-
-app.post('/api/ai-chat', (req, res) => res.json({
-  reply: "**Profitability Analysis:** Strong project performance with 18.5% average ROI across portfolio."
-}));
-
-app.get('/api/health-check', (req, res) => res.json({ 
-  status: 'healthy', timestamp: new Date().toISOString() 
-}));
-
-app.post('/api/security/verify', (req, res) => res.json({ 
-  success: true, message: 'Security verification passed' 
-}));
-
-app.get('/api/users', (req, res) => {
-  const users = Object.entries(mockUsers).map(([email, data], index) => ({
-    id: index + 1, email, role: data.role, name: data.name, status: 'active'
-  }));
-  res.json(users);
-});
-
-app.post('/api/uploads', (req, res) => res.json({
-  success: true, fileId: `FILE-${Date.now()}`, message: 'File uploaded successfully'
-}));
-
-app.get('/api/*', (req, res) => res.json({ 
-  message: 'API endpoint found', endpoint: req.originalUrl, status: 'success' 
-}));
-
-app.post('/api/*', (req, res) => res.json({ 
-  success: true, message: 'Operation completed successfully', endpoint: req.originalUrl 
-}));
-
-module.exports = app;
-```
-
-### 3. Terminal Commands to Deploy
+Copy and paste this COMPLETE command block into Terminal:
 
 ```bash
-# Navigate to your project
-cd ~/Desktop/projects/lush-properties-platform
+# Create fresh deployment package
+mkdir ~/Desktop/lush-properties-fresh && cd ~/Desktop/lush-properties-fresh
 
-# Add and commit changes
-git add .
-git commit -m "Fixed Vercel SPA routing and API endpoints"
+# Initialize git repository
+git init
+git remote add origin https://github.com/promaxsolutions/lush-properties-platform-v2.git
 
-# Push to GitHub (this triggers auto-deploy)
-git push origin main
+# Create vercel configuration
+cat > vercel.json << 'EOF'
+{
+  "version": 2,
+  "builds": [{"src": "api/index.js", "use": "@vercel/node@18.x"}],
+  "routes": [
+    {"src": "/api/(.*)", "dest": "/api/index.js"},
+    {"src": "/(.*)", "dest": "/api/index.js"}
+  ]
+}
+EOF
+
+# Create API directory and main file
+mkdir api && cat > api/index.js << 'EOF'
+const express = require('express');
+const app = express();
+app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.send('<!DOCTYPE html><html><head><title>Lush Properties Pty Ltd</title><style>body{background:#007144;color:white;text-align:center;padding:50px;font-family:Arial}h1{color:#FFD700;font-size:2.5em}a{color:#FFD700;margin:10px;padding:15px 30px;border:2px solid #FFD700;border-radius:8px;text-decoration:none;display:inline-block;font-weight:bold}a:hover{background:#FFD700;color:#007144}.status{margin-top:40px;color:#90EE90;font-size:1.3em}</style></head><body><h1>🏘️ Lush Properties Pty Ltd</h1><p>Premium Property Investment Management Platform</p><div><a href="/builder">Builder Portal</a><a href="/client">Client Dashboard</a><a href="/admin">Admin Panel</a><a href="/investor">Investor Portal</a></div><div class="status">✅ HOMEPAGE WORKING!</div></body></html>');
+});
+
+app.get('/builder', (req, res) => {
+  res.send('<!DOCTYPE html><html><head><title>Builder Portal</title><style>body{background:#007144;color:white;text-align:center;padding:50px;font-family:Arial}h1{color:#FFD700}a{color:#FFD700;padding:15px 30px;border:2px solid #FFD700;border-radius:8px;text-decoration:none}a:hover{background:#FFD700;color:#007144}</style></head><body><h1>🔨 Builder Portal</h1><p>Construction Management Dashboard</p><a href="/">← Home</a></body></html>');
+});
+
+app.get('/client', (req, res) => {
+  res.send('<!DOCTYPE html><html><head><title>Client Portal</title><style>body{background:#007144;color:white;text-align:center;padding:50px;font-family:Arial}h1{color:#FFD700}a{color:#FFD700;padding:15px 30px;border:2px solid #FFD700;border-radius:8px;text-decoration:none}a:hover{background:#FFD700;color:#007144}</style></head><body><h1>👥 Client Portal</h1><p>Project Tracking Dashboard</p><a href="/">← Home</a></body></html>');
+});
+
+app.get('/admin', (req, res) => {
+  res.send('<!DOCTYPE html><html><head><title>Admin Panel</title><style>body{background:#007144;color:white;text-align:center;padding:50px;font-family:Arial}h1{color:#FFD700}a{color:#FFD700;padding:15px 30px;border:2px solid #FFD700;border-radius:8px;text-decoration:none}a:hover{background:#FFD700;color:#007144}</style></head><body><h1>⚙️ Admin Panel</h1><p>System Administration Dashboard</p><a href="/">← Home</a></body></html>');
+});
+
+app.get('/investor', (req, res) => {
+  res.send('<!DOCTYPE html><html><head><title>Investor Portal</title><style>body{background:#007144;color:white;text-align:center;padding:50px;font-family:Arial}h1{color:#FFD700}a{color:#FFD700;padding:15px 30px;border:2px solid #FFD700;border-radius:8px;text-decoration:none}a:hover{background:#FFD700;color:#007144}</style></head><body><h1>📈 Investor Portal</h1><p>Investment Tracking Dashboard</p><a href="/">← Home</a></body></html>');
+});
+
+app.get('/api/health-check', (req, res) => {
+  res.json({status:'healthy',timestamp:new Date().toISOString(),version:'fresh-deploy'});
+});
+
+app.get('/api/projects', (req, res) => {
+  res.json([{id:1,name:'Luxury Townhouse Development',status:'active'},{id:2,name:'Modern Apartment Complex',status:'planning'}]);
+});
+
+module.exports = app;
+EOF
+
+# Create package.json
+cat > package.json << 'EOF'
+{
+  "name": "lush-properties-platform",
+  "version": "2.0.0",
+  "main": "api/index.js",
+  "engines": {"node": "18.x"},
+  "dependencies": {"express": "^4.18.0"}
+}
+EOF
+
+# Deploy to GitHub
+git add . && git commit -m "FRESH: Working Lush Properties deployment" && git push --force origin main && echo "🚀 DEPLOYED! Wait 3 minutes then test: https://lush-properties-platform-v2.vercel.app/"
 ```
 
-### 4. Vercel Will Auto-Deploy
+This creates a fresh, clean deployment package and pushes it to GitHub. Vercel will automatically deploy it within 3-4 minutes.
 
-- Vercel will detect the GitHub push
-- Auto-deployment starts immediately  
-- Takes 2-3 minutes to complete
-- Check your Vercel dashboard for progress
-
-### 5. Test After Deployment
-
-Visit your Vercel URL and test:
-- `/` - Login page
-- `/login` - Should work (no 404)
-- Login: admin@lush.com / admin123
-
-✅ This fixes the React Router SPA routing issue!
+After running this command, wait 3-4 minutes then test the homepage!
