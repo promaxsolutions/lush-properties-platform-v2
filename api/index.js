@@ -1,23 +1,19 @@
-const express = require("express");
-const app = express();
+module.exports = (req, res) => {
+  const { url } = req;
 
-app.get("/api/health-check", (req, res) => {
-  res.json({ status: "healthy", timestamp: new Date().toISOString() });
-});
-
-app.get("*", (req, res) => {
-  if (req.path === "/") {
-    res.send(`
-      <h1>Lush Properties Platform</h1>
-      <p>Welcome to the homepage!</p>
-    `);
-  } else {
-    res.send(`
-      <h1>${req.path.slice(1)} Page</h1>
-      <p>Welcome to the ${req.path.slice(1)} page</p>
-    `);
+  if (url === "/api/health-check") {
+    return res
+      .writeHead(200, { "Content-Type": "application/json" })
+      .end(JSON.stringify({ status: "healthy", timestamp: new Date().toISOString() }));
   }
-});
 
-// ✅ Vercel-compatible export
-module.exports = app;
+  if (url === "/") {
+    return res
+      .writeHead(200, { "Content-Type": "text/html" })
+      .end(\`<h1>Lush Properties Platform</h1><p>Welcome to the homepage!</p>\`);
+  }
+
+  return res
+    .writeHead(200, { "Content-Type": "text/html" })
+    .end(\`<h1>\${url.slice(1)} Page</h1><p>Welcome to the \${url.slice(1)} page</p>\`);
+};
